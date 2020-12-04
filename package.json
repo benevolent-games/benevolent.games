@@ -1,0 +1,24 @@
+{
+	"private": true,
+	"name": "axiom.games",
+	"version": "0.0.0-dev.0",
+	"description": "",
+	"license": "ISC",
+	"author": "Chase Moskal <chasemoskal@gmail.com>",
+	"type": "module",
+	"files": [],
+	"scripts": {
+		"start": "serve"
+	},
+	"devDependencies": {
+		"serve": "^11.3.2"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/chase-moskal/feature.farm.git"
+	},
+	"bugs": {
+		"url": "https://github.com/chase-moskal/feature.farm/issues"
+	},
+	"homepage": "https://github.com/chase-moskal/feature.farm#readme"
+}
