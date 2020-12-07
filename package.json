@@ -15,10 +15,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/chase-moskal/feature.farm.git"
+		"url": "git+https://github.com/chase-moskal/axiom.games.git"
 	},
 	"bugs": {
-		"url": "https://github.com/chase-moskal/feature.farm/issues"
+		"url": "https://github.com/chase-moskal/axiom.games/issues"
 	},
-	"homepage": "https://github.com/chase-moskal/feature.farm#readme"
+	"homepage": "https://github.com/chase-moskal/axiom.games#readme"
 }
