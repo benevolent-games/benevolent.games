@@ -8,10 +8,23 @@
 	"type": "module",
 	"files": [],
 	"scripts": {
+		"prepare": "run-s clean && run-p importmap compile-typescript && run-s test",
+		"clean": "rimraf x && mkdirp x",
+		"importmap": "importly --host=unpkg < package.json > x/importmap.json",
+		"compile-typescript": "tsc",
+		"test": "cynic node --label='axiom games test suite' x/tests.test.js",
 		"start": "serve"
 	},
+	"dependencies": {},
 	"devDependencies": {
-		"serve": "^11.3.2"
+		"chokidar-cli": "^2.1.0",
+		"cynic": "0.1.0-dev.12",
+		"importly": "0.1.0-dev.0",
+		"mkdirp": "^1.0.4",
+		"npm-run-all": "^4.1.5",
+		"rimraf": "^3.0.2",
+		"serve": "^11.3.2",
+		"typescript": "^4.1.2"
 	},
 	"repository": {
 		"type": "git",
