@@ -9,9 +9,10 @@ import {FreeCamera} from "@babylonjs/core/Cameras/freeCamera.js"
 import {GridMaterial} from "@babylonjs/materials/grid/gridMaterial.js"
 import {HemisphericLight} from "@babylonjs/core/Lights/hemisphericLight.js"
 
-import "@babylonjs/core/Meshes/meshBuilder"
+import "@babylonjs/core/Meshes/meshBuilder.js"
 
 const canvas = <HTMLCanvasElement>document.getElementById("renderport")
+
 const engine = new Engine(canvas)
 var scene = new Scene(engine)
 var camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene)
@@ -26,6 +27,4 @@ sphere.material = material
 var ground = Mesh.CreateGround("ground1", 6, 6, 2, scene)
 ground.material = material
 
-engine.runRenderLoop(() => {
-	scene.render();
-})
+engine.runRenderLoop(() => scene.render())

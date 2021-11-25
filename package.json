@@ -8,15 +8,21 @@
 	"type": "module",
 	"files": [],
 	"scripts": {
-		"prepare": "run-s clean && run-p importmap compile-typescript && run-s test",
+		"prepare": "run-s clean && run-p importmap compile-typescript && run-p test compile-bundle",
 		"clean": "rimraf x && mkdirp x",
 		"importmap": "importly --host=unpkg < package.json > x/importmap.json",
 		"compile-typescript": "tsc",
-		"watch": "npm run -s compile-typescript -- -w",
+		"compile-bundle": "run-s compile-bundle-rollup compile-bundle-minify",
+		"compile-bundle-rollup": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/axiom.js -o x/axiom.bundle.js",
+		"compile-bundle-minify": "terser x/axiom.bundle.js -cm --source-map --comments false -o x/axiom.bundle.min.js",
+		"watch-typescript": "npm run -s compile-typescript -- -w",
+		"watch-bundle": "npm run -s compile-bundle-rollup -- -w",
+		"watch": "run-p watch-typescript watch-bundle",
 		"test": "cynic node --label='axiom games test suite' x/tests.test.js",
 		"start": "serve"
 	},
 	"devDependencies": {
+		"@rollup/plugin-node-resolve": "^13.0.6",
 		"chokidar-cli": "^3.0.0",
 		"cynic": "0.1.0-dev.16",
 		"importly": "^0.1.0",
@@ -25,6 +31,7 @@
 		"rimraf": "^3.0.2",
 		"rollup": "^2.60.1",
 		"serve": "^13.0.2",
+		"terser": "^5.10.0",
 		"typescript": "4.2"
 	},
 	"dependencies": {
@@ -32,7 +39,8 @@
 		"@babylonjs/loaders": "^4.2.0",
 		"@babylonjs/materials": "^4.2.0",
 		"ammojs-typed": "1.0.6",
-		"lit": "^2.0.2"
+		"lit": "^2.0.2",
+		"rollup-plugin-sizes": "^1.0.4"
 	},
 	"repository": {
 		"type": "git",
