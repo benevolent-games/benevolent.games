@@ -15,6 +15,6 @@ void async function setupPlayground() {
 		element: document.querySelector<HTMLSpanElement>(".stats .fps span"),
 	})
 	await setupCameraAndLights(viewport)
-	await loadCharacter(viewport.scene)
+	// await loadCharacter(viewport.scene)
 	await loadEnvironment(viewport.scene)
 }()
