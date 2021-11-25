@@ -11,20 +11,36 @@ import {HemisphericLight} from "@babylonjs/core/Lights/hemisphericLight.js"
 
 import "@babylonjs/core/Meshes/meshBuilder.js"
 
-const canvas = <HTMLCanvasElement>document.getElementById("renderport")
+const displayFramerate = (() => {
+	const span = document.querySelector<HTMLSpanElement>(".stats .fps span")
+	return function(rate: number) {
+		const fixed = rate.toFixed(0)
+		span.textContent = fixed.length === 1
+			? "0" + fixed
+			: fixed
+	}
+})()
 
+const canvas = <HTMLCanvasElement>document.getElementById("renderport")
 const engine = new Engine(canvas)
-var scene = new Scene(engine)
-var camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene)
+const scene = new Scene(engine)
+const camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene)
 camera.setTarget(Vector3.Zero())
 camera.attachControl(canvas, true)
-var light = new HemisphericLight("light1", new Vector3(0, 1, 0), scene)
+const light = new HemisphericLight("light1", new Vector3(0, 1, 0), scene)
 light.intensity = 0.7
-var material = new GridMaterial("grid", scene)
-var sphere = Mesh.CreateSphere("sphere1", 16, 2, scene)
+const material = new GridMaterial("grid", scene)
+const sphere = Mesh.CreateSphere("sphere1", 16, 2, scene)
 sphere.position.y = 2
 sphere.material = material
-var ground = Mesh.CreateGround("ground1", 6, 6, 2, scene)
+const ground = Mesh.CreateGround("ground1", 6, 6, 2, scene)
 ground.material = material
 
-engine.runRenderLoop(() => scene.render())
+engine.runRenderLoop(() => {
+	scene.render()
+})
+
+setInterval(
+	() => displayFramerate(engine.getFps()),
+	100
+)
