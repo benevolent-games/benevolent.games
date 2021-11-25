@@ -8,7 +8,7 @@
 	"type": "module",
 	"files": [],
 	"scripts": {
-		"build": "run-s clean && run-p importmap compile-typescript && run-s test",
+		"prepare": "run-s clean && run-p importmap compile-typescript && run-s test",
 		"clean": "rimraf x && mkdirp x",
 		"importmap": "importly --host=unpkg < package.json > x/importmap.json",
 		"compile-typescript": "tsc",
