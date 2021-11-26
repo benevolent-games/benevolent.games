@@ -20,4 +20,6 @@ void async function setupPlayground() {
 	await setupCameraAndLights(viewport)
 	await loadCharacter(viewport.scene)
 	await loadEnvironment(viewport.scene)
+
+	;(<any>window).scene = viewport.scene
 }()
