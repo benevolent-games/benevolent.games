@@ -9,11 +9,14 @@ import {makeFramerateDisplay} from "./demo/make-framerate-display.js"
 import {setupCameraAndLights} from "./demo/loaders/setup-camera-and-lights.js"
 
 void async function setupPlayground() {
+
 	const viewport = makeViewport()
+
 	makeFramerateDisplay({
 		getFramerate: () => viewport.engine.getFps(),
 		element: document.querySelector<HTMLSpanElement>(".stats .fps span"),
 	})
+
 	await setupCameraAndLights(viewport)
 	await loadCharacter(viewport.scene)
 	await loadEnvironment(viewport.scene)
