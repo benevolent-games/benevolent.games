@@ -10,6 +10,6 @@ const options = {
 }
 
 const transform = prepareTransformer("./x/")
-await transform("style.css", styleCss(options))
+await transform("style.css", styleCss())
 await transform("index.html", indexHtml(options))
 await transform("play.html", playHtml(options))

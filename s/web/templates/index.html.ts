@@ -1,43 +1,40 @@
 
 import {noop as html} from "../utils/template-noop.js"
+import headBasicsHtml from "../partials/head-basics.html.js"
+
 export default ({debug}: {debug: boolean}) => html`
 
 <!doctype html>
 <html>
 <head>
-	<meta charset="utf-8"/>
-	<meta name="viewport" content="width=device-width,initial-scale=1"/>
-	<title>axiom.games</title>
-
-	<link rel=stylesheet href="/style.css"/>
-
-	<link rel=preconnect href="https://fonts.gstatic.com"/>
-	<link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap"/>
-
-	<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png"/>
-	<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png"/>
-	<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png"/>
+	${headBasicsHtml({title: "axiom.games"})}
 </head>
-<body>
+<body class="home">
 	<main style="display: none">
 		<h1><img alt="axiom" src="./assets/axiom.svg"/></h1>
-		<p>the axiom vr sandbox</p>
-		<p>is currently being conceptualized</p>
-		<p>by distinguished geniuses with exceptionally large brains</p>
-		<p><a href="https://github.com/chase-moskal/">@chase-moskal</a></p>
+		<div>
+			<h2>humanoid</h2>
+			<p>is in active development</p>
+			<p>by distinguished geniuses</p>
+			<p>with exceptionally large brains</p>
+		</div>
+		<div>
+			<p><a href="https://github.com/chase-moskal/">@chase-moskal</a></p>
+			<p>and other secret collaborators</p>
+		</div>
 	</main>
-
 	<script>
+
 		const {style} = document.querySelector("main")
 
-		function setAnimationStart() {
+		function startAnimation() {
 			style.opacity = "0"
-			style.transform = "scale(1.1)"
+			style.transform = "scale(1.2)"
 			style.display = "block"
 		}
 
-		function setAnimationEnd() {
-			style.transition = "all ease 4s"
+		function endAnimation() {
+			style.transition = "all ease 6s"
 			style.opacity = "1"
 			style.transform = "scale(1)"
 		}
@@ -46,8 +43,9 @@ export default ({debug}: {debug: boolean}) => html`
 			setTimeout(func, 0)
 		}
 
-		setAnimationStart()
-		delay(setAnimationEnd)
+		startAnimation()
+		delay(endAnimation)
+
 	</script>
 </body>
 </html>
