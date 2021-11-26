@@ -3,12 +3,6 @@ import {noop as css} from "../utils/template-noop.js"
 
 export default () => css`
 
-canvas {
-	position: relative;
-	width: 100%;
-	min-height: 100%;
-}
-
 .stats {
 	display: inline-block;
 	position: fixed;
@@ -23,6 +17,7 @@ canvas {
 	background: #1114;
 	padding: 0.5em;
 	color: white;
+	border-radius: 0.5em;
 }
 
 `

@@ -12,10 +12,11 @@ void async function setupPlayground() {
 
 	const viewport = makeViewport()
 
-	makeFramerateDisplay({
-		getFramerate: () => viewport.engine.getFps(),
-		element: document.querySelector<HTMLSpanElement>(".stats .fps span"),
-	})
+	document.querySelector(".stats").appendChild(
+		makeFramerateDisplay({
+			getFramerate: () => viewport.engine.getFps(),
+		})
+	)
 
 	await setupCameraAndLights(viewport)
 	await loadCharacter(viewport.scene)

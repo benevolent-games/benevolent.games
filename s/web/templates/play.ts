@@ -7,7 +7,7 @@ export default ({debug}: {debug: boolean}) => html`
 <!doctype html>
 <html>
 <head>
-	${headBasicsHtml({title: "axiom.games play"})}
+	${headBasicsHtml({title: "axiom play"})}
 	<script
 		type=module
 		defer
@@ -15,10 +15,8 @@ export default ({debug}: {debug: boolean}) => html`
 	></script>
 </head>
 <body class=game>
-	<canvas id=renderport></canvas>
-	<ul class=stats>
-		<p class=fps>fps <span>--</span></p>
-	</ul>
+	<canvas></canvas>
+	<ul class=stats></ul>
 </body>
 </html>
 

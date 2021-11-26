@@ -7,14 +7,14 @@ export default ({debug}: {debug: boolean}) => html`
 <!doctype html>
 <html>
 <head>
-	${headBasicsHtml({title: "axiom.games"})}
+	${headBasicsHtml({title: "axiom"})}
 </head>
 <body class="home">
 	<main style="display: none">
 		<h1><img alt="axiom" src="./assets/axiom.svg"/></h1>
 		<div>
 			<h2>humanoid</h2>
-			<p>is in active development</p>
+			<p>active development</p>
 			<p>by distinguished geniuses</p>
 			<p>with exceptionally large brains</p>
 		</div>

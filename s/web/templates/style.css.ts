@@ -23,6 +23,12 @@ html, body, canvas {
 	height: 100%;
 }
 
+canvas {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
 ${linksCss()}
 ${homeCss()}
 ${gameCss()}
