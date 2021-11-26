@@ -8,10 +8,11 @@
 	"type": "module",
 	"files": [],
 	"scripts": {
-		"prepare": "run-s clean && run-p importmap copy-assets compile-typescript && run-p test compile-bundle build-web",
+		"prepare": "run-s clean && run-p importmap copy-assets copy-metas compile-typescript && run-p test compile-bundle build-web",
 		"clean": "rimraf x && mkdirp x",
 		"importmap": "importly --host=unpkg < package.json > x/importmap.json",
 		"copy-assets": "cp -r assets/ x/",
+		"copy-metas": "cp CNAME x/ && touch x/.nojekyll",
 		"compile-typescript": "tsc",
 		"compile-bundle": "run-s compile-bundle-rollup compile-bundle-minify",
 		"compile-bundle-rollup": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/axiom.js -o x/axiom.bundle.js",
