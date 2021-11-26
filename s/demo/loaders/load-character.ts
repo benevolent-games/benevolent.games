@@ -4,7 +4,7 @@ import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
 
 export async function loadCharacter(scene: Scene) {
 
-	await SceneLoader.AppendAsync("/assets/", "character-04.glb", scene, () => {})
+	await SceneLoader.AppendAsync("/assets/", "character.glb", scene, () => {})
 	console.log("character loaded")
 
 	const man = scene.meshes.find(m => m.id.startsWith("man"))
