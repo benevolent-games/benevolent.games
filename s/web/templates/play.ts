@@ -7,7 +7,7 @@ export default ({debug}: {debug: boolean}) => html`
 <head>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=device-width,initial-scale=1"/>
-	<title>axiom.games</title>
+	<title>axiom.games play</title>
 
 	<style>
 		* {
