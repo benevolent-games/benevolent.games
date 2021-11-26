@@ -13,6 +13,11 @@ jobs:
 
     - name: 🛎️ checkout source
       uses: actions/checkout@v2
+      with:
+        lfs: true
+
+    - name: 🎁 download lfs objects
+      run: git lfs checkout
 
     - name: 🔧 setup node
       uses: actions/setup-node@v1
@@ -21,8 +26,7 @@ jobs:
 
     - name: 📦 dependencies and build
       shell: bash
-      run: |
-        npm ci
+      run: npm ci
 
     - name: 🚀 gh-pages deployment
       uses: JamesIves/github-pages-deploy-action@4.1.6
