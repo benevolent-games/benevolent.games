@@ -11,7 +11,7 @@
 		"prepare": "run-s clean && run-p importmap copy compile-typescript && run-p test compile-bundle build-web",
 		"clean": "rimraf x && mkdirp x x/node_modules/es-module-shims/dist x/node_modules/babylonjs x/node_modules/ammo.js/builds",
 		"importmap": "importly --host=unpkg < package.json > x/importmap.json",
-		"copy": "run-p copy-assets copy-metas copy-es-module-shims copy-babylon copy-ammo",
+		"copy": "run-p copy-assets copy-metas copy-es-module-shims copy-babylon copy-babylon-extras copy-ammo",
 		"copy-assets": "cp -r assets/ x/",
 		"copy-metas": "cp CNAME x/ && touch x/.nojekyll",
 		"copy-es-module-shims": "cp -r node_modules/es-module-shims/dist/ x/node_modules/es-module-shims/",
