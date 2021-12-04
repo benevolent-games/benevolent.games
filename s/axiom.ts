@@ -1,7 +1,6 @@
 
 console.log("💠 axiom", {BABYLON, Ammo})
 
-import "./demo/setup-babylon-side-effects.js"
 import {makeViewport} from "./demo/make-viewport.js"
 import {makeCrate} from "./demo/loaders/make-crate.js"
 import {loadCharacter} from "./demo/loaders/load-character.js"
