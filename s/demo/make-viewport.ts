@@ -1,11 +1,18 @@
 
-import {Scene} from "@babylonjs/core/scene.js"
-import {Engine} from "@babylonjs/core/Engines/engine.js"
+export async function makeViewport() {
+	BABYLON.SceneLoader.ShowLoadingScreen = false
 
-export function makeViewport() {
 	const canvas = <HTMLCanvasElement>document.querySelector("canvas")
-	const engine = new Engine(canvas)
-	const scene = new Scene(engine)
+	const engine = new BABYLON.Engine(canvas)
+	const scene = new BABYLON.Scene(engine)
+
+	scene.collisionsEnabled = true
+
+	await Ammo()
+	const gravity = new BABYLON.Vector3(0, -9.81, 0)
+	const physics = new BABYLON.AmmoJSPlugin()
+	scene.enablePhysics(gravity, physics)
+
 	engine.runRenderLoop(() => scene.render())
 	engine.loadingScreen = null
 	return {canvas, engine, scene}

@@ -1,10 +1,7 @@
 
-import {Scene} from "@babylonjs/core/scene.js"
-import {SceneLoader} from "@babylonjs/core/Loading/sceneLoader.js"
+export async function loadCharacter(scene: BABYLON.Scene) {
 
-export async function loadCharacter(scene: Scene) {
-
-	await SceneLoader.AppendAsync("/assets/", "character.glb", scene, () => {})
+	await BABYLON.SceneLoader.AppendAsync("/assets/", "character.glb", scene, () => {})
 	console.log("character loaded")
 
 	const man = scene.meshes.find(m => m.id.startsWith("man"))
