@@ -9,19 +9,15 @@ export async function loadEnvironment(scene: BABYLON.Scene) {
 	console.log("done loading environment")
 
 	const statics = scene.meshes.filter(mesh => mesh.name.startsWith("static_"))
-	const floor = <BABYLON.Mesh>statics.find(mesh => mesh.name === "static_collisionmesh.004")
 
 	for (const mesh of statics) {
 		mesh.isVisible = false
-		mesh.checkCollisions = true
+		mesh.setParent(null)
 		mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
 			mesh,
 			BABYLON.PhysicsImpostor.MeshImpostor,
-			{mass: 0},
+			{mass: 0, friction: 1, restitution: 0.1},
 			scene,
 		)
 	}
-
-	;(<any>window).statics = statics
-	;(<any>window).floor = floor
 }
