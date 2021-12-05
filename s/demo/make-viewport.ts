@@ -1,6 +1,7 @@
 
 export async function makeViewport() {
-	const canvas = <HTMLCanvasElement>document.querySelector("canvas")
+
+	const canvas = document.createElement("canvas")
 	const engine = new BABYLON.Engine(canvas)
 	const scene = new BABYLON.Scene(engine)
 
@@ -11,12 +12,15 @@ export async function makeViewport() {
 
 	BABYLON.SceneLoader.ShowLoadingScreen = false
 	engine.loadingScreen = null
+
 	engine.runRenderLoop(() => scene.render())
+
+	canvas.onclick = () => canvas.requestPointerLock()
 
 	return {
 		canvas,
 		engine,
 		scene,
-		resize: () => engine.resize,
+		resize: () => engine.resize(),
 	}
 }
