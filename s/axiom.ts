@@ -7,44 +7,24 @@ console.log("💠 axiom", {BABYLON, Ammo})
 // import {loadEnvironment} from "./demo/loaders/load-environment.js"
 // import {makeFramerateDisplay} from "./demo/make-framerate-display.js"
 // import {setupCameraAndLights} from "./demo/loaders/setup-camera-and-lights.js"
+import {v3} from "./game/utils/v3.js"
 import {makeGame} from "./game/make-game.js"
+import {makeFramerateDisplay} from "./demo/make-framerate-display.js"
 
 void async function setupPlay() {
 
 	const game = await makeGame()
-	document.querySelector(".game").appendChild(game.canvas)
+	document.querySelector(".game").prepend(game.canvas)
 	window.addEventListener("resize", game.resize)
 	game.resize()
 
-	await game.spawn.camera()
-	// await game.spawn.environment("/assets/suzannemattest.glb")
-	// await game.spawn.environment("/assets/environment.poo.glb")
-	await game.spawn.environment("/assets/environment.poo3.glb")
-	// await game.spawn.environment("/assets/envtestredsand3.glb")
-	// await game.spawn.environment("/assets/envtestredsand.glb")
-	const player = await game.spawn.player()
+	const {middle} = await game.spawn.environment("/assets/environment.poo13_DX.glb")
+	await game.spawn.player(v3.add(middle, [2, 0, 2]))
+	await game.spawn.character("/assets/character.glb")
 
-	player.position = [0, 5, 30]
-
-	// const viewport = await makeViewport()
-	// window.addEventListener("resize", viewport.resize)
-	// viewport.resize()
-
-	// document.querySelector(".stats").appendChild(
-	// 	makeFramerateDisplay({
-	// 		getFramerate: () => viewport.engine.getFps(),
-	// 	})
-	// )
-
-	// await setupCameraAndLights(viewport)
-	// await loadCharacter(viewport.scene)
-	// await loadEnvironment(viewport.scene)
-
-	// for (let x = -10; x < 10; x += 5) {
-	// 	for (let z = -10; z < 10; z += 5) {
-	// 		makeCrate(viewport.scene, [x, 5, z])
-	// 	}
-	// }
-
-	// ;(<any>window).scene = viewport.scene
+	document.querySelector(".stats").appendChild(
+		makeFramerateDisplay({
+			getFramerate: () => game.framerate,
+		})
+	)
 }()

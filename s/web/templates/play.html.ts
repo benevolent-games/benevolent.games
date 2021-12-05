@@ -11,7 +11,7 @@ export default ({debug}: {debug: boolean}) => html`
 	<script defer src="/node_modules/babylonjs/babylon.js"></script>
 	<script defer src="/node_modules/babylonjs-materials/babylonjs.materials.min.js"></script>
 	<script defer src="/node_modules/babylonjs-loaders/babylonjs.loaders.min.js"></script>
-	<script defer src="/assets/ammo/ammo.js"></script>
+	<script defer src="/assets/ammo/ammo.wasm.js"></script>
 	${debug
 		? html`
 			<script defer src="/node_modules/es-module-shims/dist/es-module-shims.js"></script>
