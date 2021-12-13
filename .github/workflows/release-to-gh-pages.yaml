@@ -30,7 +30,10 @@ jobs:
 
     - name: 🗃️ copy node_modules
       shell: bash
-      run: npm ci --production && rm -rf x/node_modules && cp -r node_modules/ x/
+      run: |
+        npm ci --production \
+          && rm -rf x/node_modules && cp -r node_modules/ x/ \
+          && rm -rf x/assets && cp -r assets/ x/
 
     - name: 🚀 gh-pages deployment
       uses: JamesIves/github-pages-deploy-action@4.1.6

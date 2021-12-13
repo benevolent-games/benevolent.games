@@ -2,7 +2,7 @@
 import {V3} from "./utils/v3.js"
 import {loadGlb} from "./utils/load-glb.js"
 
-export async function makeGame() {
+export async function makeGame(middle: V3 = [0, 0, 0]) {
 	const canvas = document.createElement("canvas")
 	const engine = new BABYLON.Engine(canvas)
 	const scene = new BABYLON.Scene(engine)
@@ -28,9 +28,7 @@ export async function makeGame() {
 
 	const lpos = new BABYLON.Vector3(2000, 2000, -2000)
 	const lvec = lpos.negate()
-	const middle: V3 = [-1301.7, 13.3, -1168.8]
 
-	// const campos = new BABYLON.Vector3(0, 5, -10)
 	const campos = new BABYLON.Vector3(...middle)
 	const camera = new BABYLON.FreeCamera("camera1", campos, scene)
 	camera.attachControl(canvas, true)
@@ -43,7 +41,7 @@ export async function makeGame() {
 		get framerate() { return engine.getFps() },
 		spawn: {
 
-			async player(position: [number, number, number]) {
+			async player(position: V3) {
 				const mesh = BABYLON.Mesh.CreateCapsule(
 					"player",
 					{
@@ -72,13 +70,9 @@ export async function makeGame() {
 				assets.removeAllFromScene()
 				assets.addAllToScene()
 
-				const man = assets.meshes.find(m => m.id.startsWith("man"))
-				if (!man)
-					throw new Error("man not found")
-
 				let index = 0
 				const animationGroups = scene.animationGroups
-			
+
 				setInterval(() => {
 					scene.stopAllAnimations()
 					const animationGroup = animationGroups[index]

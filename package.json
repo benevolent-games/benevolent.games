@@ -13,7 +13,7 @@
 		"nodemodules": "ln -s \"$PWD/node_modules\" x/node_modules",
 		"importmap": "importly < package-lock.json > x/importmap.json",
 		"copy": "run-p copy-assets copy-metas",
-		"copy-assets": "cp -r assets/ x/",
+		"copy-assets": "ln -s \"$PWD/assets\" x/assets",
 		"copy-metas": "cp CNAME x/ && touch x/.nojekyll",
 		"compile-typescript": "tsc",
 		"compile-bundle": "run-s compile-bundle-rollup compile-bundle-minify",
