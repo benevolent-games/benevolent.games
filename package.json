@@ -24,8 +24,7 @@
 		"watch-typescript": "npm run -s compile-typescript -- -w",
 		"watch-bundle": "npm run -s compile-bundle-rollup -- -w",
 		"watch-web": "chokidar \"x/web/**/*.js\" -c \"npm run web-debug -s && echo 'rebuilt web'\"",
-		"watch-assets": "chokidar \"assets/**/*\" -c \"npm run copy-assets -s && echo 'rebuilt assets'\"",
-		"watch": "run-s web-debug copy-assets && run-p watch-typescript watch-bundle watch-web",
+		"watch": "run-s web-debug && run-p watch-typescript watch-bundle watch-web",
 		"test": "cynic node --label='axiom games test suite' x/tests.test.js",
 		"start": "http-server x"
 	},
