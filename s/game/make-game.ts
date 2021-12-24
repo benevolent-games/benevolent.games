@@ -203,7 +203,23 @@ export async function makeGame(middle: V3 = [0, 0, 0]) {
 				assets.addAllToScene()
 
 				const root = scene.rootNodes.find(node => node.name.includes("__root__"))
-
+				
+				{
+					const nodeMaterial = new BABYLON.NodeMaterial("node material", scene, {emitComments: false})
+					nodeMaterial.setToDefault()
+					
+					await nodeMaterial.loadAsync("/assets/shaders/terrainshader3.json").then(() => {
+						nodeMaterial.build(true)
+					})
+					
+					const blocks = nodeMaterial.getTextureBlocks()
+					for(const block of blocks)
+						block.texture = new BABYLON.Texture(`/assets/shaders/terrain/${block.name}.jpg`, scene)
+	
+					const terrain = assets.meshes.find(m => m.name === "terrain")
+					terrain.material = nodeMaterial
+				}
+				
 				const statics = assets.meshes.filter(
 					mesh => {
 						const name = mesh.name.toLowerCase()

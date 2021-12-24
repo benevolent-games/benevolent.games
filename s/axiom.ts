@@ -16,7 +16,7 @@ void async function setupPlay() {
 
 	let {getCameraPosition} = await game.spawn.camera()
 	await Promise.all([
-		game.spawn.environment("/assets/environment2.glb", getCameraPosition),
+		game.spawn.environment("/assets/environment3.glb", getCameraPosition),
 		game.spawn.character("/assets/android14.glb"),
 	])
 	const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
