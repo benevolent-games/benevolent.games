@@ -4,6 +4,7 @@ import {V3} from "./utils/v3.js"
 import * as v2 from "./utils/v2.js"
 import * as v3 from "./utils/v3.js"
 import {loadGlb} from "./utils/load-glb.js"
+import {loadMaterial} from "./utils/load-material.js"
 import {makeKeyListener} from "./utils/key-listener.js"
 import {makeMouseLooker} from "./utils/mouse-looker.js"
 
@@ -203,23 +204,25 @@ export async function makeGame(middle: V3 = [0, 0, 0]) {
 				assets.addAllToScene()
 
 				const root = scene.rootNodes.find(node => node.name.includes("__root__"))
-				
-				{
-					const nodeMaterial = new BABYLON.NodeMaterial("node material", scene, {emitComments: false})
-					nodeMaterial.setToDefault()
-					
-					await nodeMaterial.loadAsync("/assets/shaders/terrainshader3.json").then(() => {
-						nodeMaterial.build(true)
-					})
-					
-					const blocks = nodeMaterial.getTextureBlocks()
-					for(const block of blocks)
-						block.texture = new BABYLON.Texture(`/assets/shaders/terrain/${block.name}.jpg`, scene)
-	
-					const terrain = assets.meshes.find(m => m.name === "terrain")
-					terrain.material = nodeMaterial
-				}
-				
+				const terrainMesh = assets.meshes.find(m => m.name === "terrain")
+
+				terrainMesh.material = await loadMaterial({
+					scene,
+					label: "terrain-material",
+					path: "/assets/shaders/terrainshader3.json",
+				}).then(m => m.assignTextures({
+					blendmask: "/assets/shaders/terrain/blendmask.jpg",
+					layer1_armd: "/assets/shaders/terrain/layer1_armd.jpg",
+					layer1_color: "/assets/shaders/terrain/layer1_color.jpg",
+					layer1_normal: "/assets/shaders/terrain/layer1_normal.jpg",
+					layer2_armd: "/assets/shaders/terrain/layer2_armd.jpg",
+					layer2_color: "/assets/shaders/terrain/layer2_color.jpg",
+					layer2_normal: "/assets/shaders/terrain/layer2_normal.jpg",
+					layer3_armd: "/assets/shaders/terrain/layer3_armd.jpg",
+					layer3_color: "/assets/shaders/terrain/layer3_color.jpg",
+					layer3_normal: "/assets/shaders/terrain/layer3_normal.jpg",
+				}))
+
 				const statics = assets.meshes.filter(
 					mesh => {
 						const name = mesh.name.toLowerCase()
