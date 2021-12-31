@@ -8,8 +8,9 @@
 	"type": "module",
 	"files": [],
 	"scripts": {
-		"build": "run-s clean && run-p importmap nodemodules copy compile-typescript && run-p test compile-bundle web",
+		"build": "run-s clean && run-p importmap nodemodules linksource copy compile-typescript && run-p test compile-bundle web",
 		"clean": "rimraf x && mkdirp x",
+		"linksource": "ln -s \"$PWD/s\" x/s",
 		"nodemodules": "ln -s \"$PWD/node_modules\" x/node_modules",
 		"importmap": "importly < package-lock.json > x/importmap.json",
 		"copy": "run-p copy-assets copy-metas",
