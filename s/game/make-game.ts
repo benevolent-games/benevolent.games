@@ -11,6 +11,7 @@ import {spawnCharacter} from "./spawn/character.js"
 import {spawnEnvironment} from "./spawn/environment.js"
 
 export async function makeGame(middle: V3 = [0, 0, 0]) {
+
 	const canvas = document.createElement("canvas")
 	const engine = new BABYLON.Engine(canvas)
 	const scene = new BABYLON.Scene(engine)
