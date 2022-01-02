@@ -6,14 +6,15 @@ export default () => css`
 .home {
 	margin: auto;
 	max-width: 960px;
-	text-align: center;
-	padding-bottom: 5em;
+	padding-bottom: 10em;
 }
 
 .home h1 {
 	font-family: "PT Serif", serif;
 	line-height: 0;
-	margin-bottom: 2rem;
+	margin-bottom: 1rem;
+	text-align: center;
+	color: white;
 }
 
 .home h1 img {
@@ -28,23 +29,36 @@ export default () => css`
 	font-size: 0.5em;
 }
 
-.home p {
-	color: #888;
+.home h2 {
+	font-size: 2em;
+	color: white;
+}
+
+.home h3 {
+	font-size: 1.5em;
+	color: white;
+}
+
+.home h4 {
+	font-size: 1em;
+	color: #ccc;
 }
 
 .home main > * + div {
 	margin-top: 1em;
 }
 
-.gamegrid {
+.home .gamegrid {
 	list-style: none;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: center;
+	margin-top: 4em;
+	text-align: center;
 }
 
-.gamegrid li {
+.home .gamegrid li {
 	width: 10em;
 	padding: 0.2em;
 	cursor: pointer;
@@ -54,28 +68,81 @@ export default () => css`
 	transition: transform 200ms ease;
 }
 
-@media (max-width: 500px) {
-	.gamegrid li {
+@media (max-width: 510px) {
+	.home .gamegrid li {
 		width: 6em;
 	}
 }
 
-.gamegrid li:hover,
-.gamegrid li:focus {
+.home .gamegrid li:hover,
+.home .gamegrid li:focus {
 	transform: scale(1);
 }
 
-.gamegrid li > * {
+.home .gamegrid li > * {
 	flex: 0 0 auto;
 }
 
-.gamegrid img {
+.home .gamegrid img {
 	width: 100%;
 	box-shadow: 0.1em 0.5em 1em #0008;
 }
 
-.gamegrid div {
+.home .gamegrid div {
 	flex: 1 0 auto;
+}
+
+.home main > hr {
+	width: 50%;
+	width: calc(50% - 1em);
+	margin: 4em auto;
+	border: none;
+	height: 2px;
+	background: #fff2;
+}
+
+.home section {
+	margin: 1em;
+}
+
+.home section > * + * {
+	margin-top: 0.6rem;
+}
+
+.home section p {
+	max-width: 32rem;
+}
+
+.home .explaingrid {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.5em;
+	padding: 0 1em;
+	xxoutline: 1px solid yellow;
+}
+
+.home .explaingrid > div {
+	flex: 1 1 16em;
+	max-width: 32em;
+	padding: 1em;
+	border: 1px solid #fff2;
+	border-radius: 0.5em;
+}
+
+.home .explaingrid h3 {
+	xxtext-align: center;
+}
+
+.home .explaingrid > div > * + * {
+	margin-top: 0.6em;
+}
+
+.home main > footer {
+	max-width: 16em;
+	margin: auto;
+	text-align: center;
 }
 
 `

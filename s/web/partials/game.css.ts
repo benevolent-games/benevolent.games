@@ -3,6 +3,16 @@ import {noop as css} from "../utils/template-noop.js"
 
 export default () => css`
 
+.game, .game body {
+	height: 100%;
+}
+
+canvas {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
 .stats {
 	display: inline-block;
 	position: fixed;

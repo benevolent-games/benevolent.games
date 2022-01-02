@@ -5,7 +5,7 @@ import {noop as html} from "../utils/template-noop.js"
 export default ({debug}: {debug: boolean}) => html`
 
 <!doctype html>
-<html>
+<html class="game">
 <head>
 	${headBasicsHtml({title: "humanoid – benevolent"})}
 	<script defer src="/node_modules/babylonjs/babylon.js"></script>
@@ -19,7 +19,7 @@ export default ({debug}: {debug: boolean}) => html`
 		`
 		: html`<script defer type=module src="main.bundle.min.js"></script>`}
 </head>
-<body class=game>
+<body>
 	<ul class=stats></ul>
 </body>
 </html>

@@ -10,7 +10,7 @@ void async function() {
 
 	const middle: V3 = [0, 0, 0]
 	const game = await makeGame(middle)
-	document.querySelector(".game").prepend(game.canvas)
+	document.querySelector(".game body").prepend(game.canvas)
 	window.addEventListener("resize", game.resize)
 	game.resize()
 
