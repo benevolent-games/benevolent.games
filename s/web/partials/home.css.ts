@@ -10,7 +10,6 @@ export default () => css`
 }
 
 .home h1 {
-	font-family: "PT Serif", serif;
 	line-height: 0;
 	margin-bottom: 1rem;
 	text-align: center;
@@ -103,8 +102,8 @@ export default () => css`
 	width: 50%;
 	width: calc(50% - 1em);
 	margin: 4em auto;
-	border: none;
 	height: 2px;
+	border: none;
 	background: #fff2;
 }
 
