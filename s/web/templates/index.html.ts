@@ -18,6 +18,14 @@ export default ({debug}: {debug: boolean}) => html`
 			<img src="/assets/website/b.svg"/>
 			<span>benevolent.games</span>
 		</h1>
+		<ol class="gamegrid">
+			<li>
+				<a href="#">
+					<img src="/assets/website/posters/humanoid.webp" alt=""/>
+					<div>humanoid</div>
+				</a>
+			</li>
+		</ol>
 		<div>
 			<h2>humanoid</h2>
 			<p>active development</p>
@@ -35,7 +43,7 @@ export default ({debug}: {debug: boolean}) => html`
 
 		function startAnimation() {
 			style.opacity = "0"
-			style.transform = "scale(1.1)"
+			style.transform = "scale(0.8)"
 			style.display = "block"
 		}
 
