@@ -2,6 +2,11 @@
 import {noop as html} from "../utils/template-noop.js"
 import headBasicsHtml from "../partials/head-basics.html.js"
 
+const urls = {
+	discord: "https://discord.gg/BnZx2utdev",
+	github: "https://github.com/chase-moskal/benevolent.games",
+}
+
 export default ({debug}: {debug: boolean}) => html`
 
 <!doctype html>
@@ -37,9 +42,9 @@ export default ({debug}: {debug: boolean}) => html`
 			<p>here at benevolent games, we're working hard to reinvent game development.</p>
 			<p><strong>humanoid sandbox</strong> is our first prototype project. we just got started, so it's seriously not playable yet, we're just assembling the basics — but we make progress every week.</p>
 			<p>
-				<a href="https://discord.gg/BnZx2utdev">➡️ join benevolent on discord</a>
+				<a href="${urls.discord}">➡️ join benevolent on discord</a>
 				<br/>
-				<a href="https://github.com/chase-moskal/benevolent.games">➡️ collaborate together on github</a>
+				<a href="${urls.github}">➡️ collaborate together on github</a>
 			</p>
 		</section>
 		<hr/>
@@ -68,7 +73,7 @@ export default ({debug}: {debug: boolean}) => html`
 		</div>
 		<hr/>
 		<footer>
-			<p>join the <a href="https://discord.gg/BnZx2utdev">discord</a> and get involved on <a href="https://github.com/chase-moskal/benevolent.games">github</a></p>
+			<p>join the <a href="${urls.discord}">discord</a> and get involved on <a href="${urls.github}">github</a></p>
 		</footer>
 	</main>
 	<script>
