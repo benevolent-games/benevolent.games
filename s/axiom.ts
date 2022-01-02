@@ -6,7 +6,7 @@ import * as v3 from "./game/utils/v3.js"
 import {makeGame} from "./game/make-game.js"
 import {makeFramerateDisplay} from "./demo/make-framerate-display.js"
 
-void async function setupPlay() {
+void async function() {
 
 	const middle: V3 = [0, 0, 0]
 	const game = await makeGame(middle)
@@ -16,8 +16,8 @@ void async function setupPlay() {
 
 	let {getCameraPosition} = await game.spawn.camera()
 	await Promise.all([
-		game.spawn.environment("/assets/environment2.glb", getCameraPosition),
-		game.spawn.character("/assets/android14.glb"),
+		game.spawn.environment(() => getCameraPosition()),
+		game.spawn.character(),
 	])
 	const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
 	await game.spawn.crate([10, 5, 10])

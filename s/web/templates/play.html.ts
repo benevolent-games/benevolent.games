@@ -9,8 +9,8 @@ export default ({debug}: {debug: boolean}) => html`
 <head>
 	${headBasicsHtml({title: "axiom play"})}
 	<script defer src="/node_modules/babylonjs/babylon.js"></script>
-	<script defer src="/node_modules/babylonjs-materials/babylonjs.materials.min.js"></script>
 	<script defer src="/node_modules/babylonjs-loaders/babylonjs.loaders.min.js"></script>
+	<script defer src="/node_modules/babylonjs-materials/babylonjs.materials.min.js"></script>
 	<script defer src="/assets/ammo/ammo.wasm.js"></script>
 	${debug
 		? html`

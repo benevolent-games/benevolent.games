@@ -8,8 +8,9 @@
 	"type": "module",
 	"files": [],
 	"scripts": {
-		"build": "run-s clean && run-p importmap nodemodules copy compile-typescript && run-p test compile-bundle web",
+		"build": "run-s clean && run-p importmap nodemodules linksource copy compile-typescript && run-p test compile-bundle web",
 		"clean": "rimraf x && mkdirp x",
+		"linksource": "ln -s \"$PWD/s\" x/s",
 		"nodemodules": "ln -s \"$PWD/node_modules\" x/node_modules",
 		"importmap": "importly < package-lock.json > x/importmap.json",
 		"copy": "run-p copy-assets copy-metas",
@@ -29,7 +30,7 @@
 		"start": "http-server x"
 	},
 	"devDependencies": {
-		"@rollup/plugin-node-resolve": "^13.1.1",
+		"@rollup/plugin-node-resolve": "^13.1.2",
 		"chokidar-cli": "^3.0.0",
 		"cynic": "0.1.0-dev.16",
 		"http-server": "^14.0.0",
@@ -43,14 +44,11 @@
 		"typescript": "^4.5.4"
 	},
 	"dependencies": {
-		"@babylonjs/core": "^4.2.0",
-		"@babylonjs/loaders": "^4.2.0",
-		"@babylonjs/materials": "^4.2.0",
 		"ammo.js": "github:kripken/ammo.js",
 		"ammojs-typed": "1.0.6",
-		"babylonjs": "^4.2.0",
-		"babylonjs-loaders": "^4.2.0",
-		"babylonjs-materials": "^4.2.0",
+		"babylonjs": "5.0.0-alpha.65",
+		"babylonjs-loaders": "5.0.0-alpha.65",
+		"babylonjs-materials": "5.0.0-alpha.65",
 		"es-module-shims": "^1.4.1",
 		"lit": "^2.0.2",
 		"rollup-plugin-sizes": "^1.0.4",

@@ -11,7 +11,7 @@
 		"esModuleInterop": true,
 		"sourceMap": true,
 		"declaration": true,
-		"skipLibCheck": true
+		"skipLibCheck": true,
 	},
 	"include": [
 		"s/**/*.ts",
