@@ -7,11 +7,17 @@ export default ({debug}: {debug: boolean}) => html`
 <!doctype html>
 <html>
 <head>
-	${headBasicsHtml({title: "axiom"})}
+	${headBasicsHtml({title: "benevolent.games"})}
+	<style>
+		main > h1 { display: none; }
+	</style>
 </head>
 <body class="home">
-	<main style="display: none">
-		<h1><img alt="axiom" src="./assets/axiom.svg"/></h1>
+	<main>
+		<h1>
+			<img src="/assets/website/b.svg"/>
+			<span>benevolent.games</span>
+		</h1>
 		<div>
 			<h2>humanoid</h2>
 			<p>active development</p>
@@ -25,16 +31,16 @@ export default ({debug}: {debug: boolean}) => html`
 	</main>
 	<script>
 
-		const {style} = document.querySelector("main")
+		const {style} = document.querySelector("main > h1")
 
 		function startAnimation() {
 			style.opacity = "0"
-			style.transform = "scale(1.2)"
+			style.transform = "scale(1.1)"
 			style.display = "block"
 		}
 
 		function endAnimation() {
-			style.transition = "all ease 6s"
+			style.transition = "all ease 10s"
 			style.opacity = "1"
 			style.transform = "scale(1)"
 		}

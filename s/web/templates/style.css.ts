@@ -14,9 +14,8 @@ export default () => css`
 html {
 	font-size: 21px;
 	color: white;
-	background: #181818;
+	background: #222;
 	font-family: "Titillium Web", sans-serif;
-	background: linear-gradient(to bottom right, #282828, #000)
 }
 
 html, body, canvas {
