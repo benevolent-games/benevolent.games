@@ -19,7 +19,7 @@ html {
 }
 
 html, body, canvas {
-	height: 100%;
+	min-height: 100%;
 }
 
 canvas {

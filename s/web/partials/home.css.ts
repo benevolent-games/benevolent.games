@@ -7,6 +7,7 @@ export default () => css`
 	margin: auto;
 	max-width: 960px;
 	text-align: center;
+	padding-bottom: 5em;
 }
 
 .home h1 {
