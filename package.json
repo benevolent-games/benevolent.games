@@ -56,10 +56,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/chase-moskal/axiom.games.git"
+		"url": "git+https://github.com/chase-moskal/benevolent.games.git"
 	},
 	"bugs": {
-		"url": "https://github.com/chase-moskal/axiom.games/issues"
+		"url": "https://github.com/chase-moskal/benevolent.games/issues"
 	},
-	"homepage": "https://github.com/chase-moskal/axiom.games#readme"
+	"homepage": "https://github.com/chase-moskal/benevolent.games#readme"
 }

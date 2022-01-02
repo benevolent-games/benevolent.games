@@ -1,2 +1,2 @@
 
-# 😇 [benevolent.games](https://axiom.games/)
+# 😇 [benevolent.games](https://benevolent.games/)
