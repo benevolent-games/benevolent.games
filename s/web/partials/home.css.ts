@@ -37,24 +37,26 @@ export default () => css`
 
 .gamegrid {
 	list-style: none;
-	display: grid;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 	justify-content: center;
-	grid-template-columns: repeat(auto-fill, 10em);
-}
-
-@media (max-width: 500px) {
-	.gamegrid {
-		grid-template-columns: repeat(auto-fill, 7em);
-	}
 }
 
 .gamegrid li {
+	width: 10em;
 	padding: 0.2em;
 	cursor: pointer;
 	display: flex;
 	flex-direction: column;
 	transform: scale(0.95);
 	transition: transform 200ms ease;
+}
+
+@media (max-width: 500px) {
+	.gamegrid li {
+		width: 6em;
+	}
 }
 
 .gamegrid li:hover,
