@@ -14,19 +14,25 @@ export default () => css`
 	line-height: 0;
 	margin-bottom: 1rem;
 	text-align: center;
-	color: white;
+}
+
+.home h1 .logo {
+	aspect-ratio: 1 / 1;
+	max-width: 10rem;
+	margin: auto;
 }
 
 .home h1 img {
 	display: block;
 	width: 100%;
-	max-width: 10rem;
 	margin: auto;
 }
 
 .home h1 span {
-	opacity: 0.5;
+	opacity: 0.8;
 	font-size: 0.5em;
+	text-shadow: 0 0 0.4em rgba(255, 255, 255, 0.5);
+	font-style: italic;
 }
 
 .home h2 {
@@ -86,6 +92,7 @@ export default () => css`
 .home .gamegrid img {
 	width: 100%;
 	box-shadow: 0.1em 0.5em 1em #0008;
+	border-radius: 0.3em;
 }
 
 .home .gamegrid div {
@@ -120,27 +127,22 @@ export default () => css`
 	justify-content: center;
 	gap: 0.5em;
 	padding: 0 1em;
-	xxoutline: 1px solid yellow;
 }
 
 .home .explaingrid > div {
 	flex: 1 1 16em;
-	max-width: 32em;
+	max-width: 24em;
 	padding: 1em;
 	border: 1px solid #fff2;
 	border-radius: 0.5em;
 }
 
-.home .explaingrid h3 {
-	xxtext-align: center;
-}
-
 .home .explaingrid > div > * + * {
-	margin-top: 0.6em;
+	margin-top: 0.2em;
 }
 
 .home main > footer {
-	max-width: 16em;
+	max-width: 32em;
 	margin: auto;
 	text-align: center;
 }

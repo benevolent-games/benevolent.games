@@ -9,14 +9,18 @@ export default ({debug}: {debug: boolean}) => html`
 <head>
 	${headBasicsHtml({title: "benevolent.games"})}
 	<style>
-		main > h1 { display: none; }
+		main > h1 > .logo-unit { display: none; }
 	</style>
 </head>
 <body>
 	<main>
 		<h1>
-			<img src="/assets/website/b.svg"/>
-			<span>benevolent.games</span>
+			<div class="logo">
+				<div class="logo-unit">
+					<img src="/assets/website/b.svg" alt=""/>
+					<span>benevolent.games</span>
+				</div>
+			</div>
 		</h1>
 		<ol class="gamegrid">
 			<li>
@@ -28,40 +32,48 @@ export default ({debug}: {debug: boolean}) => html`
 		</ol>
 		<hr/>
 		<section>
-			<h2>power to the community</h2>
+			<h2>community-powered open games</h2>
 			<p>we're all growing tired of the greed and corporatism of the modern gaming industry. <em>let's make something different.</em></p>
-			<p>here at benevolent games, we're working hard to reinvent gaming.</p>
-			<p><a href="https://discord.gg/BnZx2utdev">➡️ join benevolent on discord</a></p>
-			<p><a href="https://github.com/chase-moskal/benevolent.games">➡️ collaborate together on github</a></p>
+			<p>here at benevolent games, we're working hard to reinvent game development.</p>
+			<p><strong>humanoid sandbox</strong> is our first prototype project. we just got started, so it's seriously not playable yet, we're just assembling the basics — but we make progress every week.</p>
+			<p>
+				<a href="https://discord.gg/BnZx2utdev">➡️ join benevolent on discord</a>
+				<br/>
+				<a href="https://github.com/chase-moskal/benevolent.games">➡️ collaborate together on github</a>
+			</p>
 		</section>
 		<hr/>
-		<h2 style="text-align: center;">we believe games can be...</h2>
+		<h2 style="text-align: center;">we believe games can...</h2>
 		<div class="explaingrid">
 			<div>
-				<h3>🌎 universal</h3>
-				<p>everyone's invited to play: laptops, desktops, phones, and even vr.</p>
-				<p>we develop our games on the web, so no installation is necessary, and everyone can play.</p>
+				<h3>🌎 run on any device</h3>
+				<h4>let's invite everyone to play.</h4>
+				<p>laptops, desktops, phones, and even vr. we develop games for the web, so installations aren't necessary.</p>
 			</div>
 			<div>
-				<h3>📖 open source</h3>
-				<h4>games should be open source.</h4>
-				<p>anybody can freely fork our games, use our assets, share our code, and make new games.</p>
-				<p>blurring the lines between developers, modders, and the community.</p>
+				<h3>📖 be open source</h3>
+				<h4>mit licensed.</h4>
+				<p>anybody can freely contribute, use our code and art, fork our games, and make their own new games. let's blur the lines between developers, modders, and the community.</p>
 			</div>
 			<div>
-				<h3>💸 funded by donations</h3>
-				<h4>we rely on community support to fund our games.</h4>
-				<p>we believe that if developers act with belevolence towards gamers, the community might return the favor.</p>
+				<h3>💸 be funded by donations</h3>
+				<h4>what goes around comes around.</h4>
+				<p>we believe that if developers act with benevolence and generosity towards gamers, the community just might return the favor.</p>
+			</div>
+			<div>
+				<h3>😇 involve the community</h3>
+				<h4>games don't need secrecy or nda's.</h4>
+				<p>join the developers for weekly play-testing sessions, participate in discussions about new ideas, and report bugs directly to our github issues page.</p>
 			</div>
 		</div>
 		<hr/>
 		<footer>
-			<h3>neato</h3>
+			<p>join the <a href="https://discord.gg/BnZx2utdev">discord</a> and get involved on <a href="https://github.com/chase-moskal/benevolent.games">github</a></p>
 		</footer>
 	</main>
 	<script>
 
-		const {style} = document.querySelector("main > h1")
+		const {style} = document.querySelector("main > h1 .logo-unit")
 
 		function startAnimation() {
 			style.opacity = "0"
