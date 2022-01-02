@@ -3,7 +3,7 @@
 	"name": "benevolent.games",
 	"version": "0.0.0-dev.1",
 	"description": "",
-	"license": "ISC",
+	"license": "MIT",
 	"author": "Chase Moskal <chasemoskal@gmail.com>",
 	"type": "module",
 	"files": [],
