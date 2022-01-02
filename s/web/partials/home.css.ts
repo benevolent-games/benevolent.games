@@ -88,14 +88,49 @@ export default () => css`
 	flex: 0 0 auto;
 }
 
-.home .gamegrid img {
+.home .gamegrid .poster {
+	position: relative;
+}
+
+.home .gamegrid .poster::before {
+	z-index: 1;
+	position: absolute;
+	content: "";
 	width: 100%;
-	box-shadow: 0.1em 0.5em 1em #0008;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: white;
+	background: no-repeat url("/assets/website/play.svg");
+	background-position: center center;
+	background-size: 3em;
+	filter: invert(1) drop-shadow(0px 0px 5px rgba(0, 0, 0, 80%)) opacity(50%);
+	transition: all 200ms ease;
+}
+
+.home .gamegrid li:hover .poster::before,
+.home .gamegrid li:focus .poster::before {
+	background-size: 4em;
+	filter: invert(1) drop-shadow(0px 0px 5px rgba(0, 0, 0, 80%)) opacity(100%);
+}
+
+.home .gamegrid li:active .poster::before {
+	background-size: 3.5em;
+	filter: invert(1) drop-shadow(0px 0px 5px rgba(0, 0, 0, 80%)) opacity(75%);
+}
+
+.home .gamegrid img {
+	display: block;
+	width: 100%;
+	box-shadow: 0.1em 0.5em 2em 1em #0008;
 	border-radius: 0.3em;
 }
 
-.home .gamegrid div {
+.home .gamegrid .title {
 	flex: 1 0 auto;
+	z-index: 1;
+	position: relative;
 }
 
 .home main > hr {

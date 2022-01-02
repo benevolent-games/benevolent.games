@@ -30,8 +30,10 @@ export default ({debug}: {debug: boolean}) => html`
 		<ol class="gamegrid">
 			<li>
 				<a href="/play">
-					<img src="/assets/website/posters/humanoid.webp" alt=""/>
-					<div>humanoid sandbox</div>
+					<div class="poster">
+						<img src="/assets/website/posters/humanoid.webp" alt=""/>
+					</div>
+					<div class="title">humanoid sandbox</div>
 				</a>
 			</li>
 		</ol>
