@@ -1,5 +1,5 @@
 
-console.log("💠 axiom", {BABYLON, Ammo})
+console.log("😇 benevolent.games", {BABYLON, Ammo})
 
 import {V3} from "./game/utils/v3.js"
 import * as v3 from "./game/utils/v3.js"
@@ -10,7 +10,7 @@ void async function() {
 
 	const middle: V3 = [0, 0, 0]
 	const game = await makeGame(middle)
-	document.querySelector(".game").prepend(game.canvas)
+	document.querySelector(".game body").prepend(game.canvas)
 	window.addEventListener("resize", game.resize)
 	game.resize()
 

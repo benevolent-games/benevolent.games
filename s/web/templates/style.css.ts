@@ -9,24 +9,14 @@ export default () => css`
 * {
 	margin: 0;
 	padding: 0;
+	box-sizing: border-box;
 }
 
 html {
 	font-size: 21px;
-	color: white;
-	background: #181818;
-	font-family: "Titillium Web", sans-serif;
-	background: linear-gradient(to bottom right, #282828, #000)
-}
-
-html, body, canvas {
-	height: 100%;
-}
-
-canvas {
-	position: relative;
-	width: 100%;
-	height: 100%;
+	color: #aaa;
+	background: #222;
+	font-family: "PT Serif", serif;
 }
 
 ${linksCss()}
