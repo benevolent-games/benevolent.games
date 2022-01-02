@@ -63,14 +63,14 @@ export default ({debug}: {debug: boolean}) => html`
 				<p>anybody can freely contribute, use our code and art, fork our games, and make their own new games. let's blur the lines between developers, modders, and the community.</p>
 			</div>
 			<div>
-				<h3>💸 be funded by donations</h3>
-				<h4>what goes around comes around.</h4>
-				<p>we believe that if developers act with benevolence and generosity towards gamers, the community just might return the favor.</p>
-			</div>
-			<div>
 				<h3>😇 involve the community</h3>
 				<h4>games don't need secrecy or nda's.</h4>
 				<p>join the developers for weekly play-testing sessions, participate in discussions about new ideas, and report bugs directly to our github issues page.</p>
+			</div>
+			<div>
+				<h3>💸 be funded by donations</h3>
+				<h4>what goes around comes around.</h4>
+				<p>we believe that if developers act with benevolence and generosity towards gamers, the community just might return the favor.</p>
 			</div>
 		</div>
 		<hr/>
