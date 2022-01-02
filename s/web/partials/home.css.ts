@@ -123,7 +123,7 @@ export default () => css`
 .home .gamegrid img {
 	display: block;
 	width: 100%;
-	box-shadow: 0.1em 0.5em 2em 1em #0008;
+	box-shadow: 0 0.2em 1em 0.5em #0006;
 	border-radius: 0.3em;
 }
 

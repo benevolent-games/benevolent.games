@@ -29,20 +29,20 @@ export default ({debug}: {debug: boolean}) => html`
 		</h1>
 		<ol class="gamegrid">
 			<li>
-				<a href="/play">
+				<a href="/humanoid">
 					<div class="poster">
 						<img src="/assets/website/posters/humanoid.webp" alt=""/>
 					</div>
-					<div class="title">humanoid sandbox</div>
+					<div class="title">humanoid</div>
 				</a>
 			</li>
 		</ol>
 		<hr/>
 		<section>
-			<h2>community-powered open games</h2>
+			<h2>community-powered games</h2>
 			<p>we're all growing tired of the greed and corporatism of the modern gaming industry. <em>let's make something different.</em></p>
 			<p>here at benevolent games, we're working hard to reinvent game development.</p>
-			<p><strong>humanoid sandbox</strong> is our first prototype project. we just got started, so it's seriously not playable yet, we're just assembling the basics — but we make progress every week.</p>
+			<p><strong>humanoid</strong> is our first prototype project. it's a sandbox where we can experiment with new game ideas. we just got started, so it's seriously not playable yet, we're just assembling the basics.. but we make progress every week ;)</p>
 			<p>
 				<a href="${urls.discord}">➡️ join benevolent on discord</a>
 				<br/>
