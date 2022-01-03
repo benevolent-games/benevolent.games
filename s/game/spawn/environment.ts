@@ -7,29 +7,33 @@ import {loadMaterial} from "../babylon/load-material.js"
 export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 	return async function(getCameraPosition: () => V3) {
 
-		const assets = await loadGlb(scene, "/assets/environment3.glb")
+		const assets = await loadGlb(scene, "/assets/environment.poo.glb")
 		assets.removeAllFromScene()
 		assets.addAllToScene()
 
 		const root = scene.rootNodes.find(node => node.name.includes("__root__"))
 		const terrainMesh = assets.meshes.find(m => m.name === "terrain")
 
-		terrainMesh.material = await loadMaterial({
+		const nodeMaterial = await loadMaterial({
 			scene,
 			label: "terrain-material",
-			path: "/assets/shaders/terrainshader3.json",
+			path: "/assets/shaders/terrainshader4.json",
 		}).then(m => m.assignTextures({
-			blendmask: "/assets/shaders/terrain/blendmask.jpg",
-			layer1_armd: "/assets/shaders/terrain/layer1_armd.jpg",
-			layer1_color: "/assets/shaders/terrain/layer1_color.jpg",
-			layer1_normal: "/assets/shaders/terrain/layer1_normal.jpg",
-			layer2_armd: "/assets/shaders/terrain/layer2_armd.jpg",
-			layer2_color: "/assets/shaders/terrain/layer2_color.jpg",
-			layer2_normal: "/assets/shaders/terrain/layer2_normal.jpg",
-			layer3_armd: "/assets/shaders/terrain/layer3_armd.jpg",
-			layer3_color: "/assets/shaders/terrain/layer3_color.jpg",
-			layer3_normal: "/assets/shaders/terrain/layer3_normal.jpg",
+			blendmask: "/assets/textures/desert/terrain/blendmask.jpg",
+			layer1_armd: "/assets/textures/desert/terrain/layer1_armd.jpg",
+			layer1_color: "/assets/textures/desert/terrain/layer1_color.jpg",
+			layer1_normal: "/assets/textures/desert/terrain/layer1_normal.jpg",
+			layer2_armd: "/assets/textures/desert/terrain/layer2_armd.jpg",
+			layer2_color: "/assets/textures/desert/terrain/layer2_color.jpg",
+			layer2_normal: "/assets/textures/desert/terrain/layer2_normal.jpg",
+			layer3_armd: "/assets/textures/desert/terrain/layer3_armd.jpg",
+			layer3_color: "/assets/textures/desert/terrain/layer3_color.jpg",
+			layer3_normal: "/assets/textures/desert/terrain/layer3_normal.jpg",
 		}))
+
+		// const perturbBlock = <BABYLON.PerturbNormalBlock>nodeMaterial.getBlockByName("Perturb normal")
+		// perturbBlock.invertX = false
+		terrainMesh.material = nodeMaterial
 
 		const statics = assets.meshes.filter(
 			mesh => {
