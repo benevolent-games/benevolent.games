@@ -15,7 +15,7 @@ join our [discord](https://discord.gg/BnZx2utdev)
 
 ### 💡 getting started
 
-&nbsp; &nbsp; **fundamental skills**
+&nbsp; **fundamental skills**
 - ℹ️ you don't have to master these skills. just be aware of them, so you know what to study when you encounter the need
 - learn how to use git and github so you can collaborate
   - fork projects on github
@@ -33,18 +33,18 @@ join our [discord](https://discord.gg/BnZx2utdev)
 - learn how to write code that blends in with the style and formatting of the rest of the codebase
 - please be aware of the whitespace you author (the vscode setting `Render whitespace` setting `Boundary` is great for this)
 
-&nbsp; &nbsp; **technical prerequisites**
+&nbsp; **technical prerequisites**
 - if you're on windows, first, setup [wsl](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) and learn how it works
   - or otherwise install a linux virtual machine for development (we recommend debian+kde on vmware)
 - install `git`, `nodejs`, `vscode`, and [connect github with ssh keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
 
-&nbsp; &nbsp; **initial setup**
+&nbsp; **initial setup**
 - fork the benevolent games project on github, and git clone your fork
 - open a terminal (linux shell) in your cloned directory, and run these commands
   - `npm install` to install the project's dependencies
   - `npm run build` to run a full build of the project
 
-&nbsp; &nbsp; **during your development sessions**
+&nbsp; **during your development sessions**
 - first, run `npm install && npm run build`, especially if you've recently pulled any changes
 - run these background processes, each in their own shell
   - `npm run watch` to continually rebuild source files on save
@@ -63,5 +63,5 @@ join our [discord](https://discord.gg/BnZx2utdev)
   - whenever you save a typescript file, the watch routine will automatically rebuild it, then you can refresh the browser to see your changes
   - you can also press vscode hotkey `ctrl+shift+b` to run the typescript build, which allows vscode to nicely highlight typescript errors for you to address
 
-&nbsp; &nbsp; **the more you know**
+&nbsp; **the more you know**
 - this is an open source project, all contributions are under the mit license
