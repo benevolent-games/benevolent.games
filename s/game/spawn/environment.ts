@@ -12,9 +12,9 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 		assets.addAllToScene()
 
 		const root = scene.rootNodes.find(node => node.name.includes("__root__"))
-		const terrainMesh = assets.meshes.find(m => m.name === "terrain")
-		const texturesDirectory = "/textures/1"
+		const terrainMeshes = assets.meshes.filter(m => m.name.includes("terrain"))
 
+		const texturesDirectory = "/textures/1"
 		const nodeMaterial = await loadMaterial({
 			scene,
 			label: "terrain-material",
@@ -32,9 +32,8 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 			layer3_normal: `${texturesDirectory}/desert/terrain/layer3_normal.jpg`,
 		}))
 
-		// const perturbBlock = <BABYLON.PerturbNormalBlock>nodeMaterial.getBlockByName("Perturb normal")
-		// perturbBlock.invertX = false
-		terrainMesh.material = nodeMaterial
+		for (const mesh of terrainMeshes)
+			mesh.material = nodeMaterial
 
 		const statics = assets.meshes.filter(
 			mesh => {
