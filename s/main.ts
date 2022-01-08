@@ -22,6 +22,17 @@ void async function() {
 	const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
 	await game.spawn.crate([10, 5, 10])
 
+	game.keyListener.on("e", state => {
+		if (state.isDown) {
+			const {pickedMesh} = game.scene.pick(
+				game.canvas.width / 2,
+				game.canvas.height / 2,
+			)
+			;(<any>window).pick = pickedMesh
+			console.log(pickedMesh.name, pickedMesh)
+		}
+	})
+
 	getCameraPosition = player.getCameraPosition
 
 	document.querySelector(".stats").appendChild(
