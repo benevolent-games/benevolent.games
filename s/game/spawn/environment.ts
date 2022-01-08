@@ -10,71 +10,91 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 		}) {
 
 		const assets = await loadGlb(scene, "/assets/environment.poo.glb")
-		assets.removeAllFromScene()
-		assets.addAllToScene()
-		const root = scene.rootNodes.find(node => node.name.includes("__root__"))
-		const meshes = new Set(assets.meshes)
-		function deleteMeshes(toDelete: BABYLON.AbstractMesh[]) {
-			for (const mesh of toDelete) {
-				mesh.isVisible = false
-				if (!(mesh instanceof BABYLON.InstancedMesh))
-					mesh.receiveShadows = false
-				mesh.dispose()
-				meshes.delete(mesh)
-			}
-		}
+		const {meshes, deleteMeshes} = prepareAssets(assets)
 
-		hideMeshes(selectOriginMeshes([...meshes], assets.rootNodes))
 		deleteMeshes(selectLod(2, [...meshes]))
+		hideMeshes(except(["terrain"], selectOriginMeshes([...meshes])))
 
 		const statics = selectStatics([...meshes])
-		applyStaticPhysics({meshes: selectStatics([...meshes])})
-		for (const mesh of statics)
-			mesh.isVisible = false
+		applyStaticPhysics({meshes: statics})
+		hideMeshes(statics)
 
 		const texturesDirectory = "/textures/1"
 		const terrainMesh = [...meshes].find(m => m.name === "terrain")
-		const rockslideMeshes = [...meshes].filter(m => m.name.includes("rockslide"))
 		await Promise.all([
-			applyTerrainShader({scene, texturesDirectory, meshes: [terrainMesh]}),
-			applyRockslideShader({scene, texturesDirectory, meshes: rockslideMeshes}),
+			applyTerrainShader({
+				scene,
+				texturesDirectory,
+				meshes: [terrainMesh],
+			}),
+			applyRockslideShader({
+				scene,
+				texturesDirectory,
+				meshes: [...meshes].filter(m => m.name.includes("rockslide")),
+			}),
 		])
 
-		// hideMeshes([...meshes])
-		// terrainMesh.isVisible = true
-
-		const skycolor = applySkyColor(scene, [0.5, 0.6, 1])
-		const skybox = makeSkybox({
+		makeSkybox({
 			scene,
 			size: 20_000,
-			color: skycolor,
+			color: applySkyColor(scene, [0.5, 0.6, 1]),
 			cubeTexturePath: `/assets/skybox2/sky`,
 		})
 
-		const {sun, torus} = makeSunlight({
+		const {sun} = makeSunlight({
 			scene,
 			renderLoop,
 			lightPositionRelativeToCamera: [2000, 2000, -2000],
 			getCameraPosition,
 		})
 
-		const shadowables = [...meshes].filter(mesh => (
-			(
-				mesh.name.includes("terrain") ||
-				mesh.name.includes("cliff") ||
-				mesh.name.includes("cliff")
-			) &&
-			mesh.isVisible
-		))
-
 		applyShadows({
 			light: sun,
-			casters: shadowables,
-			receivers: [<BABYLON.Mesh>terrainMesh],
+			casters: [...meshes].filter(mesh => (
+				(
+					mesh.name.includes("terrain") ||
+					mesh.name.includes("cliff") ||
+					mesh.name.includes("rocks")
+				) &&
+				mesh.isVisible
+			)),
+			receivers: <BABYLON.Mesh[]>[terrainMesh],
 			bias: 0.0001,
 			resolution: 1024,
 		})
 	}
+}
+
+function prepareAssets(assets: BABYLON.AssetContainer) {
+	assets.removeAllFromScene()
+	assets.addAllToScene()
+	const meshes = new Set(assets.meshes)
+	function deleteMeshes(toDelete: BABYLON.AbstractMesh[]) {
+		for (const mesh of toDelete) {
+			mesh.isVisible = false
+			mesh.dispose()
+			meshes.delete(mesh)
+		}
+	}
+	return {meshes, deleteMeshes}
+}
+
+function select(searches: string[], meshes: BABYLON.AbstractMesh[]) {
+	return meshes.filter(mesh => {
+		for (const search of searches)
+			if (mesh.name.includes(search))
+				return true
+		return false
+	})
+}
+
+function except(searches: string[], meshes: BABYLON.AbstractMesh[]) {
+	return meshes.filter(mesh => {
+		for (const search of searches)
+			if (mesh.name.includes(search))
+				return false
+		return true
+	})
 }
 
 function selectLod(lod: number, meshes: BABYLON.AbstractMesh[]) {
@@ -209,8 +229,15 @@ function applyStaticPhysics({meshes}: {meshes: BABYLON.AbstractMesh[]}) {
 	}
 }
 
-function selectOriginMeshes(meshes: BABYLON.AbstractMesh[], rootNodes: BABYLON.Node[]) {
-	return meshes.filter(mesh => mesh.isAnInstance && rootNodes.includes(mesh.parent))
+function selectOriginMeshes(meshes: BABYLON.AbstractMesh[]) {
+	return meshes.filter(mesh => {
+		const {x, y, z} = mesh.getAbsolutePosition()
+		return (
+			x === 0 &&
+			y === 0 &&
+			z === 0
+		)
+	})
 }
 
 function hideMeshes(meshes: BABYLON.AbstractMesh[]) {
