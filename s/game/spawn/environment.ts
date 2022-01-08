@@ -13,22 +13,23 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 
 		const root = scene.rootNodes.find(node => node.name.includes("__root__"))
 		const terrainMesh = assets.meshes.find(m => m.name === "terrain")
+		const texturesDirectory = "/textures/1"
 
 		const nodeMaterial = await loadMaterial({
 			scene,
 			label: "terrain-material",
 			path: "/assets/shaders/terrainshader4.json",
 		}).then(m => m.assignTextures({
-			blendmask: "/assets/textures/desert/terrain/blendmask.jpg",
-			layer1_armd: "/assets/textures/desert/terrain/layer1_armd.jpg",
-			layer1_color: "/assets/textures/desert/terrain/layer1_color.jpg",
-			layer1_normal: "/assets/textures/desert/terrain/layer1_normal.jpg",
-			layer2_armd: "/assets/textures/desert/terrain/layer2_armd.jpg",
-			layer2_color: "/assets/textures/desert/terrain/layer2_color.jpg",
-			layer2_normal: "/assets/textures/desert/terrain/layer2_normal.jpg",
-			layer3_armd: "/assets/textures/desert/terrain/layer3_armd.jpg",
-			layer3_color: "/assets/textures/desert/terrain/layer3_color.jpg",
-			layer3_normal: "/assets/textures/desert/terrain/layer3_normal.jpg",
+			blendmask: `${texturesDirectory}/desert/terrain/blendmask.jpg`,
+			layer1_armd: `${texturesDirectory}/desert/terrain/layer1_armd.jpg`,
+			layer1_color: `${texturesDirectory}/desert/terrain/layer1_color.jpg`,
+			layer1_normal: `${texturesDirectory}/desert/terrain/layer1_normal.jpg`,
+			layer2_armd: `${texturesDirectory}/desert/terrain/layer2_armd.jpg`,
+			layer2_color: `${texturesDirectory}/desert/terrain/layer2_color.jpg`,
+			layer2_normal: `${texturesDirectory}/desert/terrain/layer2_normal.jpg`,
+			layer3_armd: `${texturesDirectory}/desert/terrain/layer3_armd.jpg`,
+			layer3_color: `${texturesDirectory}/desert/terrain/layer3_color.jpg`,
+			layer3_normal: `${texturesDirectory}/desert/terrain/layer3_normal.jpg`,
 		}))
 
 		// const perturbBlock = <BABYLON.PerturbNormalBlock>nodeMaterial.getBlockByName("Perturb normal")
