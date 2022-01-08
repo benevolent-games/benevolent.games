@@ -1,5 +1,7 @@
 
-![](/assets/website/favicon/android-chrome-192x192.png)
+<p align="center"><img width=360 src="assets/website/b.svg"/></p>
+
+<br/>
 
 # https://benevolent.games/
 
