@@ -16,7 +16,7 @@ void async function() {
 
 	let {getCameraPosition} = await game.spawn.camera()
 	await Promise.all([
-		game.spawn.environment(() => getCameraPosition()),
+		game.spawn.environment({getCameraPosition: () => getCameraPosition()}),
 		game.spawn.character(),
 	])
 	const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
