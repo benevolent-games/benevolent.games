@@ -46,7 +46,7 @@ export async function makeGame(middle: V3 = [0, 0, 0]) {
 	;(<any>window).scene = scene
 
 	return {
-		canvas,
+		...options,
 		resize: () => engine.resize(),
 		get framerate() { return engine.getFps() },
 		spawn: {
