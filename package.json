@@ -50,7 +50,7 @@
 		"babylonjs-loaders": "5.0.0-alpha.65",
 		"babylonjs-materials": "5.0.0-alpha.65",
 		"es-module-shims": "^1.4.1",
-		"lit": "^2.1.0",
+		"lit": "^2.1.1",
 		"rollup-plugin-sizes": "^1.0.4",
 		"xiome": "^0.0.18"
 	},
