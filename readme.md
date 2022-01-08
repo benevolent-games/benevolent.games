@@ -3,7 +3,7 @@
 
 <br/>
 
-# https://benevolent.games/
+# 👼 https://benevolent.games/
 
 community-powered games
 

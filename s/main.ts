@@ -1,5 +1,5 @@
 
-console.log("😇 benevolent.games", {BABYLON, Ammo})
+console.log("👼 benevolent.games", {BABYLON, Ammo})
 
 import {V3} from "./game/utils/v3.js"
 import * as v3 from "./game/utils/v3.js"
