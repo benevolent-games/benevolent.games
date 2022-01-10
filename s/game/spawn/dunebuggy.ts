@@ -3,7 +3,7 @@ import {V3} from "../utils/v3.js"
 import {SpawnOptions} from "../types.js"
 import {loadGlb} from "../babylon/load-glb.js"
 
-export function spawnCrate({scene}: SpawnOptions) {
+export function spawnDunebuggy({scene}: SpawnOptions) {
 	return async function(position: V3) {
 		const assets = await loadGlb(scene, "/assets/models/dunebuggy/dunebuggy.poo.glb")
 		assets.removeAllFromScene()

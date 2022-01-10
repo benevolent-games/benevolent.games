@@ -21,6 +21,7 @@ void async function() {
 	])
 	const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
 	await game.spawn.crate([10, 5, 10])
+	await game.spawn.dunebuggy([0, 0, 0])
 
 	game.keyListener.on("e", state => {
 		if (state.isDown) {
