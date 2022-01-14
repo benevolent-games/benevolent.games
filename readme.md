@@ -38,7 +38,9 @@ join our [discord](https://discord.gg/BnZx2utdev)
 &nbsp; **technical prerequisites**
 - if you're on windows, first, setup [wsl](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) and learn how it works
   - or otherwise install a linux virtual machine for development (we recommend debian+kde on vmware)
-- install `git`, `nodejs`, `vscode`, and [connect github with ssh keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+- install `vscode`, `git`, and `nodejs` (probably install node via nvm)
+- [connect your github with ssh keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+- install [git lfs](https://git-lfs.github.com/), and enter `git lfs install` to setup your user account
 
 &nbsp; **initial setup**
 - fork the benevolent games project on github, and git clone your fork
