@@ -17,7 +17,7 @@
 		"copy": "run-p copy-assets copy-metas",
 		"copy-assets": "ln -s \"$PWD/assets\" x/assets",
 		"copy-metas": "cp CNAME x/ && touch x/.nojekyll",
-		"compress-textures": "run-p compress-textures-0 compress-textures-1",
+		"compress-textures": "run-s compress-textures-0 compress-textures-1",
 		"compress-textures-0": "jpegger --indir assets/textures --outdir x/textures/0 --quality 70 --size 1024",
 		"compress-textures-1": "jpegger --indir assets/textures --outdir x/textures/1 --quality 40 --size 256",
 		"compile-typescript": "tsc",

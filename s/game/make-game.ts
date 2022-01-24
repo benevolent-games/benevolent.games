@@ -4,10 +4,11 @@ import {SpawnOptions} from "./types.js"
 import {makeKeyListener} from "./utils/key-listener.js"
 import {makeMouseLooker} from "./utils/mouse-looker.js"
 
-import {spawnCamera} from "./spawn/camera.js"
 import {spawnCrate} from "./spawn/crate.js"
+import {spawnCamera} from "./spawn/camera.js"
 import {spawnPlayer} from "./spawn/player.js"
 import {spawnCharacter} from "./spawn/character.js"
+import {spawnDunebuggy} from "./spawn/dunebuggy.js"
 import {spawnEnvironment} from "./spawn/environment.js"
 
 export async function makeGame(middle: V3 = [0, 0, 0]) {
@@ -55,6 +56,7 @@ export async function makeGame(middle: V3 = [0, 0, 0]) {
 			player: spawnPlayer(options),
 			character: spawnCharacter(options),
 			environment: spawnEnvironment(options),
+			dunebuggy: spawnDunebuggy(options),
 		}
 	}
 }
