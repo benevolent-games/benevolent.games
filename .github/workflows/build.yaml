@@ -17,20 +17,17 @@ jobs:
     - name: 🛎️ checkout source
       uses: actions/checkout@v2
       with:
-        lfs: true
-
-    - name: 🎁 download lfs objects
-      run: git lfs checkout
+        lfs: false
 
     - name: 🔧 setup node
       uses: actions/setup-node@v1
       with:
-        node-version: 17
+        node-version: "17"
 
     - name: 📦 install dependencies
       shell: bash
       run: npm i
 
-    - name: 🏃‍♂️ build
+    - name: 🏃‍♂️ typescript compile
       shell: bash
-      run: npm run build
+      run: npm run compile-typescript
