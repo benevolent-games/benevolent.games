@@ -19,6 +19,7 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 		applyStaticPhysics({meshes: statics})
 		hideMeshes(statics)
 
+		const texturesDirectoryLod0 = "/textures/0"
 		const texturesDirectory = "/textures/1"
 		const terrainMesh = [...meshes].find(m => m.name === "terrain")
 		await Promise.all([
@@ -38,7 +39,15 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 			scene,
 			size: 20_000,
 			color: applySkyColor(scene, [0.5, 0.6, 1]),
-			cubeTexturePath: `/assets/art/skybox2/sky`,
+			cubeTexturePath: `${texturesDirectoryLod0}/desert/sky/cloudy/bluecloud`,
+			extensions: [
+				"_ft.jpg",
+				"_up.jpg",
+				"_rt.jpg",
+				"_bk.jpg",
+				"_dn.jpg",
+				"_lf.jpg",
+			],
 		})
 
 		const {sun} = makeSunlight({
@@ -258,16 +267,17 @@ function hideMeshes(meshes: BABYLON.AbstractMesh[]) {
 		mesh.isVisible = false
 }
 
-function makeSkybox({cubeTexturePath, scene, size, color}: {
+function makeSkybox({cubeTexturePath, extensions, scene, size, color}: {
 		cubeTexturePath: string
 		scene: BABYLON.Scene
 		size: number
 		color: BABYLON.Color3
+		extensions: [string, string, string, string, string, string]
 	}) {
-	const box = BABYLON.MeshBuilder.CreateBox("skyBox", {size}, scene)
-	const material = new BABYLON.StandardMaterial("skyBox", scene)
+	const box = BABYLON.MeshBuilder.CreateBox("skybox", {size}, scene)
+	const material = new BABYLON.StandardMaterial("skybox", scene)
 	material.backFaceCulling = false
-	material.reflectionTexture = new BABYLON.CubeTexture(cubeTexturePath, scene)
+	material.reflectionTexture = new BABYLON.CubeTexture(cubeTexturePath, scene, extensions)
 	material.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE
 	material.diffuseColor = color
 	material.specularColor = color
@@ -275,7 +285,6 @@ function makeSkybox({cubeTexturePath, scene, size, color}: {
 	box.infiniteDistance = true
 	material.disableLighting = true
 	box.applyFog = false
-	return box
 }
 
 function applyShadows({light, casters, receivers, resolution, bias}: {
