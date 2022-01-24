@@ -19,18 +19,21 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 		applyStaticPhysics({meshes: statics})
 		hideMeshes(statics)
 
-		const texturesDirectoryLod0 = "/textures/0"
-		const texturesDirectory = "/textures/1"
+		const textures = {
+			lod0: "/textures/lod0",
+			lod1: "/textures/lod1",
+		}
+
 		const terrainMesh = [...meshes].find(m => m.name === "terrain")
 		await Promise.all([
 			applyTerrainShader({
 				scene,
-				texturesDirectory,
+				texturesDirectory: textures.lod1,
 				meshes: [terrainMesh],
 			}),
 			applyRockslideShader({
 				scene,
-				texturesDirectory,
+				texturesDirectory: textures.lod1,
 				meshes: [...meshes].filter(m => m.name.includes("rockslide")),
 			}),
 		])
@@ -39,7 +42,7 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 			scene,
 			size: 20_000,
 			color: applySkyColor(scene, [0.5, 0.6, 1]),
-			cubeTexturePath: `${texturesDirectoryLod0}/desert/sky/cloudy/bluecloud`,
+			cubeTexturePath: `${textures.lod0}/desert/sky/cloudy/bluecloud`,
 			extensions: [
 				"_ft.jpg",
 				"_up.jpg",
