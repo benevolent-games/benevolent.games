@@ -18,10 +18,12 @@ export async function loadMaterial({
 		assignTextures(textures: {[blockName: string]: string}) {
 			const blocks = material.getTextureBlocks()
 			for (const [blockName, texturePath] of Object.entries(textures)) {
-				const block = blocks.find(b => b.name === blockName)
+				const block = <BABYLON.TextureBlock>blocks.find(b => b.name === blockName)
 				if (!block)
 					console.error(`cannot find texture block "${blockName}" for node material "${material.name}"`)
-				block.texture = new BABYLON.Texture(texturePath, scene)
+				block.texture = new BABYLON.Texture(texturePath, scene, {
+					invertY: false,
+				})
 			}
 			return material
 		}
