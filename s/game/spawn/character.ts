@@ -4,7 +4,7 @@ import {loadGlb} from "../babylon/load-glb.js"
 
 export function spawnCharacter({scene}: SpawnOptions) {
 	return async function() {
-		const assets = await loadGlb(scene, "/assets/android14.glb")
+		const assets = await loadGlb(scene, "/assets/art/character/android14.glb")
 		assets.removeAllFromScene()
 		assets.addAllToScene()
 
