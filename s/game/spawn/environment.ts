@@ -4,12 +4,12 @@ import {SpawnOptions} from "../types.js"
 import {loadGlb} from "../babylon/load-glb.js"
 import {loadMaterial} from "../babylon/load-material.js"
 
-export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
+export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions) {
 	return async function({getCameraPosition}: {
 			getCameraPosition: () => V3
 		}) {
 
-		const assets = await loadGlb(scene, "/assets/art/desert/terrain/terrain.q1.glb")
+		const assets = await loadGlb(scene, `/assets/art/desert/terrain/terrain.${quality}.glb`)
 		const {meshes, deleteMeshes} = prepareAssets(assets)
 
 		deleteMeshes(selectLod(2, [...meshes]))
@@ -19,21 +19,21 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 		applyStaticPhysics({meshes: statics})
 		hideMeshes(statics)
 
-		const textures = {
-			lod0: "/textures/lod0",
-			lod1: "/textures/lod1",
-		}
+		const texturesHq = "/textures/lod0"
+		const textures = quality === "q0"
+			? "/textures/lod0"
+			: "/textures/lod1"
 
 		const terrainMesh = [...meshes].find(m => m.name === "terrain")
 		await Promise.all([
 			applyTerrainShader({
 				scene,
-				texturesDirectory: textures.lod1,
+				texturesDirectory: textures,
 				meshes: [terrainMesh],
 			}),
 			applyRockslideShader({
 				scene,
-				texturesDirectory: textures.lod1,
+				texturesDirectory: textures,
 				meshes: [...meshes].filter(m => m.name.includes("rockslide")),
 			}),
 		])
@@ -42,7 +42,7 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 			scene,
 			size: 20_000,
 			color: applySkyColor(scene, [0.5, 0.6, 1]),
-			cubeTexturePath: `${textures.lod0}/desert/sky/cloudy/bluecloud`,
+			cubeTexturePath: `${texturesHq}/desert/sky/cloudy/bluecloud`,
 			extensions: [
 				"_ft.jpg",
 				"_up.jpg",

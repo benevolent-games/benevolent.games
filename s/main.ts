@@ -2,6 +2,7 @@
 console.log("👼 benevolent.games", {BABYLON, Ammo})
 
 import {V3} from "./game/utils/v3.js"
+import {Quality} from "./game/types.js"
 import * as v3 from "./game/utils/v3.js"
 import {makeGame} from "./game/make-game.js"
 import {makeFramerateDisplay} from "./demo/make-framerate-display.js"
@@ -14,9 +15,11 @@ declare global {
 }
 
 void async function() {
-
+	const quality: Quality = location.search.includes("pretty")
+		? "q0"
+		: "q1"
 	const middle: V3 = [0, 0, 0]
-	const game = await makeGame(middle)
+	const game = await makeGame(quality, middle)
 	document.querySelector(".game body").prepend(game.canvas)
 	window.addEventListener("resize", game.resize)
 	game.resize()
