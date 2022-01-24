@@ -9,7 +9,7 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 			getCameraPosition: () => V3
 		}) {
 
-		const assets = await loadGlb(scene, "/assets/environment.poo.glb")
+		const assets = await loadGlb(scene, "/assets/art/desert/terrain/terrain.q1.glb")
 		const {meshes, deleteMeshes} = prepareAssets(assets)
 
 		deleteMeshes(selectLod(2, [...meshes]))
@@ -38,7 +38,7 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 			scene,
 			size: 20_000,
 			color: applySkyColor(scene, [0.5, 0.6, 1]),
-			cubeTexturePath: `/assets/skybox2/sky`,
+			cubeTexturePath: `/assets/art/skybox2/sky`,
 		})
 
 		const {sun} = makeSunlight({
@@ -162,7 +162,7 @@ async function applyTerrainShader({scene, texturesDirectory, meshes}: {
 	const nodeMaterial = await loadMaterial({
 		scene,
 		label: "terrain-material",
-		path: "/assets/shaders/terrainshader4.json",
+		path: "/assets/art/desert/terrain/terrain.shader.json",
 	}).then(m => m.assignTextures({
 		blendmask: `${texturesDirectory}/desert/terrain/blendmask.jpg`,
 		layer1_armd: `${texturesDirectory}/desert/terrain/layer1_armd.jpg`,
@@ -188,7 +188,7 @@ async function applyRockslideShader({scene, texturesDirectory, meshes}: {
 	const nodeMaterial = await loadMaterial({
 		scene,
 		label: "rockslide-material",
-		path: "/assets/shaders/rockslideshader.json",
+		path: "/assets/art/desert/terrain/rockslide.shader.json",
 	}).then(m => m.assignTextures({
 		nor: `${texturesDirectory}/desert/rockslides/rockslide_nor.jpg`,
 		color: `${texturesDirectory}/desert/rockslides/rockslide_col.jpg`,
@@ -258,7 +258,7 @@ function hideMeshes(meshes: BABYLON.AbstractMesh[]) {
 		mesh.isVisible = false
 }
 
-function makeSkybox({scene, size, color}: {
+function makeSkybox({cubeTexturePath, scene, size, color}: {
 		cubeTexturePath: string
 		scene: BABYLON.Scene
 		size: number
@@ -267,7 +267,7 @@ function makeSkybox({scene, size, color}: {
 	const box = BABYLON.MeshBuilder.CreateBox("skyBox", {size}, scene)
 	const material = new BABYLON.StandardMaterial("skyBox", scene)
 	material.backFaceCulling = false
-	material.reflectionTexture = new BABYLON.CubeTexture("/assets/skybox2/sky", scene)
+	material.reflectionTexture = new BABYLON.CubeTexture(cubeTexturePath, scene)
 	material.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE
 	material.diffuseColor = color
 	material.specularColor = color
