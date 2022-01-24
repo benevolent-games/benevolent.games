@@ -13,7 +13,7 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 		const {meshes, deleteMeshes} = prepareAssets(assets)
 
 		deleteMeshes(selectLod(2, [...meshes]))
-		hideMeshes(except(["terrain"], selectOriginMeshes([...meshes])))
+		hideMeshes(except(selectOriginMeshes([...meshes]), "terrain"))
 
 		const statics = selectStatics([...meshes])
 		applyStaticPhysics({meshes: statics})
@@ -48,17 +48,11 @@ export function spawnEnvironment({scene, renderLoop}: SpawnOptions) {
 			getCameraPosition,
 		})
 
+		const shadowy = distinguish([...meshes], "terrain")
 		applyShadows({
 			light: sun,
-			casters: [...meshes].filter(mesh => (
-				(
-					mesh.name.includes("terrain") ||
-					mesh.name.includes("cliff") ||
-					mesh.name.includes("rocks")
-				) &&
-				mesh.isVisible
-			)),
-			receivers: <BABYLON.Mesh[]>[terrainMesh],
+			casters: shadowy.included,
+			receivers: <BABYLON.Mesh[]>shadowy.included.filter(m => !m.isAnInstance),
 			bias: 0.0001,
 			resolution: 1024,
 		})
@@ -79,7 +73,26 @@ function prepareAssets(assets: BABYLON.AssetContainer) {
 	return {meshes, deleteMeshes}
 }
 
-function select(searches: string[], meshes: BABYLON.AbstractMesh[]) {
+function distinguish(meshes: BABYLON.AbstractMesh[], ...searches: string[]) {
+	const included: BABYLON.AbstractMesh[] = []
+	const excluded: BABYLON.AbstractMesh[] = []
+	for (const mesh of meshes) {
+		let meshShouldBeIncluded = false
+		for (const search of searches) {
+			if (mesh.name.includes(search)) {
+				meshShouldBeIncluded = true
+				break
+			}
+		}
+		if (meshShouldBeIncluded)
+			included.push(mesh)
+		else
+			excluded.push(mesh)
+	}
+	return {included, excluded}
+}
+
+function select(meshes: BABYLON.AbstractMesh[], ...searches: string[]) {
 	return meshes.filter(mesh => {
 		for (const search of searches)
 			if (mesh.name.includes(search))
@@ -88,7 +101,7 @@ function select(searches: string[], meshes: BABYLON.AbstractMesh[]) {
 	})
 }
 
-function except(searches: string[], meshes: BABYLON.AbstractMesh[]) {
+function except(meshes: BABYLON.AbstractMesh[], ...searches: string[]) {
 	return meshes.filter(mesh => {
 		for (const search of searches)
 			if (mesh.name.includes(search))

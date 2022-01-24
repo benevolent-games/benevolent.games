@@ -44,9 +44,9 @@ export async function makeGame(middle: V3 = [0, 0, 0]) {
 		keyListener: makeKeyListener(),
 	}
 
-	;(<any>window).scene = scene
-
 	return {
+		scene,
+		engine,
 		...options,
 		resize: () => engine.resize(),
 		get framerate() { return engine.getFps() },

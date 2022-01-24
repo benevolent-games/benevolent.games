@@ -6,6 +6,13 @@ import * as v3 from "./game/utils/v3.js"
 import {makeGame} from "./game/make-game.js"
 import {makeFramerateDisplay} from "./demo/make-framerate-display.js"
 
+declare global {
+	interface Window {
+		scene: BABYLON.Scene
+		engine: BABYLON.Engine
+	}
+}
+
 void async function() {
 
 	const middle: V3 = [0, 0, 0]
@@ -13,6 +20,9 @@ void async function() {
 	document.querySelector(".game body").prepend(game.canvas)
 	window.addEventListener("resize", game.resize)
 	game.resize()
+
+	window.scene = game.scene
+	window.engine = game.engine
 
 	let {getCameraPosition} = await game.spawn.camera()
 	await Promise.all([
