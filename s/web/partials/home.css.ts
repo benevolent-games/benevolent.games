@@ -64,6 +64,7 @@ export default () => css`
 }
 
 .home .gamegrid li {
+	position: relative;
 	width: 10em;
 	padding: 0.2em;
 	cursor: pointer;
@@ -133,10 +134,39 @@ export default () => css`
 	position: relative;
 }
 
+.home .gamegrid[data-high-quality="true"] li::before {
+	content: "HQ ENABLED";
+	display: block;
+	position: absolute;
+	z-index: 1;
+	top: 0.5em;
+	right: 0.5em;
+	font-size: 0.6em;
+	padding: 0.5em;
+	background: #9100b644;
+	border-radius: 0.5em;
+	font-family: sans-serif;
+	font-weight: bold;
+}
+
+.home .qualityselector {
+	margin-top: 3em;
+	text-align: center;
+}
+
+.home .qualityselector span {
+	opacity: 0.6;
+	font-size: 0.7em;
+}
+
+.home .qualityselector span em {
+	opacity: 0.6;
+}
+
 .home main > hr {
 	width: 50%;
 	width: calc(50% - 1em);
-	margin: 4em auto;
+	margin: 3em auto;
 	height: 2px;
 	border: none;
 	background: #fff2;
