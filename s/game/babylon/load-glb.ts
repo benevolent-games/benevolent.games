@@ -22,6 +22,6 @@ export async function loadGlb(scene: BABYLON.Scene, link: string) {
 		},
 	)
 
-	console.log(`⌛ done ${link}`)
+	console.log(`🎉 done ${link}`)
 	return assetContainer
 }

@@ -1,6 +1,6 @@
 
 import {V3} from "./utils/v3.js"
-import {SpawnOptions} from "./types.js"
+import {Quality, SpawnOptions} from "./types.js"
 import {makeKeyListener} from "./utils/key-listener.js"
 import {makeMouseLooker} from "./utils/mouse-looker.js"
 
@@ -11,7 +11,9 @@ import {spawnCharacter} from "./spawn/character.js"
 import {spawnDunebuggy} from "./spawn/dunebuggy.js"
 import {spawnEnvironment} from "./spawn/environment.js"
 
-export async function makeGame(middle: V3 = [0, 0, 0]) {
+export async function makeGame(quality: Quality, middle: V3 = [0, 0, 0]) {
+
+	console.log("💅", quality)
 
 	const canvas = document.createElement("canvas")
 	const engine = new BABYLON.Engine(canvas)
@@ -39,6 +41,7 @@ export async function makeGame(middle: V3 = [0, 0, 0]) {
 		engine,
 		canvas,
 		middle,
+		quality,
 		renderLoop,
 		looker: makeMouseLooker(),
 		keyListener: makeKeyListener(),

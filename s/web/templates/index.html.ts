@@ -27,7 +27,7 @@ export default ({debug}: {debug: boolean}) => html`
 				</div>
 			</div>
 		</h1>
-		<ol class="gamegrid">
+		<ol class="gamegrid" data-high-quality="false">
 			<li>
 				<a href="/humanoid">
 					<div class="poster">
@@ -37,6 +37,12 @@ export default ({debug}: {debug: boolean}) => html`
 				</a>
 			</li>
 		</ol>
+		<div class="qualityselector">
+			<label>
+				<input class="qualitycheckbox" type="checkbox"/>
+				<span>Launch in High-Quality <em>(more megabytes!)</em></span>
+			</label>
+		</div>
 		<hr/>
 		<section>
 			<h2>community-powered games</h2>
@@ -80,26 +86,63 @@ export default ({debug}: {debug: boolean}) => html`
 	</main>
 	<script>
 
-		const {style} = document.querySelector("main > h1 .logo-unit")
+		void function introAnimation() {
+			const {style} = document.querySelector("main > h1 .logo-unit")
+	
+			function startAnimation() {
+				style.opacity = "0"
+				style.transform = "scale(0.5)"
+				style.display = "block"
+			}
+	
+			function endAnimation() {
+				style.transition = "all ease 10s"
+				style.opacity = "1"
+				style.transform = "scale(1)"
+			}
+	
+			function delay(func) {
+				setTimeout(func, 0)
+			}
+	
+			startAnimation()
+			delay(endAnimation)
+		}()
 
-		function startAnimation() {
-			style.opacity = "0"
-			style.transform = "scale(0.5)"
-			style.display = "block"
-		}
+		void function qualityModeSelection() {
+			const storageKey = "benevolent-high-quality"
+			const gamegrid = document.querySelector(".gamegrid")
+			const checkbox = document.querySelector(".qualitycheckbox")
+			const gamelinks = Array.from(
+				document.querySelectorAll(".gamegrid > li > a")
+			)
 
-		function endAnimation() {
-			style.transition = "all ease 10s"
-			style.opacity = "1"
-			style.transform = "scale(1)"
-		}
+			function updateGrid() {
+				const {checked} = checkbox
+				gamegrid.setAttribute("data-high-quality", checked ? "true" : "false")
+				for (const link of gamelinks) {
+					if (!link.hasAttribute("data-href")) {
+						link.setAttribute("data-href", link.href)
+					}
+					const dataHref = link.getAttribute("data-href")
+					link.href = dataHref + (checked ? "?pretty" : "")
+				}
+			}
 
-		function delay(func) {
-			setTimeout(func, 0)
-		}
+			checkbox.oninput = () => {
+				const setting = checkbox.checked
+					? "true"
+					: "false"
+				localStorage.setItem(storageKey, setting)
+				updateGrid()
+			}
 
-		startAnimation()
-		delay(endAnimation)
+			const recollection = localStorage.getItem(storageKey) ?? "false"
+			checkbox.checked = recollection === "true"
+				? true
+				: false
+			updateGrid()
+		}()
 
 	</script>
 </body>
