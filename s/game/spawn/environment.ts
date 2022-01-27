@@ -1,7 +1,7 @@
 
 import {V3} from "../utils/v3.js"
-import {SpawnOptions} from "../types.js"
 import {loadGlb} from "../babylon/load-glb.js"
+import {Quality, SpawnOptions} from "../types.js"
 import {loadMaterial} from "../babylon/load-material.js"
 
 export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions) {
@@ -35,7 +35,7 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions) {
 			? "/textures/lod0"
 			: "/textures/lod1"
 
-		const terrainMesh = [...meshes].find(m => m.name === "terrain")
+		const terrainMesh = <BABYLON.Mesh>[...meshes].find(m => m.name === "terrain")
 		await Promise.all([
 			applyTerrainShader({
 				scene,
@@ -51,7 +51,7 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions) {
 
 		makeSkybox({
 			scene,
-			size: 20_000,
+			size: 5_000,
 			color: applySkyColor(scene, [0.5, 0.6, 1]),
 			cubeTexturePath: `${texturesHq}/desert/sky/cloudy/bluecloud`,
 			extensions: [
@@ -67,17 +67,27 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions) {
 		const {sun} = makeSunlight({
 			scene,
 			renderLoop,
-			lightPositionRelativeToCamera: [2000, 2000, -2000],
+			lightPositionRelativeToCamera: [1000, 1000, -1000],
 			getCameraPosition,
 		})
 
-		const shadowy = distinguish([...meshes], "terrain")
+		const shadowy = select(
+			[
+				terrainMesh,
+				...selectLod(quality === "q0" ? 0 : 1, [...meshes]),
+			],
+			"terrain", "cliff", "rock",
+		)
+
 		applyShadows({
+			quality,
 			light: sun,
-			casters: shadowy.included,
-			receivers: <BABYLON.Mesh[]>shadowy.included.filter(m => !m.isAnInstance),
-			bias: 0.0001,
-			resolution: 1024,
+			casters: shadowy,
+			receivers: <BABYLON.Mesh[]>shadowy.filter(m => !m.isAnInstance),
+			bias: 0.01,
+			resolution: quality === "q0"
+				? 4096
+				: 1024,
 		})
 	}
 }
@@ -162,7 +172,8 @@ function makeSunlight({
 
 	const antidirection = lightDirection.negate().addInPlace(new BABYLON.Vector3(0.3, 0.2, 0.1))
 	const antilight = new BABYLON.HemisphericLight("antilight", antidirection, scene)
-	antilight.intensity = 0.1
+	antilight.intensity = 0.05
+	antilight.shadowEnabled = false
 
 	return {sun, antilight, torus}
 }
@@ -284,7 +295,8 @@ function makeSkybox({cubeTexturePath, extensions, scene, size, color}: {
 	box.applyFog = false
 }
 
-function applyShadows({light, casters, receivers, resolution, bias}: {
+function applyShadows({quality, light, casters, receivers, resolution, bias}: {
+		quality: Quality
 		light: BABYLON.IShadowLight
 		casters: BABYLON.AbstractMesh[]
 		receivers: BABYLON.Mesh[]
@@ -292,12 +304,18 @@ function applyShadows({light, casters, receivers, resolution, bias}: {
 		bias: number
 	}) {
 
+	light.shadowMinZ = 500
+	light.shadowMaxZ = 2000
+
 	const shadows = new BABYLON.ShadowGenerator(resolution, light)
 	shadows.bias = bias
-	shadows.forceBackFacesOnly = true
-	shadows.usePoissonSampling = true
-	shadows.useExponentialShadowMap = true
-	shadows.useBlurExponentialShadowMap = true
+	shadows.useCloseExponentialShadowMap = true
+	shadows.useBlurCloseExponentialShadowMap = true
+	shadows.usePercentageCloserFiltering = true
+	shadows.blurScale = 2
+	shadows.filteringQuality = quality === "q0"
+		? BABYLON.ShadowGenerator.QUALITY_HIGH
+		: BABYLON.ShadowGenerator.QUALITY_LOW
 
 	for (const mesh of casters)
 		shadows.addShadowCaster(mesh)

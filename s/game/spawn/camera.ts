@@ -8,7 +8,7 @@ export function spawnCamera({middle, scene, canvas}: SpawnOptions) {
 		const camera = new BABYLON.FreeCamera("camera1", campos, scene)
 		camera.attachControl(canvas, true)
 		camera.minZ = 1
-		camera.maxZ = 20_000
+		camera.maxZ = 2_000
 		scene.activeCamera = camera
 		return {
 			getCameraPosition(): V3 {
