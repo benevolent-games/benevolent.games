@@ -12,11 +12,22 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions) {
 		const assets = await loadGlb(scene, `/assets/art/desert/terrain/terrain.${quality}.glb`)
 		const {meshes, deleteMeshes} = prepareAssets(assets)
 
-		deleteMeshes(selectLod(2, [...meshes]))
-		hideMeshes(except(selectOriginMeshes([...meshes]), "terrain"))
+		hideMeshes(selectLod(2, [...meshes]))
+
+		if (quality === "q0") {
+			hideMeshes(selectLod(1, select([...meshes], "cliff", "rock")))
+		}
+
+		const unwantedOriginMeshCopies = except(selectOriginMeshes([...meshes]), "terrain")
+		hideMeshes(unwantedOriginMeshCopies)
+
+		const physicsForCliffsAndRocks = selectLod(1, select([...meshes], "cliff", "rock"))
+			.filter(mesh => !unwantedOriginMeshCopies.includes(mesh))
+
+		applyStaticPhysics(physicsForCliffsAndRocks)
 
 		const statics = selectStatics([...meshes])
-		applyStaticPhysics({meshes: statics})
+		applyStaticPhysics(statics)
 		hideMeshes(statics)
 
 		const texturesHq = "/textures/lod0"
@@ -226,31 +237,14 @@ function selectStatics(meshes: BABYLON.AbstractMesh[]) {
 	)
 }
 
-function applyStaticPhysics({meshes}: {meshes: BABYLON.AbstractMesh[]}) {
-	const statics = meshes.filter(
-		mesh => {
-			const name = mesh.name.toLowerCase()
-			return (
-				name.includes("static_") ||
-				name.includes(".static")
-			)
-		}
-	)
-	for (const mesh of statics) {
-		if (!mesh.isAnInstance) {
-			mesh.setParent(null)
-			mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
-				mesh,
-				BABYLON.PhysicsImpostor.MeshImpostor,
-				{mass: 0, friction: 1, restitution: 0.1}
-			)
-		}
-	}
-	for (const mesh of statics) {
-		if (mesh.isAnInstance) {
-			const instance = <BABYLON.InstancedMesh>mesh
-			instance.physicsImpostor = instance.sourceMesh.physicsImpostor
-		}
+function applyStaticPhysics(meshes: BABYLON.AbstractMesh[]) {
+	for (const mesh of meshes) {
+		mesh.setParent(null)
+		mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
+			mesh,
+			BABYLON.PhysicsImpostor.MeshImpostor,
+			{mass: 0, friction: 1, restitution: 0.1}
+		)
 	}
 }
 
