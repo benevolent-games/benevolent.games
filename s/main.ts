@@ -40,6 +40,11 @@ void async function() {
 	await game.spawn.crate([10, 5, 10])
 	await game.spawn.dunebuggy([0, 0, 0])
 
+	await (async function finishLoading() {
+		const loading = document.querySelector<HTMLElement>(".loading")
+		loading.style.display = "none"
+	}())
+
 	game.keyListener.on("e", state => {
 		if (state.isDown) {
 			const {pickedMesh} = game.scene.pick(

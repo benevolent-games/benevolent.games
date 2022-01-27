@@ -7,6 +7,28 @@ export default () => css`
 	height: 100%;
 }
 
+.game body {
+	position: relative;
+}
+
+.game .loading {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.game .loading span {
+	background: #0008;
+	padding: 0.5em 1em;
+	border-radius: 0.5em;
+	text-shadow: 0 1px 2px #0008;
+}
+
 canvas {
 	position: relative;
 	width: 100%;

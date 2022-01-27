@@ -20,6 +20,9 @@ export default ({debug}: {debug: boolean}) => html`
 		: html`<script defer type=module src="main.bundle.min.js"></script>`}
 </head>
 <body>
+	<div class="loading">
+		<span>♻️ loading</span>
+	</div>
 	<ul class=stats></ul>
 </body>
 </html>
