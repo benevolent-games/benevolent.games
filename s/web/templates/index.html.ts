@@ -120,13 +120,6 @@ export default ({debug}: {debug: boolean}) => html`
 			function updateGrid() {
 				const {checked} = checkbox
 				gamegrid.setAttribute("data-high-quality", checked ? "true" : "false")
-				for (const link of gamelinks) {
-					if (!link.hasAttribute("data-href")) {
-						link.setAttribute("data-href", link.href)
-					}
-					const dataHref = link.getAttribute("data-href")
-					link.href = dataHref + (checked ? "?pretty" : "")
-				}
 			}
 
 			checkbox.oninput = () => {

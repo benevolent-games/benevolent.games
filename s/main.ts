@@ -15,9 +15,13 @@ declare global {
 }
 
 void async function() {
-	const quality: Quality = location.search.includes("pretty")
-		? "q0"
-		: "q1"
+
+	const quality: Quality = (
+		localStorage.getItem("benevolent-high-quality") === "true"
+			? "q0"
+			: "q1"
+	)
+
 	const middle: V3 = [0, 0, 0]
 	const game = await makeGame(quality, middle)
 	document.querySelector(".game body").prepend(game.canvas)
