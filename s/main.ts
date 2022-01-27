@@ -22,6 +22,10 @@ void async function() {
 			: "q1"
 	)
 
+	const loadingSpan = document.querySelector<HTMLElement>(".loading span")
+	if (quality === "q0")
+		loadingSpan.textContent += " high quality"
+
 	const middle: V3 = [0, 0, 0]
 	const game = await makeGame(quality, middle)
 	document.querySelector(".game body").prepend(game.canvas)
