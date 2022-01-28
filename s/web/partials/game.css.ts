@@ -90,6 +90,10 @@ canvas {
 }
 
 .game body[data-pointer-lock="true"] .buttonbar .fullscreen {
+	opacity: 0.1;
+}
+
+.game body[data-pointer-lock="true"] .mobile {
 	display: none;
 }
 
