@@ -84,7 +84,7 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions) {
 			light: sun,
 			casters: shadowy,
 			receivers: <BABYLON.Mesh[]>shadowy.filter(m => !m.isAnInstance),
-			bias: 0.01,
+			bias: 0.0001,
 			resolution: quality === "q0"
 				? 4096
 				: 1024,
@@ -309,6 +309,7 @@ function applyShadows({quality, light, casters, receivers, resolution, bias}: {
 
 	const shadows = new BABYLON.ShadowGenerator(resolution, light)
 	shadows.bias = bias
+	shadows.forceBackFacesOnly = true
 	shadows.useCloseExponentialShadowMap = true
 	shadows.useBlurCloseExponentialShadowMap = true
 	shadows.usePercentageCloserFiltering = true
