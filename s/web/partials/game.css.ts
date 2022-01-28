@@ -47,9 +47,49 @@ canvas {
 
 .stats p {
 	background: #1114;
-	padding: 0.5em;
+	padding: 0.5rem;
 	color: white;
-	border-radius: 0.5em;
+	border-radius: 0.5rem;
+}
+
+.game .buttonbar {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	padding: 0.5em;
+}
+
+.game .buttonbar button {
+	opacity: 0.6;
+
+	border: none;
+	padding: 0;
+	color: inherit;
+
+	cursor: pointer;
+	background: #111a;
+	padding: 0.5rem;
+	border-radius: 0.5rem;
+}
+
+.game .buttonbar button:hover {
+	opacity: 1;
+}
+
+.game .buttonbar svg {
+	line-height: 0;
+}
+
+.game .buttonbar .fullscreen[data-fullscreen="false"] .min {
+	display: none;
+}
+
+.game .buttonbar .fullscreen[data-fullscreen="true"] .max {
+	display: none;
+}
+
+.game body[data-pointer-lock="true"] .buttonbar .fullscreen {
+	display: none;
 }
 
 `

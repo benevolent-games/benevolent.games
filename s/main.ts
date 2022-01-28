@@ -26,6 +26,38 @@ void async function() {
 	if (quality === "q0")
 		loadingSpan.textContent += " high quality"
 
+	{ // pointer lock attribute on body
+		document.addEventListener("pointerlockchange", () => {
+			const isPointerLocked = !!document.pointerLockElement
+			document.body.setAttribute(
+				"data-pointer-lock",
+				isPointerLocked
+					? "true"
+					: "false",
+			)
+		})
+	}
+
+	{ // fullscreen toggling
+		const fullscreenButton = document.querySelector<HTMLButtonElement>(".buttonbar .fullscreen")
+		if (document.fullscreenEnabled) {
+			document.addEventListener("fullscreenchange", () => {
+				const isFullscreen = !!document.fullscreenElement
+				fullscreenButton.setAttribute("data-fullscreen", isFullscreen ? "true" : "false")
+			})
+			fullscreenButton.onclick = () => {
+				const isFullscreen = !!document.fullscreenElement
+				if (isFullscreen)
+					document.exitFullscreen()
+				else
+					document.body.requestFullscreen()
+			}
+		}
+		else {
+			fullscreenButton.remove()
+		}
+	}
+
 	const middle: V3 = [0, 0, 0]
 	const game = await makeGame(quality, middle)
 	document.querySelector(".game body").prepend(game.canvas)

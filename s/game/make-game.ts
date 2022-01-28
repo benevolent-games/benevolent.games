@@ -34,7 +34,10 @@ export async function makeGame(quality: Quality, middle: V3 = [0, 0, 0]) {
 		scene.render()
 	})
 
-	canvas.onclick = () => canvas.requestPointerLock()
+	canvas.onclick = () => {
+		if (!document.pointerLockElement)
+			canvas.requestPointerLock()
+	}
 
 	const options: SpawnOptions = {
 		scene,
