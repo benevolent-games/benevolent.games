@@ -67,7 +67,7 @@ export function spawnPlayer({scene, renderLoop, looker, keyListener}: SpawnOptio
 				return keyListener.getKeyState(key).isDown
 			}
 			// const topSpeed = 2
-			const power = 3_000
+			const power = 10
 			mesh.physicsImpostor.registerBeforePhysicsStep(impostor => {
 				impostor.wakeUp()
 				const willpower = isPressed("shift")
@@ -91,18 +91,14 @@ export function spawnPlayer({scene, renderLoop, looker, keyListener}: SpawnOptio
 					willpower,
 				)
 
-				// const velocity3d = impostor.getLinearVelocity()
+				const velocity3d = impostor.getLinearVelocity()
 				// const velocity: V2 = [velocity3d.x, velocity3d.z]
 				// const difference = v2.dot(forceDirection, velocity)
 				// const distance = v2.distance(forceDirection, velocity)
 				// const tanny = v2.atan2(intention, velocity)
 
 				const [x, z] = force
-
-				impostor.applyForce(
-					new BABYLON.Vector3(x, 0, z),
-					BABYLON.Vector3.Zero(),
-				)
+				impostor.setLinearVelocity(new BABYLON.Vector3(x, velocity3d.y, z))
 			})
 		}
 
