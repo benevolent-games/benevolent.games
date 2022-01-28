@@ -3,9 +3,11 @@ import {V3} from "../utils/v3.js"
 import * as v2 from "../utils/v2.js"
 import {SpawnOptions} from "../types.js"
 
-export function spawnPlayer({scene, renderLoop, looker, keyListener}: SpawnOptions) {
+export function spawnPlayer({
+		scene, renderLoop, looker, keyListener, thumbsticks,
+	}: SpawnOptions) {
 	return async function(position: V3) {
-		const mesh = BABYLON.Mesh.CreateCapsule(
+		const mesh = BABYLON.MeshBuilder.CreateCapsule(
 			"player",
 			{
 				subdivisions: 2,
@@ -48,6 +50,11 @@ export function spawnPlayer({scene, renderLoop, looker, keyListener}: SpawnOptio
 		box.material = boxMaterial
 
 		renderLoop.add(() => {
+			{ // thumblook
+				const sensitivity = 0.02
+				const {x, y} = thumbsticks.right.values
+				looker.add(x * sensitivity, -y * sensitivity)
+			}
 			const {horizontalRadians, verticalRadians} = looker.mouseLook
 			mesh.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
 				horizontalRadians,
@@ -80,6 +87,8 @@ export function spawnPlayer({scene, renderLoop, looker, keyListener}: SpawnOptio
 				if (isPressed("s")) stride -= 1
 				if (isPressed("a")) strafe -= 1
 				if (isPressed("d")) strafe += 1
+				stride += thumbsticks.left.values.y
+				strafe += thumbsticks.left.values.x
 
 				const intention = v2.rotate(
 					...v2.normalize([strafe, stride]),

@@ -5,6 +5,7 @@ export default () => css`
 
 .game, .game body {
 	height: 100%;
+	user-select: none;
 }
 
 .game body {
@@ -54,8 +55,8 @@ canvas {
 
 .game .buttonbar {
 	position: absolute;
-	bottom: 0;
-	right: 0;
+	top: 0;
+	left: 0;
 	padding: 0.5em;
 }
 
@@ -90,6 +91,26 @@ canvas {
 
 .game body[data-pointer-lock="true"] .buttonbar .fullscreen {
 	display: none;
+}
+
+.game .mobile {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	pointer-events: none;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.game .mobile thumb-stick {
+	opacity: 0.2;
+	width: 7em;
+	height: 7em;
+	margin: 2em;
+	pointer-events: auto;
 }
 
 `

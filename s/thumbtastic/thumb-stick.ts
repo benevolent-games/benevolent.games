@@ -6,6 +6,8 @@ export class ThumbStick extends LitElement {
 	static styles = css`
 	:host {
 		display: block;
+		width: 20em;
+		height: 20em;
 	}
 	.base {
 		position: relative;
@@ -35,30 +37,42 @@ export class ThumbStick extends LitElement {
 	values: {x: number, y: number} = {x: 0, y: 0}
 	onstickmove = (values: {x: number, y: number}) => {}
 
+	#basis: {
+		rect: DOMRect
+		radius: number
+	}
+
+	#updateBasis = () => {
+		const base = this.shadowRoot.querySelector<HTMLElement>(".base")
+		const stick = this.shadowRoot.querySelector<HTMLElement>(".stick")
+		const rect = base.getBoundingClientRect()
+		const radius = (rect.width / 2) - (stick.getBoundingClientRect().width / 4)
+		this.#basis = {rect, radius}
+	}
+
 	firstUpdated() {
 		const base = this.shadowRoot.querySelector<HTMLElement>(".base")
 		const stick = this.shadowRoot.querySelector<HTMLElement>(".stick")
 		const understick = this.shadowRoot.querySelector<HTMLElement>(".understick")
 
-		const rect = base.getBoundingClientRect()
-		const radius = (rect.width / 2) - (stick.getBoundingClientRect().width / 4)
+		this.#updateBasis()
 
-		function withinRadius(x: number, y: number) {
-			return (x ** 2) + (y ** 2) < (radius ** 2)
+		const withinRadius = (x: number, y: number) => {
+			return (x ** 2) + (y ** 2) < (this.#basis.radius ** 2)
 		}
 
-		function findClosestPointOnCircle(x: number, y: number) {
+		const findClosestPointOnCircle = (x: number, y: number) => {
 			const mag = Math.sqrt((x ** 2) + (y ** 2))
 			return [
-				x / mag * radius,
-				y / mag * radius,
+				x / mag * this.#basis.radius,
+				y / mag * this.#basis.radius,
 			]
 		}
 
 		const registerFinalValues = (x: number, y: number) => {
 			const values = {
-				x: x / radius,
-				y: -(y / radius),
+				x: x / this.#basis.radius,
+				y: -(y / this.#basis.radius),
 			}
 			this.values = values
 			this.onstickmove(values)
@@ -69,8 +83,8 @@ export class ThumbStick extends LitElement {
 			understick.style.transform = `translate(${underX}px, ${underY}px)`
 		}
 
-		function moveStick(clientX: number, clientY: number) {
-			const {left, top, height, width} = rect
+		const moveStick = (clientX: number, clientY: number) => {
+			const {left, top, height, width} = this.#basis.rect
 			const middleX = left + (width / 2)
 			const middleY = top + (height / 2)
 			let x = clientX - middleX
@@ -81,11 +95,12 @@ export class ThumbStick extends LitElement {
 			registerFinalValues(x, y)
 		}
 
-		function resetStick() {
+		const resetStick = () => {
 			registerFinalValues(0, 0)
 		}
 
 		let trackingMouse = false
+		let trackingTouchId: number
 
 		base.addEventListener("mousedown", ({clientX, clientY}: MouseEvent) => {
 			trackingMouse = true
@@ -103,19 +118,33 @@ export class ThumbStick extends LitElement {
 		})
 
 		base.addEventListener("touchstart", (event: TouchEvent) => {
-			const {clientX, clientY} = event.touches[0]
+			const touch = event.targetTouches[0]
+			trackingTouchId = touch.identifier
+			const {clientX, clientY} = touch
 			moveStick(clientX, clientY)
 			event.preventDefault()
 		})
 
 		base.addEventListener("touchmove", (event: TouchEvent) => {
-			const {clientX, clientY} = event.touches[0]
-			moveStick(clientX, clientY)
+			const touch = event.touches.item(trackingTouchId)
+			if (touch) {
+				const {clientX, clientY} = touch
+				moveStick(clientX, clientY)
+			}
 			event.preventDefault()
 		})
 
 		base.addEventListener("touchend", () => {
+			trackingTouchId = undefined
 			resetStick()
+		})
+
+		window.addEventListener("resize", () => {
+			this.#updateBasis()
+		})
+
+		window.addEventListener("scroll", () => {
+			this.#updateBasis()
 		})
 	}
 

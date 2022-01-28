@@ -2,10 +2,13 @@
 console.log("👼 benevolent.games", {BABYLON, Ammo})
 
 import {V3} from "./game/utils/v3.js"
-import {Quality} from "./game/types.js"
 import * as v3 from "./game/utils/v3.js"
 import {makeGame} from "./game/make-game.js"
+import {Quality, Thumbsticks} from "./game/types.js"
 import {makeFramerateDisplay} from "./demo/make-framerate-display.js"
+
+import "./thumbtastic/thumbtastic.js"
+import {ThumbStick} from "./thumbtastic/thumb-stick.js"
 
 declare global {
 	interface Window {
@@ -15,6 +18,10 @@ declare global {
 }
 
 void async function() {
+	const thumbsticks: Thumbsticks = {
+		left: document.querySelector<ThumbStick>("thumb-stick.left"),
+		right: document.querySelector<ThumbStick>("thumb-stick.right"),
+	}
 
 	const quality: Quality = (
 		localStorage.getItem("benevolent-high-quality") === "true"
@@ -59,7 +66,7 @@ void async function() {
 	}
 
 	const middle: V3 = [0, 0, 0]
-	const game = await makeGame(quality, middle)
+	const game = await makeGame({quality, middle, thumbsticks})
 	document.querySelector(".game body").prepend(game.canvas)
 	window.addEventListener("resize", game.resize)
 	game.resize()

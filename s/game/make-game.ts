@@ -1,8 +1,8 @@
 
 import {V3} from "./utils/v3.js"
-import {Quality, SpawnOptions} from "./types.js"
 import {makeKeyListener} from "./utils/key-listener.js"
 import {makeMouseLooker} from "./utils/mouse-looker.js"
+import {Quality, SpawnOptions, Thumbsticks} from "./types.js"
 
 import {spawnCrate} from "./spawn/crate.js"
 import {spawnCamera} from "./spawn/camera.js"
@@ -11,7 +11,15 @@ import {spawnCharacter} from "./spawn/character.js"
 import {spawnDunebuggy} from "./spawn/dunebuggy.js"
 import {spawnEnvironment} from "./spawn/environment.js"
 
-export async function makeGame(quality: Quality, middle: V3 = [0, 0, 0]) {
+export async function makeGame({
+		quality,
+		thumbsticks,
+		middle = [0, 0, 0],
+	}: {
+		quality: Quality
+		thumbsticks: Thumbsticks
+		middle?: V3
+	}) {
 
 	console.log("💅", quality)
 
@@ -34,8 +42,11 @@ export async function makeGame(quality: Quality, middle: V3 = [0, 0, 0]) {
 		scene.render()
 	})
 
-	canvas.onclick = () => {
-		if (!document.pointerLockElement)
+	canvas.onclick = (event: any) => {
+		const notTouch = event.pointerType !== undefined
+			? event.pointerType !== "touch"
+			: true
+		if (notTouch && !document.pointerLockElement)
 			canvas.requestPointerLock()
 	}
 
@@ -46,6 +57,7 @@ export async function makeGame(quality: Quality, middle: V3 = [0, 0, 0]) {
 		middle,
 		quality,
 		renderLoop,
+		thumbsticks,
 		looker: makeMouseLooker(),
 		keyListener: makeKeyListener(),
 	}

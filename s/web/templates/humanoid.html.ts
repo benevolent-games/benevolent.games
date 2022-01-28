@@ -1,6 +1,6 @@
 
-import headBasicsHtml from "../partials/head-basics.html.js"
 import {noop as html} from "../utils/template-noop.js"
+import headBasicsHtml from "../partials/head-basics.html.js"
 
 export default ({debug}: {debug: boolean}) => html`
 
@@ -15,7 +15,8 @@ export default ({debug}: {debug: boolean}) => html`
 	${debug
 		? html`
 			<script defer src="/node_modules/es-module-shims/dist/es-module-shims.js"></script>
-			<script defer type=module src="main.js"></script>
+			<script defer type=importmap-shim src="/importmap.json"></script>
+			<script defer type=module-shim src="/main.js"></script>
 		`
 		: html`<script defer type=module src="main.bundle.min.js"></script>`}
 </head>
@@ -32,6 +33,10 @@ export default ({debug}: {debug: boolean}) => html`
 				<svg class="min feather feather-minimize" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
 			</div>
 		</button>
+	</div>
+	<div class="mobile">
+		<thumb-stick class=left></thumb-stick>
+		<thumb-stick class=right></thumb-stick>
 	</div>
 </body>
 </html>

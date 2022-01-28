@@ -8,8 +8,8 @@ export default ({debug}: {debug: boolean}) => html`
 <html>
 <head class=thumb>
 	${headBasicsHtml({title: "thumb - benevolent"})}
-	<script defer type=module-shim src="/thumbtastic/thumbtastic.js"></script>
 	<script defer type=importmap-shim src="/importmap.json"></script>
+	<script defer type=module-shim src="/thumbtastic/thumbtastic.js"></script>
 	<script defer src="/node_modules/es-module-shims/dist/es-module-shims.js"></script>
 	<style>
 		thumb-stick {

@@ -11,5 +11,4 @@ const theme = css`
 	box-sizing: border-box;
 }
 `
-
 registerComponents(themeComponents(theme, <any>{ThumbStick}))

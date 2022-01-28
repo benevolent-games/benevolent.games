@@ -1,9 +1,15 @@
 
 import type {V3} from "./utils/v3.js"
+import {ThumbStick} from "../thumbtastic/thumb-stick.js"
 import type {makeKeyListener} from "./utils/key-listener.js"
 import type {makeMouseLooker} from "./utils/mouse-looker.js"
 
 export type Quality = "q0" | "q1"
+
+export interface Thumbsticks {
+	left: ThumbStick
+	right: ThumbStick
+}
 
 export interface SpawnOptions {
 	middle: V3
@@ -14,4 +20,5 @@ export interface SpawnOptions {
 	renderLoop: Set<() => void>
 	looker: ReturnType<typeof makeMouseLooker>
 	keyListener: ReturnType<typeof makeKeyListener>
+	thumbsticks: Thumbsticks
 }
