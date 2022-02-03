@@ -27,9 +27,8 @@
 		"web": "node x/web/build.js",
 		"web-debug": "node x/web/build.js debug",
 		"watch-typescript": "npm run -s compile-typescript -- -w",
-		"watch-bundle": "npm run -s compile-bundle-rollup -- -w",
 		"watch-web": "chokidar \"x/web/**/*.js\" -c \"npm run web-debug -s && echo 'rebuilt web'\"",
-		"watch": "run-s web-debug && run-p watch-typescript watch-bundle watch-web",
+		"watch": "run-s web-debug && run-p watch-typescript watch-web",
 		"test": "cynic node --label='test suite' x/tests.test.js",
 		"start": "http-server x"
 	},
