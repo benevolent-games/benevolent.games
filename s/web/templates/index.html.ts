@@ -13,6 +13,7 @@ export default ({debug}: {debug: boolean}) => html`
 <html class="home">
 <head>
 	${headBasicsHtml({title: "benevolent.games"})}
+	<script defer type=module src="/website.js"></script>
 	<style>
 		main > h1 > .logo-unit { display: none; }
 	</style>
@@ -84,60 +85,6 @@ export default ({debug}: {debug: boolean}) => html`
 			<p>join the <a href="${urls.discord}">discord</a> and get involved on <a href="${urls.github}">github</a></p>
 		</footer>
 	</main>
-	<script>
-
-		void function introAnimation() {
-			const {style} = document.querySelector("main > h1 .logo-unit")
-	
-			function startAnimation() {
-				style.opacity = "0"
-				style.transform = "scale(0.5)"
-				style.display = "block"
-			}
-	
-			function endAnimation() {
-				style.transition = "all ease 10s"
-				style.opacity = "1"
-				style.transform = "scale(1)"
-			}
-	
-			function delay(func) {
-				setTimeout(func, 0)
-			}
-	
-			startAnimation()
-			delay(endAnimation)
-		}()
-
-		void function qualityModeSelection() {
-			const storageKey = "benevolent-high-quality"
-			const gamegrid = document.querySelector(".gamegrid")
-			const checkbox = document.querySelector(".qualitycheckbox")
-			const gamelinks = Array.from(
-				document.querySelectorAll(".gamegrid > li > a")
-			)
-
-			function updateGrid() {
-				const {checked} = checkbox
-				gamegrid.setAttribute("data-high-quality", checked ? "true" : "false")
-			}
-
-			checkbox.oninput = () => {
-				const setting = checkbox.checked
-					? "true"
-					: "false"
-				localStorage.setItem(storageKey, setting)
-				updateGrid()
-			}
-
-			const recollection = localStorage.getItem(storageKey) ?? "false"
-			checkbox.checked = recollection === "true"
-				? true
-				: false
-			updateGrid()
-		}()
-
-	</script>
 </body>
 </html>
 
