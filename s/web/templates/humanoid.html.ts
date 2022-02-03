@@ -16,9 +16,9 @@ export default ({debug}: {debug: boolean}) => html`
 		? html`
 			<script defer src="/node_modules/es-module-shims/dist/es-module-shims.js"></script>
 			<script defer type=importmap-shim src="/importmap.json"></script>
-			<script defer type=module-shim src="/main.js"></script>
+			<script defer type=module-shim src="/humanoid.js"></script>
 		`
-		: html`<script defer type=module src="main.bundle.min.js"></script>`}
+		: html`<script defer type=module src="humanoid.bundle.min.js"></script>`}
 </head>
 <body data-pointer-lock="false">
 	<div class=loading>
