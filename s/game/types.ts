@@ -1,6 +1,6 @@
 
 import type {V3} from "./utils/v3.js"
-import {ThumbStick} from "../thumbtastic/thumb-stick.js"
+import {ThumbStick} from "./utils/thumbsticks/thumb-stick.js"
 import type {makeKeyListener} from "./utils/key-listener.js"
 import type {makeMouseLooker} from "./utils/mouse-looker.js"
 

@@ -1,10 +1,7 @@
 
-import {V3} from "../game/utils/v3.js"
-import * as v3 from "../game/utils/v3.js"
-
-import {Quality} from "../game/types.js"
+import {Quality} from "../types.js"
+import {makeGame} from "../make-game.js"
 import {Await} from "xiome/x/types/await.js"
-import {makeGame} from "../game/make-game.js"
 
 export function getGameQualityMode(): Quality {
 	return localStorage.getItem("benevolent-high-quality") === "true"
@@ -53,21 +50,6 @@ export function setupFullscreenToggling(attribute: string, fullscreenButton: HTM
 	else {
 		fullscreenButton.remove()
 	}
-}
-
-export async function setupHumanoidDemo({middle, game}: {
-		middle: V3
-		game: Await<ReturnType<typeof makeGame>>
-	}) {
-	let {getCameraPosition} = await game.spawn.camera()
-	await Promise.all([
-		game.spawn.environment({getCameraPosition: () => getCameraPosition()}),
-		game.spawn.character(),
-	])
-	const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
-	await game.spawn.crate([10, 5, 10])
-	await game.spawn.dunebuggy([0, 0, 0])
-	getCameraPosition = player.getCameraPosition
 }
 
 export function enableDebugMeshPicking({game}: {game: Await<ReturnType<typeof makeGame>>}) {

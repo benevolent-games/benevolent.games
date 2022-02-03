@@ -21,8 +21,6 @@ export async function makeGame({
 		middle?: V3
 	}) {
 
-	console.log("💅", quality)
-
 	const canvas = document.createElement("canvas")
 	const engine = new BABYLON.Engine(canvas)
 	const scene = new BABYLON.Scene(engine)

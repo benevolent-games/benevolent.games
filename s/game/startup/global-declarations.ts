@@ -7,3 +7,11 @@ export declare interface Window {
 		typeof import("babylonjs-materials") &
 		typeof import("babylonjs-loaders")
 }
+
+declare global {
+	interface Window {
+		scene: BABYLON.Scene
+		engine: BABYLON.Engine
+		pick: BABYLON.AbstractMesh
+	}
+}
