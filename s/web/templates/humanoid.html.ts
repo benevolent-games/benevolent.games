@@ -4,10 +4,6 @@ import headBasicsHtml from "../partials/head-basics.html.js"
 
 import maximizeSvg from "../icons/maximize.svg.js"
 import minimizeSvg from "../icons/minimize.svg.js"
-import wifiSvg from "../icons/wifi.svg.js"
-import wifiOffSvg from "../icons/wifi-off.svg.js"
-import userPlusSvg from "../icons/user-plus.svg.js"
-import powerSvg from "../icons/power.svg.js"
 
 export default ({debug}: {debug: boolean}) => html`
 
@@ -39,18 +35,7 @@ export default ({debug}: {debug: boolean}) => html`
 				<span class=min>${minimizeSvg}</span>
 			</button>
 		</div>
-		<div class=networking data-connected=false data-host=true>
-			<div class=net>
-				<span class=net-on title="connected">${wifiSvg}</span>
-				<span class=net-off title="not connected">${wifiOffSvg}</span>
-			</div>
-			<button class=starthosting title="host multiplayer game">
-				${powerSvg}
-			</button>
-			<button class=invite disabled title="invite players">
-				${userPlusSvg}
-			</button>
-		</div>
+		<div class=networking></div>
 	</div>
 	<div class="mobile">
 		<thumb-stick class=left></thumb-stick>

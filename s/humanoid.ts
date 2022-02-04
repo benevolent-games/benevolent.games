@@ -31,7 +31,9 @@ void async function main() {
 	await game.spawn.crate([10, 5, 10])
 	await game.spawn.dunebuggy([0, 0, 0])
 
-	makeNetworking({})
+	makeNetworking({
+		networkingPanel: document.querySelector(".networking")
+	})
 
 	finishLoading()
 }()

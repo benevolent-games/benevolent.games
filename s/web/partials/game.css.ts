@@ -105,8 +105,25 @@ canvas {
 	background: #111a;
 }
 
+.game .buttonbar > div span {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .game .buttonbar svg {
 	line-height: 0;
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+.game .buttonbar .busy {
+	animation: 5s linear spin;
 }
 
 .game .buttonbar .fullscreen[data-fullscreen="false"] .min {
@@ -115,34 +132,6 @@ canvas {
 
 .game .buttonbar .fullscreen[data-fullscreen="true"] .max {
 	display: none;
-}
-
-.game .buttonbar .networking .net > span {
-	display: none;
-}
-
-.game .buttonbar .networking[data-connected="true"] .net-on {
-	display: block;
-}
-
-.game .buttonbar .networking[data-connected="false"] .net-off {
-	display: block;
-}
-
-.game .buttonbar .networking .starthosting {
-	display: none;
-}
-
-.game .buttonbar .networking[data-connected="false"][data-host="true"] .starthosting {
-	display: block;
-}
-
-.game .buttonbar .networking .invite {
-	display: none;
-}
-
-.game .buttonbar .networking[data-connected="true"][data-host="true"] .invite {
-	display: block;
 }
 
 .game body[data-pointer-lock="true"] .mobile {
