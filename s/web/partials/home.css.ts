@@ -4,9 +4,12 @@ import {noop as css} from "../utils/template-noop.js"
 export default () => css`
 
 .home {
-	margin: auto;
-	max-width: 960px;
 	padding-bottom: 10em;
+}
+
+.home .slice {
+	max-width: 960px;
+	margin: auto;
 }
 
 .home h1 {
@@ -54,6 +57,9 @@ export default () => css`
 }
 
 .home .gamegrid {
+	margin: auto;
+	max-width: 1600px;
+
 	list-style: none;
 	display: flex;
 	flex-direction: row;
@@ -64,14 +70,19 @@ export default () => css`
 }
 
 .home .gamegrid li {
+	user-select: none;
 	position: relative;
 	width: 10em;
 	padding: 0.2em;
-	cursor: pointer;
+	cursor: default;
 	display: flex;
 	flex-direction: column;
 	transform: scale(0.95);
 	transition: transform 200ms ease;
+}
+
+.home .gamegrid li[data-playable] {
+	cursor: pointer;
 }
 
 @media (max-width: 510px) {
@@ -80,8 +91,8 @@ export default () => css`
 	}
 }
 
-.home .gamegrid li:hover,
-.home .gamegrid li:focus {
+.home .gamegrid li[data-playable]:hover,
+.home .gamegrid li[data-playable]:focus {
 	transform: scale(1);
 }
 
@@ -89,11 +100,77 @@ export default () => css`
 	flex: 0 0 auto;
 }
 
+.home .gamegrid li:first-child {
+	order: 1;
+}
+.home .gamegrid:before {
+	content: "";
+	display: block;
+	flex: 0 0 100%;
+	order: 2;
+}
+.home .gamegrid li:not(:first-child) {
+	order: 3;
+}
+
+.home .gamegrid li:not([data-playable]) {
+	opacity: 0.3;
+}
+
+.home .gamegrid li a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.home .gamegrid :is(.hq, .comingsoon) {
+	opacity: 0.7;
+	font-size: 0.6em;
+	display: flex;
+	justify-content: center;
+}
+
+.home .gamegrid :is(.hq, .comingsoon) > span {
+	display: block;
+	color: white;
+	padding: 0.1em 0.5em;
+}
+
+.home .gamegrid .hq > span {
+	visibility: hidden;
+	border-radius: 0.5em 0.5em 0 0;
+	background: #00fff659;
+	font-family: sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+	transition: opacity 200ms linear;
+}
+
+.home .gamegrid[data-high-quality="true"] li .hq > span {
+	visibility: visible;
+	opacity: 0.3;
+}
+
+.home .gamegrid li[data-playable]:is(:hover, :focus) .hq > span {
+	opacity: 1;
+}
+
+.home .gamegrid .comingsoon > span {
+	visibility: hidden;
+	opacity: 0.5;
+	font-family: sans-serif;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+.home .gamegrid .comingsoon[data-active] > span {
+	visibility: visible;
+}
+
 .home .gamegrid .poster {
 	position: relative;
 }
 
-.home .gamegrid .poster::before {
+.home .gamegrid li[data-playable] .poster::before {
 	z-index: 1;
 	position: absolute;
 	content: "";
@@ -106,22 +183,23 @@ export default () => css`
 	background: no-repeat url("/assets/website/play.svg");
 	background-position: center center;
 	background-size: 3em;
-	filter: invert(1) drop-shadow(0px 0px 5px rgba(0, 0, 0, 80%)) opacity(50%);
+	filter: invert(1) drop-shadow(0px 0px 5px rgba(0, 0, 0, 80%)) opacity(0%);
 	transition: all 200ms ease;
 }
 
-.home .gamegrid li:hover .poster::before,
-.home .gamegrid li:focus .poster::before {
+.home .gamegrid li[data-playable]:hover .poster::before,
+.home .gamegrid li[data-playable]:focus .poster::before {
 	background-size: 4em;
 	filter: invert(1) drop-shadow(0px 0px 5px rgba(0, 0, 0, 80%)) opacity(100%);
 }
 
-.home .gamegrid li:active .poster::before {
+.home .gamegrid li[data-playable]:active .poster::before {
 	background-size: 3.5em;
 	filter: invert(1) drop-shadow(0px 0px 5px rgba(0, 0, 0, 80%)) opacity(75%);
 }
 
 .home .gamegrid img {
+	pointer-events: none;
 	display: block;
 	width: 100%;
 	box-shadow: 0 0.2em 1em 0.5em #0006;
@@ -129,24 +207,10 @@ export default () => css`
 }
 
 .home .gamegrid .title {
+	display: none;
 	flex: 1 0 auto;
 	z-index: 1;
 	position: relative;
-}
-
-.home .gamegrid[data-high-quality="true"] li::before {
-	content: "HQ ENABLED";
-	display: block;
-	position: absolute;
-	z-index: 1;
-	top: 0.5em;
-	right: 0.5em;
-	font-size: 0.6em;
-	padding: 0.5em;
-	background: #9100b644;
-	border-radius: 0.5em;
-	font-family: sans-serif;
-	font-weight: bold;
 }
 
 .home .qualityselector {
@@ -163,7 +227,7 @@ export default () => css`
 	opacity: 0.6;
 }
 
-.home main > hr {
+.home .slice > hr {
 	width: 50%;
 	width: calc(50% - 1em);
 	margin: 3em auto;
@@ -182,6 +246,10 @@ export default () => css`
 
 .home section p {
 	max-width: 32rem;
+}
+
+.home h2.believe {
+	text-align: center;
 }
 
 .home .explaingrid {
@@ -205,7 +273,7 @@ export default () => css`
 	margin-top: 0.2em;
 }
 
-.home main > footer {
+.home .slice > footer {
 	max-width: 32em;
 	margin: auto;
 	text-align: center;
