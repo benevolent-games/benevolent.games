@@ -24,7 +24,7 @@ const games: {
 function gamelink(link: string, content: string) {
 	return link
 		? html`<a class="unit" ${link ?"data-playable" :""} href="${link}">${content}</a>`
-		: html`<div class="unit">${content}</div>`
+		: html`<div class="unit" tabindex="0">${content}</div>`
 }
 
 export default ({debug}: {debug: boolean}) => html`

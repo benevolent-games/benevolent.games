@@ -114,6 +114,11 @@ export default () => css`
 
 .home .gamegrid .unit:not([data-playable]) {
 	opacity: 0.4;
+	transition: opacity 200ms linear;
+}
+
+.home .gamegrid .unit:not([data-playable]):is(:hover, :focus) {
+	opacity: 1;
 }
 
 .home .gamegrid a {
