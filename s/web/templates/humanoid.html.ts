@@ -2,9 +2,9 @@
 import {noop as html} from "../utils/template-noop.js"
 import headBasicsHtml from "../partials/head-basics.html.js"
 
-import maximizeSvg from "../icons/maximize.svg.js"
-import minimizeSvg from "../icons/minimize.svg.js"
 import benevolentSvg from "../icons/benevolent.svg.js"
+import maximizeSvg from "../icons/feather/maximize.svg.js"
+import minimizeSvg from "../icons/feather/minimize.svg.js"
 
 export default ({debug}: {debug: boolean}) => html`
 

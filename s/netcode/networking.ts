@@ -4,12 +4,12 @@ import {sessionLink, parseHashForSessionId} from "sparrow-rtc"
 import {debounce, nap, snapstate} from "@chasemoskal/snapstate"
 import {render as litRender, svg, html, TemplateResult} from "lit"
 
-import loaderSvg from "../web/icons/loader.svg.js"
-import wifiSvg from "../web/icons/wifi.svg.js"
-import wifiOffSvg from "../web/icons/wifi-off.svg.js"
-import powerSvg from "../web/icons/power.svg.js"
-import userPlusSvg from "../web/icons/user-plus.svg.js"
-import crownSvg from "../web/icons/crown.svg.js"
+import loaderSvg from "../web/icons/feather/loader.svg.js"
+import wifiSvg from "../web/icons/feather/wifi.svg.js"
+import wifiOffSvg from "../web/icons/feather/wifi-off.svg.js"
+import powerSvg from "../web/icons/feather/power.svg.js"
+import userPlusSvg from "../web/icons/feather/user-plus.svg.js"
+import crownSvg from "../web/icons/tabler/crown.svg.js"
 
 const sessionTerm = "join"
 
