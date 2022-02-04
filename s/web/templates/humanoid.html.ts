@@ -27,7 +27,6 @@ export default ({debug}: {debug: boolean}) => html`
 	<div class=loading>
 		<span>♻️ loading</span>
 	</div>
-	<ul class=stats></ul>
 	<div class=buttonbar>
 		<div class=controls>
 			<button class=fullscreen data-fullscreen=false title="toggle fullscreen">
@@ -36,6 +35,7 @@ export default ({debug}: {debug: boolean}) => html`
 			</button>
 		</div>
 		<div class=networking></div>
+		<div class=stats></div>
 	</div>
 	<div class="mobile">
 		<thumb-stick class=left></thumb-stick>

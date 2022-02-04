@@ -37,20 +37,15 @@ canvas {
 }
 
 .stats {
-	display: inline-block;
-	position: fixed;
-	top: 0;
-	right: 0;
-	padding: 0.5em;
-	list-style: none;
 	font-family: monospace;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-left: auto;
 }
 
 .stats p {
 	background: #1118;
-	padding: 0.5rem;
-	color: white;
-	border-radius: 0.5rem;
 }
 
 .game .buttonbar {
