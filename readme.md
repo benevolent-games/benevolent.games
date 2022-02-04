@@ -7,6 +7,8 @@
 
 community-powered games
 
+see the new [discussions board](https://github.com/benevolent-bees/benevolent.games/discussions) for updates and asking questions
+
 join our [discord](https://discord.gg/BnZx2utdev)
 
 <br/>
