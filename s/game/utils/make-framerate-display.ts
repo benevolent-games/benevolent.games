@@ -3,7 +3,7 @@ export function makeFramerateDisplay({getFramerate}: {
 		getFramerate: () => number
 	}) {
 
-	const element = document.createElement("p")
+	const element = document.createElement("div")
 	element.className = "framerate"
 	element.textContent = "-"
 

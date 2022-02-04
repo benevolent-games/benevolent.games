@@ -1,9 +1,7 @@
 
+import {getRando, Rando} from "dbmage"
+import {snapstate} from "@chasemoskal/snapstate"
 import {render as litRender, html, TemplateResult} from "lit"
-
-import {DamnId} from "xiome/x/toolbox/damnedb/damn-id.js"
-import {getRando, Rando} from "xiome/x/toolbox/get-rando.js"
-import {snapstate} from "xiome/x/toolbox/snapstate/snapstate.js"
 
 console.log("💙 heartbeat")
 
@@ -56,7 +54,6 @@ function initializeHostSession({rando, write}: {
 }
 
 function initializeClientSession({write}: {
-
 		write: (template: TemplateResult) => void
 	}) {
 	const {readable, writable, subscribe} = snapstate({
