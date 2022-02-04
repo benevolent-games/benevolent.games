@@ -48,11 +48,13 @@
 		"typescript": "^4.5.5"
 	},
 	"dependencies": {
+		"@chasemoskal/snapstate": "^0.0.0-dev.6",
 		"ammo.js": "github:kripken/ammo.js",
 		"ammojs-typed": "1.0.6",
 		"babylonjs": "5.0.0-alpha.65",
 		"babylonjs-loaders": "5.0.0-alpha.65",
 		"babylonjs-materials": "5.0.0-alpha.65",
+		"dbmage": "^0.0.0-dev.5",
 		"es-module-shims": "^1.4.3",
 		"import": "^0.0.6",
 		"lit": "^2.1.2",
