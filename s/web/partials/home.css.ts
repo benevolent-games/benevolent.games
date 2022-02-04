@@ -114,7 +114,7 @@ export default () => css`
 }
 
 .home .gamegrid li:not([data-playable]) {
-	opacity: 0.3;
+	opacity: 0.4;
 }
 
 .home .gamegrid li a {
@@ -156,7 +156,7 @@ export default () => css`
 
 .home .gamegrid .comingsoon > span {
 	visibility: hidden;
-	opacity: 0.5;
+	opacity: 1;
 	font-family: sans-serif;
 	font-weight: bold;
 	text-transform: uppercase;
