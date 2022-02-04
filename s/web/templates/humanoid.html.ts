@@ -2,6 +2,13 @@
 import {noop as html} from "../utils/template-noop.js"
 import headBasicsHtml from "../partials/head-basics.html.js"
 
+import maximizeSvg from "../icons/maximize.svg.js"
+import minimizeSvg from "../icons/minimize.svg.js"
+import wifiSvg from "../icons/wifi.svg.js"
+import wifiOffSvg from "../icons/wifi-off.svg.js"
+import userPlusSvg from "../icons/user-plus.svg.js"
+import powerSvg from "../icons/power.svg.js"
+
 export default ({debug}: {debug: boolean}) => html`
 
 <!doctype html>
@@ -26,13 +33,24 @@ export default ({debug}: {debug: boolean}) => html`
 	</div>
 	<ul class=stats></ul>
 	<div class=buttonbar>
-		<button class=fullscreen data-fullscreen=false title="toggle fullscreen">
-			<div class=icon>
-				<!-- feather icons, "maximize" and "minimize", from https://feathericons.com/ -->
-				<svg class="max feather feather-maximize" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-				<svg class="min feather feather-minimize" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+		<div class=controls>
+			<button class=fullscreen data-fullscreen=false title="toggle fullscreen">
+				<span class=max>${maximizeSvg}</span>
+				<span class=min>${minimizeSvg}</span>
+			</button>
+		</div>
+		<div class=networking data-connected=false data-host=true>
+			<div class=net>
+				<span class=net-on title="connected">${wifiSvg}</span>
+				<span class=net-off title="not connected">${wifiOffSvg}</span>
 			</div>
-		</button>
+			<button class=starthosting title="host multiplayer game">
+				${powerSvg}
+			</button>
+			<button class=invite disabled title="invite players">
+				${userPlusSvg}
+			</button>
+		</div>
 	</div>
 	<div class="mobile">
 		<thumb-stick class=left></thumb-stick>

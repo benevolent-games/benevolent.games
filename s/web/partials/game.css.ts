@@ -47,7 +47,7 @@ canvas {
 }
 
 .stats p {
-	background: #1114;
+	background: #1118;
 	padding: 0.5rem;
 	color: white;
 	border-radius: 0.5rem;
@@ -57,24 +57,52 @@ canvas {
 	position: absolute;
 	top: 0;
 	left: 0;
+	right: 0;
 	padding: 0.5em;
+	display: flex;
+	flex-direction: row;
+	gap: 0.2em;
 }
 
-.game .buttonbar button {
-	opacity: 0.6;
+.game body[data-pointer-lock="true"] .buttonbar {
+	opacity: 0.4;
+}
 
-	border: none;
-	padding: 0;
-	color: inherit;
-
-	cursor: pointer;
-	background: #111a;
-	padding: 0.5rem;
+.game .buttonbar > div {
+	padding: 0.2em;
 	border-radius: 0.5rem;
+	background: #0006;
+	display: flex;
+	flex-direction: row;
+	gap: 0.2em;
+}
+
+.game .buttonbar > div > :is(button, div) {
+	padding: 0.2rem;
+	border: 1px solid transparent;
+	border-radius: 0.5rem;
+}
+
+.game .buttonbar > div > button {
+	color: inherit;
+	padding: 0.2rem 0.3rem;
+
+	opacity: 0.8;
+	cursor: pointer;
+	background: #1118;
+}
+
+.game .buttonbar > div > div {
+	opacity: 0.5;
 }
 
 .game .buttonbar button:hover {
 	opacity: 1;
+	border: 1px solid currentColor;
+}
+
+.game .buttonbar button:active {
+	background: #111a;
 }
 
 .game .buttonbar svg {
@@ -89,8 +117,32 @@ canvas {
 	display: none;
 }
 
-.game body[data-pointer-lock="true"] .buttonbar .fullscreen {
-	opacity: 0.1;
+.game .buttonbar .networking .net > span {
+	display: none;
+}
+
+.game .buttonbar .networking[data-connected="true"] .net-on {
+	display: block;
+}
+
+.game .buttonbar .networking[data-connected="false"] .net-off {
+	display: block;
+}
+
+.game .buttonbar .networking .starthosting {
+	display: none;
+}
+
+.game .buttonbar .networking[data-connected="false"][data-host="true"] .starthosting {
+	display: block;
+}
+
+.game .buttonbar .networking .invite {
+	display: none;
+}
+
+.game .buttonbar .networking[data-connected="true"][data-host="true"] .invite {
+	display: block;
 }
 
 .game body[data-pointer-lock="true"] .mobile {
