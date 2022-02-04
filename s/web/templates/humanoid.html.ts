@@ -4,6 +4,7 @@ import headBasicsHtml from "../partials/head-basics.html.js"
 
 import maximizeSvg from "../icons/maximize.svg.js"
 import minimizeSvg from "../icons/minimize.svg.js"
+import benevolentSvg from "../icons/benevolent.svg.js"
 
 export default ({debug}: {debug: boolean}) => html`
 
@@ -28,6 +29,11 @@ export default ({debug}: {debug: boolean}) => html`
 		<span>♻️ loading</span>
 	</div>
 	<div class=buttonbar>
+		<div>
+			<a target="_blank" href="/" title="benevolent.games">
+				${benevolentSvg}
+			</a>
+		</div>
 		<div class=controls>
 			<button class=fullscreen data-fullscreen=false title="toggle fullscreen">
 				<span class=max>${maximizeSvg}</span>

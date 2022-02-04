@@ -64,7 +64,6 @@ canvas {
 }
 
 .game .buttonbar > div {
-	padding: 0.2em;
 	border-radius: 0.5rem;
 	background: #0006;
 	display: flex;
@@ -72,13 +71,13 @@ canvas {
 	gap: 0.2em;
 }
 
-.game .buttonbar > div > :is(button, div) {
+.game .buttonbar > div > :is(button, div, a) {
 	padding: 0.2rem;
 	border: 1px solid transparent;
 	border-radius: 0.5rem;
 }
 
-.game .buttonbar > div > button {
+.game .buttonbar > div > :is(button, a) {
 	color: inherit;
 	padding: 0.2rem 0.3rem;
 
@@ -91,16 +90,16 @@ canvas {
 	opacity: 0.5;
 }
 
-.game .buttonbar button:hover {
+.game .buttonbar :is(button, a):hover {
 	opacity: 1;
 	border: 1px solid currentColor;
 }
 
-.game .buttonbar button:active {
+.game .buttonbar :is(button, a):active {
 	background: #111a;
 }
 
-.game .buttonbar > div span {
+.game .buttonbar > div :is(span, a) {
 	display: flex;
 	justify-content: center;
 	align-items: center;
