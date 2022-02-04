@@ -59,7 +59,7 @@
 		"import": "^0.0.6",
 		"lit": "^2.1.2",
 		"rollup-plugin-sizes": "^1.0.4",
-		"sparrow-rtc": "^0.0.0-dev.1",
+		"sparrow-rtc": "0.0.0-dev.2",
 		"xiome": "^0.0.20"
 	},
 	"repository": {
