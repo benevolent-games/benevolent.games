@@ -112,6 +112,24 @@ canvas {
 	height: 1.5rem;
 }
 
+.game .buttonbar .invite {
+	position: relative;
+}
+.game .buttonbar .invite[data-copied]::after {
+	content: "copied link";
+	display: block;
+	width: max-content;
+	position: absolute;
+	top: 0;
+	left: 90%;
+	padding: 0.2em 0.3em;
+	border-radius: 0.5em;
+	background: green;
+	color: white;
+	text-shadow: 0 1px 2px #0006;
+	pointer-events: none;
+}
+
 @keyframes spin {
 	from { transform: rotate(0deg); }
 	to { transform: rotate(360deg); }

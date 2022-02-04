@@ -1,6 +1,6 @@
 
 import {getRando, Rando} from "dbmage"
-import {nap, snapstate} from "@chasemoskal/snapstate"
+import {debounce, nap, snapstate} from "@chasemoskal/snapstate"
 import {sessionLink, parseHashForSessionId} from "sparrow-rtc"
 import {render as litRender, svg, html, TemplateResult} from "lit"
 
@@ -33,6 +33,7 @@ function makeNetworkingState() {
 		host: false,
 		sessionId: undefined as string | undefined,
 		loading: false,
+		inviteCopied: false,
 	})
 }
 
@@ -48,6 +49,7 @@ function initializeHostSession({rando, state, write}: {
 		writable.sessionId = rando.randomId().toString()
 		writable.loading = false
 	}
+	const invite = makeInviter(state)
 	function render() {
 		write(html`
 			${renderNetIndicator(readable)}
@@ -56,10 +58,7 @@ function initializeHostSession({rando, state, write}: {
 				: null}
 			${renderLoadingSpinner(readable.loading)}
 			${readable.sessionId
-				? renderInviteButton({
-					readable,
-					invite: () => makeInviteLink(readable.sessionId),
-				})
+				? renderInviteButton({readable, invite})
 				: !readable.loading
 					? html`
 						<button class=starthosting title="host multiplayer game" @click=${startHosting}>
@@ -78,23 +77,29 @@ function initializeClientSession({state, write}: {
 		write: (template: TemplateResult) => void
 	}) {
 	const {readable} = state
+	const invite = makeInviter(state)
 	function render() {
 		write(html`
 			${renderNetIndicator(readable)}
 			${renderLoadingSpinner(readable.loading)}
-			${renderInviteButton({
-				readable,
-				invite: () => makeInviteLink(readable.sessionId),
-			})}
+			${renderInviteButton({readable, invite})}
 		`)
 	}
 	render()
 	state.subscribe(render)
 }
 
-function makeInviteLink(sessionId: string) {
-	const link = sessionLink(location.href, sessionTerm, sessionId)
-	console.log("INVITE LINK", link)
+function makeInviter(state: ReturnType<typeof makeNetworkingState>) {
+	const hideInviteCopiedIndicator = debounce(1000, () => {
+		state.writable.inviteCopied = false
+	})
+	return function() {
+		const {sessionId} = state.readable
+		state.writable.inviteCopied = true
+		const link = sessionLink(location.href, sessionTerm, sessionId)
+		navigator.clipboard.writeText(link)
+		hideInviteCopiedIndicator()
+	}
 }
 
 function renderLoadingSpinner(loading: boolean) {
@@ -118,10 +123,10 @@ function renderInviteButton({readable, invite}: {
 		invite: () => void
 		readable: ReturnType<typeof makeNetworkingState>["readable"]
 	}) {
-	const {sessionId} = readable
+	const {sessionId, inviteCopied} = readable
 	return sessionId
 		? html`
-			<button class=invite title="copy invite link" @click=${invite}>
+			<button class=invite ?data-copied=${inviteCopied} title="copy invite link" @click=${invite}>
 				${svg(userPlusSvg)}
 			</button>
 		`
