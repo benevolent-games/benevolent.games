@@ -41,12 +41,12 @@ export default () => css`
 
 .home h3 {
 	font-size: 1.5em;
-	color: white;
+	color: #ccc;
 }
 
 .home h4 {
 	font-size: 1em;
-	color: #ccc;
+	color: #bbb;
 }
 
 .home main > * + div {

@@ -4,7 +4,7 @@ import headBasicsHtml from "../partials/head-basics.html.js"
 
 const urls = {
 	discord: "https://discord.gg/BnZx2utdev",
-	github: "https://github.com/chase-moskal/benevolent.games",
+	github: "https://github.com/benevolent-bees/benevolent.games",
 }
 
 export default ({debug}: {debug: boolean}) => html`
@@ -48,8 +48,10 @@ export default ({debug}: {debug: boolean}) => html`
 		<section>
 			<h2>community-powered games</h2>
 			<p>we're all growing tired of the greed and corporatism of the modern gaming industry. <em>let's make something different.</em></p>
-			<p>here at benevolent games, we're working hard to reinvent game development.</p>
-			<p><strong>humanoid</strong> is our first prototype project. it's a sandbox where we can experiment with new game ideas. we just got started, so it's seriously not playable yet, we're just assembling the basics.. but we make progress every week ;)</p>
+			<h3>introducing humanoid</h3>
+			<p><strong>humanoid</strong> is a prototype sandbox game template. it's where we experiment with new game mechanics, building a common platform for developers to make new games. it's an early prototype, and we make progress every week.</p>
+			<p>all of the source code and art assets are 100% open source.</p>
+			<br/>
 			<p>
 				<a href="${urls.discord}">➡️ join benevolent on discord</a>
 				<br/>
@@ -62,7 +64,7 @@ export default ({debug}: {debug: boolean}) => html`
 			<div>
 				<h3>🌎 run on any device</h3>
 				<h4>let's invite everyone to play.</h4>
-				<p>laptops, desktops, phones, and even vr. we develop games for the web, so installations aren't necessary.</p>
+				<p>laptops, desktops, phones, and eventually, even vr. we develop games for the web, where no installations are required.</p>
 			</div>
 			<div>
 				<h3>📖 be open source</h3>
