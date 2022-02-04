@@ -7,6 +7,10 @@ import {makeNetworking} from "./netcode/networking.js"
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
 
+	await makeNetworking({
+		networkingPanel: document.querySelector(".networking")
+	})
+
 	const {game, quality, middle, finishLoading} = await gameSetup({
 		statsArea: document.querySelector(".stats"),
 		fullscreenButton: document.querySelector(".buttonbar .fullscreen"),
@@ -30,10 +34,6 @@ void async function main() {
 
 	await game.spawn.crate([10, 5, 10])
 	await game.spawn.dunebuggy([0, 0, 0])
-
-	makeNetworking({
-		networkingPanel: document.querySelector(".networking")
-	})
 
 	finishLoading()
 }()

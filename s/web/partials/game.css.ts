@@ -116,7 +116,7 @@ canvas {
 	position: relative;
 }
 .game .buttonbar .invite[data-copied]::after {
-	content: "copied link";
+	content: "copied invite link";
 	display: block;
 	width: max-content;
 	position: absolute;

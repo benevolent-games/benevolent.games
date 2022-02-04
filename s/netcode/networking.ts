@@ -1,7 +1,7 @@
 
 import {getRando, Rando} from "dbmage"
-import {debounce, nap, snapstate} from "@chasemoskal/snapstate"
 import {sessionLink, parseHashForSessionId} from "sparrow-rtc"
+import {debounce, nap, snapstate} from "@chasemoskal/snapstate"
 import {render as litRender, svg, html, TemplateResult} from "lit"
 
 import loaderSvg from "../web/icons/loader.svg.js"
@@ -77,12 +77,18 @@ function initializeClientSession({state, write}: {
 		write: (template: TemplateResult) => void
 	}) {
 	const {readable} = state
+	state.writable.loading = true
+	setTimeout(() => {
+		state.writable.loading = false
+	}, 2000)
 	const invite = makeInviter(state)
 	function render() {
 		write(html`
 			${renderNetIndicator(readable)}
 			${renderLoadingSpinner(readable.loading)}
-			${renderInviteButton({readable, invite})}
+			${!state.readable.loading
+				? renderInviteButton({readable, invite})
+				: null}
 		`)
 	}
 	render()
@@ -90,7 +96,7 @@ function initializeClientSession({state, write}: {
 }
 
 function makeInviter(state: ReturnType<typeof makeNetworkingState>) {
-	const hideInviteCopiedIndicator = debounce(1000, () => {
+	const hideInviteCopiedIndicator = debounce(2000, () => {
 		state.writable.inviteCopied = false
 	})
 	return function() {
