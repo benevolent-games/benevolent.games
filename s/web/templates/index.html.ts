@@ -17,6 +17,7 @@ const games: {
 	{poster: "forbearance.webp", title: "forbearance"},
 	{poster: "muskets-of-obligation.webp", title: "muskets of obligation"},
 	{poster: "the-hopeless.webp", title: "the hopeless"},
+	{poster: "break-action.webp", title: "break-action"},
 	{poster: "will-to-die.webp", title: "will to die"},
 ]
 
