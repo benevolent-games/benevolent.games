@@ -22,8 +22,8 @@ const games: {
 
 function gamelink(link: string, content: string) {
 	return link
-		? html`<a href="${link}">${content}</a>`
-		: html`<div>${content}</div>`
+		? html`<a class="unit" ${link ?"data-playable" :""} href="${link}">${content}</a>`
+		: html`<div class="unit">${content}</div>`
 }
 
 export default ({debug}: {debug: boolean}) => html`
@@ -47,24 +47,22 @@ export default ({debug}: {debug: boolean}) => html`
 				</div>
 			</div>
 		</h1>
-		<ol class="gamegrid" data-high-quality="false">
+		<nav class="gamegrid" data-high-quality="false">
 			${games.map(({link, poster, title}) => html`
-				<li ${link ?"data-playable" :""}>
-					${gamelink(link, html`
-						<div class="hq">
-							<span>hq enabled</span>
-						</div>
-						<div class="poster">
-							<img src="/assets/website/posters/${poster}" alt="${title}"/>
-						</div>
-						<div class="comingsoon" ${link ?"" :"data-active"}>
-							<span>coming soon</span>
-						</div>
-						<div class="title">${title}</div>
-					`)}
-				</li>
+				${gamelink(link, html`
+					<div class="hq">
+						<span>hq enabled</span>
+					</div>
+					<div class="poster">
+						<img src="/assets/website/posters/${poster}" alt="${title}"/>
+					</div>
+					<div class="comingsoon" ${link ?"" :"data-active"}>
+						<span>coming soon</span>
+					</div>
+					<div class="title">${title}</div>
+				`)}
 			`).join("\n")}
-		</ol>
+		</nav>
 		<div class="qualityselector">
 			<label>
 				<input class="qualitycheckbox" type="checkbox"/>

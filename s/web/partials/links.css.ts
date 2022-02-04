@@ -4,12 +4,12 @@ import {noop as css} from "../utils/template-noop.js"
 export default () => css`
 
 a {
-	color: #fc0;
+	color: #ffe372;
 	text-decoration: none;
 }
 
 a:visited {
-	color: #fb0;
+	color: #d9be50;
 }
 
 a:hover, a:focus {

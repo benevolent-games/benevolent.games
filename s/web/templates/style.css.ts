@@ -19,6 +19,11 @@ html {
 	font-family: "PT Serif", serif;
 }
 
+*:focus {
+	outline: 2px solid #ffe372;
+	border-radius: 0.25em;
+}
+
 ${linksCss()}
 ${homeCss()}
 ${gameCss()}

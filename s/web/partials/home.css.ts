@@ -60,7 +60,6 @@ export default () => css`
 	margin: auto;
 	max-width: 1600px;
 
-	list-style: none;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -69,7 +68,7 @@ export default () => css`
 	text-align: center;
 }
 
-.home .gamegrid li {
+.home .gamegrid .unit {
 	user-select: none;
 	position: relative;
 	width: 10em;
@@ -81,26 +80,26 @@ export default () => css`
 	transition: transform 200ms ease;
 }
 
-.home .gamegrid li[data-playable] {
+.home .gamegrid .unit[data-playable] {
 	cursor: pointer;
 }
 
 @media (max-width: 510px) {
-	.home .gamegrid li {
+	.home .gamegrid .unit {
 		width: 6em;
 	}
 }
 
-.home .gamegrid li[data-playable]:hover,
-.home .gamegrid li[data-playable]:focus {
+.home .gamegrid .unit[data-playable]:hover,
+.home .gamegrid .unit[data-playable]:focus {
 	transform: scale(1);
 }
 
-.home .gamegrid li > * {
+.home .gamegrid .unit > * {
 	flex: 0 0 auto;
 }
 
-.home .gamegrid li:first-child {
+.home .gamegrid .unit:first-child {
 	order: 1;
 }
 .home .gamegrid:before {
@@ -109,15 +108,15 @@ export default () => css`
 	flex: 0 0 100%;
 	order: 2;
 }
-.home .gamegrid li:not(:first-child) {
+.home .gamegrid .unit:not(:first-child) {
 	order: 3;
 }
 
-.home .gamegrid li:not([data-playable]) {
+.home .gamegrid .unit:not([data-playable]) {
 	opacity: 0.4;
 }
 
-.home .gamegrid li a {
+.home .gamegrid a {
 	text-decoration: none;
 	color: inherit;
 }
@@ -145,12 +144,12 @@ export default () => css`
 	transition: opacity 200ms linear;
 }
 
-.home .gamegrid[data-high-quality="true"] li .hq > span {
+.home .gamegrid[data-high-quality="true"] .unit .hq > span {
 	visibility: visible;
 	opacity: 0.3;
 }
 
-.home .gamegrid li[data-playable]:is(:hover, :focus) .hq > span {
+.home .gamegrid .unit[data-playable]:is(:hover, :focus) .hq > span {
 	opacity: 1;
 }
 
@@ -170,7 +169,7 @@ export default () => css`
 	position: relative;
 }
 
-.home .gamegrid li[data-playable] .poster::before {
+.home .gamegrid .unit[data-playable] .poster::before {
 	z-index: 1;
 	position: absolute;
 	content: "";
@@ -187,13 +186,13 @@ export default () => css`
 	transition: all 200ms ease;
 }
 
-.home .gamegrid li[data-playable]:hover .poster::before,
-.home .gamegrid li[data-playable]:focus .poster::before {
+.home .gamegrid .unit[data-playable]:hover .poster::before,
+.home .gamegrid .unit[data-playable]:focus .poster::before {
 	background-size: 4em;
 	filter: invert(1) drop-shadow(0px 0px 5px rgba(0, 0, 0, 80%)) opacity(100%);
 }
 
-.home .gamegrid li[data-playable]:active .poster::before {
+.home .gamegrid .unit[data-playable]:active .poster::before {
 	background-size: 3.5em;
 	filter: invert(1) drop-shadow(0px 0px 5px rgba(0, 0, 0, 80%)) opacity(75%);
 }
