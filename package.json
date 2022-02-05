@@ -34,7 +34,7 @@
 	},
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^13.1.3",
-		"chokidar-cli": "^3.0.0",
+		"chokidar-cli": "^1.2.0",
 		"cynic": "0.1.0-dev.16",
 		"http-server": "^14.1.0",
 		"importly": "^0.2.0",
@@ -55,11 +55,11 @@
 		"babylonjs-loaders": "5.0.0-alpha.65",
 		"babylonjs-materials": "5.0.0-alpha.65",
 		"dbmage": "^0.0.0-dev.5",
-		"es-module-shims": "^1.4.3",
+		"es-module-shims": "^1.4.4",
 		"import": "^0.0.6",
 		"lit": "^2.1.2",
 		"rollup-plugin-sizes": "^1.0.4",
-		"sparrow-rtc": "0.0.0-dev.2",
+		"sparrow-rtc": "0.0.0-dev.3",
 		"xiome": "^0.0.20"
 	},
 	"repository": {
