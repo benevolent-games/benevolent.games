@@ -5,6 +5,7 @@ import headBasicsHtml from "../partials/head-basics.html.js"
 const urls = {
 	discord: "https://discord.gg/BnZx2utdev",
 	github: "https://github.com/benevolent-bees/benevolent.games",
+	discussions: "https://github.com/benevolent-bees/benevolent.games/discussions",
 }
 
 const games: {
@@ -80,9 +81,11 @@ export default ({debug}: {debug: boolean}) => html`
 				<p>all of the source code and art assets are 100% open source.</p>
 				<br/>
 				<p>
-					<a href="${urls.discord}">➡️ join benevolent on discord</a>
+					<a href="${urls.discord}">🗫 join benevolent on discord</a>
 					<br/>
-					<a href="${urls.github}">➡️ collaborate together on github</a>
+					<a href="${urls.discussions}">💬 see updates on the discussions board</a>
+					<br/>
+					<a href="${urls.github}">👨‍💻 collaborate together on github</a>
 				</p>
 			</section>
 			<hr/>
