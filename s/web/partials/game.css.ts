@@ -27,7 +27,7 @@ export default () => css`
 	background: #0008;
 	padding: 0.5em 1em;
 	border-radius: 0.5em;
-	text-shadow: 0 1px 2px #0008;
+	text-shadow: 1px 2px 3px #0008;
 }
 
 canvas {
@@ -41,7 +41,6 @@ canvas {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin-left: auto;
 }
 
 .stats p {
@@ -53,22 +52,31 @@ canvas {
 	top: 0;
 	left: 0;
 	right: 0;
+	xxxmax-width: 2000px;
+	margin: auto;
 	padding: 0.5em;
 	display: flex;
 	flex-direction: row;
 	gap: 0.2em;
+	color: white;
+	text-shadow: 1px 2px 3px #000a;
 }
 
-.game body[data-pointer-lock="true"] .buttonbar {
-	opacity: 0.4;
+.game body[data-pointer-lock="true"] .buttonbar .hide-when-pointer-locked {
+	visibility: hidden;
 }
 
 .game .buttonbar > div {
 	border-radius: 0.5rem;
-	background: #0006;
+	background: transparent;
 	display: flex;
 	flex-direction: row;
 	gap: 0.2em;
+}
+
+.game .buttonbar .indicators {
+	margin-left: auto;
+	margin-right: 1em;
 }
 
 .game .buttonbar > div > :is(button, div, a) {
@@ -109,10 +117,12 @@ canvas {
 	line-height: 0;
 	width: 1.5rem;
 	height: 1.5rem;
+	filter: drop-shadow(1px 2px 3px #000a);
 }
 
 .game .buttonbar .invite {
 	position: relative;
+	z-index: 1;
 }
 .game .buttonbar .invite[data-copied]::after {
 	content: "copied invite link";
@@ -125,7 +135,7 @@ canvas {
 	border-radius: 0.5em;
 	background: green;
 	color: white;
-	text-shadow: 0 1px 2px #0006;
+	text-shadow: 1px 2px 3px #000a;
 	pointer-events: none;
 }
 

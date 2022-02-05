@@ -5,11 +5,14 @@ export function makeFramerateDisplay({getFramerate}: {
 
 	const element = document.createElement("div")
 	element.className = "framerate"
-	element.textContent = "-"
+	element.textContent = "---"
 
 	setInterval(
-		() => element.textContent = getFramerate().toFixed(0),
-		100
+		() => element.innerHTML = getFramerate()
+			.toFixed(0)
+			.padStart(3, "X")
+			.replaceAll("X", "&nbsp;"),
+		100,
 	)
 
 	return element

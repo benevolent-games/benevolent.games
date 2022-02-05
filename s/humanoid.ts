@@ -8,7 +8,8 @@ void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
 
 	await makeNetworking({
-		networkingPanel: document.querySelector(".networking")
+		networkingPanel: document.querySelector(".networking"),
+		indicatorsDisplay: document.querySelector(".indicators"),
 	})
 
 	const {game, quality, middle, finishLoading} = await gameSetup({

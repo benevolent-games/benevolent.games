@@ -29,18 +29,19 @@ export default ({debug}: {debug: boolean}) => html`
 		<span>♻️ loading</span>
 	</div>
 	<div class=buttonbar>
-		<div>
+		<div class="hide-when-pointer-locked">
 			<a target="_blank" href="/" title="benevolent.games">
 				${benevolentSvg}
 			</a>
 		</div>
-		<div class=controls>
+		<div class="controls hide-when-pointer-locked">
 			<button class=fullscreen data-fullscreen=false title="toggle fullscreen">
 				<span class=max>${maximizeSvg}</span>
 				<span class=min>${minimizeSvg}</span>
 			</button>
 		</div>
-		<div class=networking></div>
+		<div class="networking hide-when-pointer-locked"></div>
+		<div class="indicators hide-when-pointer-locked"></div>
 		<div class=stats></div>
 	</div>
 	<div class="mobile">
