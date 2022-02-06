@@ -1,5 +1,5 @@
 
-import {standardRtcConfig} from "sparrow-rtc/x/connect/utils/standard-rtc-config.js"
+import {standardRtcConfig} from "sparrow-rtc"
 
 export const rtcOptions = {
 	timeout: 10_000,

@@ -1,7 +1,5 @@
 
-import {createSessionAsHost} from "sparrow-rtc"
-import {pub} from "sparrow-rtc/x/toolbox/pub.js"
-import {JoinerControls, Session} from "sparrow-rtc/x/types.js"
+import {createSessionAsHost, pub, JoinerControls, Session} from "sparrow-rtc"
 
 import {World} from "../types/world.js"
 import {rtcOptions} from "../common/rtc-options.js"
