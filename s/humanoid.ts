@@ -12,6 +12,7 @@ void async function main() {
 		await makeNetworking({
 			networkingPanel: document.querySelector(".networking"),
 			indicatorsDisplay: document.querySelector(".indicators"),
+			debugPanel: document.querySelector(".debug")
 		})
 
 	})(), (async() => {

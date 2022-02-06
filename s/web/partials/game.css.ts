@@ -169,9 +169,10 @@ canvas {
 
 .game .debug {
 	margin-top: 0.5em;
+	padding: 0.5em;
 	max-width: 24em;
 	color: white;
-	text-shadow: 1px 2px 0 #0008;
+	text-shadow: 1px 1px 0 #0008;
 	font-size: 0.5em;
 	font-family: monospace;
 }

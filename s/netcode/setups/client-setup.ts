@@ -11,6 +11,7 @@ export async function clientSetup({state, writeNetworking, writeIndicators}: {
 		state: ReturnType<typeof makeNetworkingState>
 		writeNetworking: (template: TemplateResult) => void
 		writeIndicators: (template: TemplateResult) => void
+		writeDebug: (template: TemplateResult) => void
 	}) {
 
 	state.writable.loading = true

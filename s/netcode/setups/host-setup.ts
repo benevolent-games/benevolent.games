@@ -1,5 +1,4 @@
 
-import {Rando} from "dbmage"
 import {TemplateResult, html, svg} from "lit"
 
 import {makeInviter} from "./common/make-inviter.js"
@@ -11,11 +10,11 @@ import {renderLoadingSpinner} from "./rendering/render-loading-spinner.js"
 
 import crownSvg from "../../web/icons/tabler/crown.svg.js"
 
-export async function hostSetup({rando, state, writeNetworking, writeIndicators}: {
-		rando: Rando
+export async function hostSetup({state, writeNetworking, writeIndicators, writeDebug}: {
 		state: ReturnType<typeof makeNetworkingState>
 		writeNetworking: (template: TemplateResult) => void
 		writeIndicators: (template: TemplateResult) => void
+		writeDebug: (template: TemplateResult) => void
 	}) {
 
 	const invite = makeInviter(state)
@@ -37,7 +36,11 @@ export async function hostSetup({rando, state, writeNetworking, writeIndicators}
 	`))
 
 	state.writable.loading = true
-	const {hostConnection, sendCloseToAllClients} = await connectAsHost()
+	const {hostConnection, sendCloseToAllClients} = await connectAsHost({
+		update: ({session, world}) => writeDebug(html`
+			<p>session: ${session?.id}</p>
+		`),
+	})
 	window.onbeforeunload = sendCloseToAllClients
 	state.writable.sessionId = hostConnection.state.session?.id
 	state.writable.loading = false

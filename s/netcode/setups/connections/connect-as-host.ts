@@ -1,7 +1,7 @@
 
 import {createSessionAsHost} from "sparrow-rtc"
 import {pub} from "sparrow-rtc/x/toolbox/pub.js"
-import {JoinerControls} from "sparrow-rtc/x/types.js"
+import {JoinerControls, Session} from "sparrow-rtc/x/types.js"
 
 import {World} from "../types/world.js"
 import {rtcOptions} from "../common/rtc-options.js"
@@ -12,7 +12,9 @@ interface Client {
 	lastTime: number
 }
 
-export async function connectAsHost() {
+export async function connectAsHost({update}: {
+		update: ({}: {session: Session, world: World}) => void
+	}) {
 	const clients = new Set<Client>()
 	const closeEvent = pub()
 
@@ -79,6 +81,7 @@ export async function connectAsHost() {
 		return () => {
 			cullTimedOutClients()
 			const world = calculateWorld()
+			update({world, session: hostConnection.state.session})
 			sendWorldToEveryClient(world)
 		}
 	})()
