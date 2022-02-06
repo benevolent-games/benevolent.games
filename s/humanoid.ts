@@ -7,34 +7,40 @@ import {makeNetworking} from "./netcode/networking.js"
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
 
-	await makeNetworking({
-		networkingPanel: document.querySelector(".networking"),
-		indicatorsDisplay: document.querySelector(".indicators"),
-	})
+	await Promise.all([(async() => {
 
-	const {game, quality, middle, finishLoading} = await gameSetup({
-		statsArea: document.querySelector(".stats"),
-		fullscreenButton: document.querySelector(".buttonbar .fullscreen"),
-		thumbsticks: {
-			left: document.querySelector("thumb-stick.left"),
-			right: document.querySelector("thumb-stick.right"),
-		}
-	})
+		await makeNetworking({
+			networkingPanel: document.querySelector(".networking"),
+			indicatorsDisplay: document.querySelector(".indicators"),
+		})
 
-	console.log("💅 quality:", quality)
+	})(), (async() => {
 
-	let {getCameraPosition} = await game.spawn.camera()
+		const {game, quality, middle, finishLoading} = await gameSetup({
+			statsArea: document.querySelector(".stats"),
+			fullscreenButton: document.querySelector(".buttonbar .fullscreen"),
+			thumbsticks: {
+				left: document.querySelector("thumb-stick.left"),
+				right: document.querySelector("thumb-stick.right"),
+			}
+		})
 
-	await Promise.all([
-		game.spawn.environment({getCameraPosition: () => getCameraPosition()}),
-		game.spawn.character(),
-	])
+		console.log("💅 quality:", quality)
+	
+		let {getCameraPosition} = await game.spawn.camera()
 
-	const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
-	getCameraPosition = player.getCameraPosition
+		await Promise.all([
+			game.spawn.environment({getCameraPosition: () => getCameraPosition()}),
+			game.spawn.character(),
+		])
 
-	await game.spawn.crate([10, 5, 10])
-	await game.spawn.dunebuggy([0, 0, 0])
+		const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
+		getCameraPosition = player.getCameraPosition
 
-	finishLoading()
+		await game.spawn.crate([10, 5, 10])
+		await game.spawn.dunebuggy([0, 0, 0])
+
+		finishLoading()
+
+	})()])
 }()
