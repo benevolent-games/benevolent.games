@@ -47,14 +47,21 @@ canvas {
 	background: #1118;
 }
 
-.game .buttonbar {
+.game .floating {
+	pointer-events: none;
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
-	xxxmax-width: 2000px;
-	margin: auto;
 	padding: 0.5em;
+}
+
+.game .floating .buttonbar > div,
+.game .floating .debug {
+	pointer-events: auto;
+}
+
+.game .buttonbar {
 	display: flex;
 	flex-direction: row;
 	gap: 0.2em;
@@ -158,6 +165,15 @@ canvas {
 
 .game body[data-pointer-lock="true"] .mobile {
 	display: none;
+}
+
+.game .debug {
+	margin-top: 0.5em;
+	max-width: 24em;
+	color: white;
+	text-shadow: 1px 2px 0 #0008;
+	font-size: 0.5em;
+	font-family: monospace;
 }
 
 .game .mobile {

@@ -28,21 +28,24 @@ export default ({debug}: {debug: boolean}) => html`
 	<div class=loading>
 		<span>♻️ loading</span>
 	</div>
-	<div class=buttonbar>
-		<div class="hide-when-pointer-locked">
-			<a target="_blank" href="/" title="benevolent.games">
-				${benevolentSvg}
-			</a>
+	<div class=floating>
+		<div class=buttonbar>
+			<div class="hide-when-pointer-locked">
+				<a target="_blank" href="/" title="benevolent.games">
+					${benevolentSvg}
+				</a>
+			</div>
+			<div class="controls hide-when-pointer-locked">
+				<button class=fullscreen data-fullscreen=false title="toggle fullscreen">
+					<span class=max>${maximizeSvg}</span>
+					<span class=min>${minimizeSvg}</span>
+				</button>
+			</div>
+			<div class="networking hide-when-pointer-locked"></div>
+			<div class="indicators hide-when-pointer-locked"></div>
+			<div class=stats></div>
 		</div>
-		<div class="controls hide-when-pointer-locked">
-			<button class=fullscreen data-fullscreen=false title="toggle fullscreen">
-				<span class=max>${maximizeSvg}</span>
-				<span class=min>${minimizeSvg}</span>
-			</button>
-		</div>
-		<div class="networking hide-when-pointer-locked"></div>
-		<div class="indicators hide-when-pointer-locked"></div>
-		<div class=stats></div>
+		<div class=debug></div>
 	</div>
 	<div class="mobile">
 		<thumb-stick class=left></thumb-stick>
