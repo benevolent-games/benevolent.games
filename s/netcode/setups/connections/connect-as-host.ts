@@ -11,7 +11,7 @@ interface Client {
 }
 
 export async function connectAsHost({update}: {
-		update: ({}: {session: Session, world: World}) => void
+		update: ({}: {sessionId: string, world: World}) => void
 	}) {
 	const clients = new Set<Client>()
 	const closeEvent = pub()
@@ -20,6 +20,7 @@ export async function connectAsHost({update}: {
 		label: "game",
 		rtcConfig: rtcOptions.rtcConfig,
 		signalServerUrl: rtcOptions.signalServerUrl,
+		onStateChange() {},
 		handleJoin(controls) {
 			const client: Client = {
 				controls,
@@ -42,7 +43,6 @@ export async function connectAsHost({update}: {
 				},
 			}
 		},
-		onStateChange({session}) {},
 	})
 
 	const heartbeatRepeater = (() => {
@@ -79,7 +79,7 @@ export async function connectAsHost({update}: {
 		return () => {
 			cullTimedOutClients()
 			const world = calculateWorld()
-			update({world, session: hostConnection.state.session})
+			update({world, sessionId: hostConnection.state.session?.id})
 			sendWorldToEveryClient(world)
 		}
 	})()

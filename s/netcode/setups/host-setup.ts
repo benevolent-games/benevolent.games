@@ -9,6 +9,7 @@ import {renderNetIndicator} from "./rendering/render-net-indicator.js"
 import {renderLoadingSpinner} from "./rendering/render-loading-spinner.js"
 
 import crownSvg from "../../web/icons/tabler/crown.svg.js"
+import {renderDebugWorld} from "./rendering/render-debug-world.js"
 
 export async function hostSetup({state, writeNetworking, writeIndicators, writeDebug}: {
 		state: ReturnType<typeof makeNetworkingState>
@@ -37,9 +38,7 @@ export async function hostSetup({state, writeNetworking, writeIndicators, writeD
 
 	state.writable.loading = true
 	const {hostConnection, sendCloseToAllClients} = await connectAsHost({
-		update: ({session, world}) => writeDebug(html`
-			<p>session: ${session?.id}</p>
-		`),
+		update: info => writeDebug(renderDebugWorld(info)),
 	})
 	window.onbeforeunload = sendCloseToAllClients
 	state.writable.sessionId = hostConnection.state.session?.id

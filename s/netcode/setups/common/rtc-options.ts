@@ -2,7 +2,7 @@
 import {standardRtcConfig} from "sparrow-rtc"
 
 export const rtcOptions = {
-	timeout: 10_000,
+	timeout: 60_000,
 	heartbeatPeriod: 101,
 	rtcConfig: standardRtcConfig,
 	signalServerUrl: `wss://sparrow-rtc.benevolent.games/`,

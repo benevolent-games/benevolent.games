@@ -177,6 +177,18 @@ canvas {
 	font-family: monospace;
 }
 
+.game .debug ul {
+	padding-left: 1.5em;
+}
+
+.game .debug .id {
+	color: lime;
+}
+
+.game .debug .time {
+	color: yellow;
+}
+
 .game .mobile {
 	position: absolute;
 	bottom: 0;
