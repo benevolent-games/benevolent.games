@@ -34,13 +34,33 @@ export default ({debug}: {debug: boolean}) => html`
 <html class="home">
 <head>
 	${headBasicsHtml({title: "benevolent.games"})}
-	<script defer type=module src="/website.js"></script>
+
+	${debug
+		? html`
+			<script defer src="/node_modules/es-module-shims/dist/es-module-shims.js"></script>
+			<script defer type=importmap-shim src="/importmap.json"></script>
+			<script defer type=module-shim src="/website.js"></script>
+		`
+		: html`
+			<script defer src="/website.bundle.min.js"></script>
+		`}
+
 	<style>
 		main > h1 > .logo-unit { display: none; }
 	</style>
 </head>
 <body>
 	<main>
+		<div class=menubar>
+			<xio-menu sticky initially-hidden>
+				<xio-menu-item>
+					<xiome-my-avatar slot=button></xiome-my-avatar>
+					<xiome-login-panel show-logout>
+						<xiome-my-account></xiome-my-account>
+					</xiome-login-panel>
+				</xio-menu-item>
+			</xio-menu>
+		</div>
 		<h1>
 			<div class="logo">
 				<div class="logo-unit">
