@@ -1,5 +1,5 @@
 
-import "./web/xiome.js"
+import "xiome"
 
 void function introAnimation() {
 	const {style} = document.querySelector<HTMLElement>("main > h1 .logo-unit")

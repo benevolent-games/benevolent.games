@@ -16,6 +16,17 @@ export default () => css`
 .home xio-menu {
 	color: #222;
 	--menu-margin: 1em;
+	--avatar-size: 2em;
+	--menu-background: transparent;
+	--menu-gapsize: 0;
+}
+
+.home xiome-my-avatar {
+	display: block;
+}
+
+.home ::part(xio-avatar) {
+	display: block;
 }
 
 .home .slice {

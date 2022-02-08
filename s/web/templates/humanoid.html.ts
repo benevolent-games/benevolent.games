@@ -1,6 +1,6 @@
 
-import {html, html as svg} from "xiome/x/toolbox/hamster-html/html.js"
 import headBasicsHtml from "../partials/head-basics.html.js"
+import {html, html as svg} from "xiome/x/toolbox/hamster-html/html.js"
 
 import benevolentSvg from "../icons/benevolent.svg.js"
 import maximizeSvg from "../icons/feather/maximize.svg.js"
@@ -44,6 +44,14 @@ export default ({debug}: {debug: boolean}) => html`
 			<div class="networking hide-when-pointer-locked"></div>
 			<div class="indicators hide-when-pointer-locked"></div>
 			<div class=stats></div>
+			<xio-menu class="hide-when-pointer-locked" initially-hidden>
+				<xio-menu-item>
+					<xiome-my-avatar slot=button></xiome-my-avatar>
+					<xiome-login-panel show-logout>
+						<xiome-my-account></xiome-my-account>
+					</xiome-login-panel>
+				</xio-menu-item>
+			</xio-menu>
 		</div>
 		<div class=debug></div>
 	</div>

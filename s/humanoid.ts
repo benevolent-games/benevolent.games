@@ -1,4 +1,6 @@
 
+import "xiome"
+
 import * as v3 from "./game/utils/v3.js"
 import "./game/utils/thumbsticks/thumbsticks.js"
 import {gameSetup} from "./game/startup/game-setup.js"
@@ -7,16 +9,15 @@ import {makeNetworking} from "./netcode/networking.js"
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
 
-	await Promise.all([(async() => {
-
+	async function setupNetworking() {
 		await makeNetworking({
 			networkingPanel: document.querySelector(".networking"),
 			indicatorsDisplay: document.querySelector(".indicators"),
 			debugPanel: document.querySelector(".debug")
 		})
+	}
 
-	})(), (async() => {
-
+	async function setupGame() {
 		const {game, quality, middle, finishLoading} = await gameSetup({
 			statsArea: document.querySelector(".stats"),
 			fullscreenButton: document.querySelector(".buttonbar .fullscreen"),
@@ -42,6 +43,10 @@ void async function main() {
 		await game.spawn.dunebuggy([0, 0, 0])
 
 		finishLoading()
+	}
 
-	})()])
+	await Promise.all([
+		setupNetworking(),
+		setupGame(),
+	])
 }()
