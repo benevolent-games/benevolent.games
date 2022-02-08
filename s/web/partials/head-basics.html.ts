@@ -1,5 +1,5 @@
 
-import {noop as html} from "../utils/template-noop.js"
+import {html} from "xiome/x/toolbox/hamster-html/html.js"
 
 export default ({title}: {title: string}) => html`
 

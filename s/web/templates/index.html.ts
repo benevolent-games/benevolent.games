@@ -1,6 +1,6 @@
 
-import {noop as html} from "../utils/template-noop.js"
 import headBasicsHtml from "../partials/head-basics.html.js"
+import {html, HtmlTemplate} from "xiome/x/toolbox/hamster-html/html.js"
 
 const urls = {
 	discord: "https://discord.gg/BnZx2utdev",
@@ -22,7 +22,7 @@ const games: {
 	{poster: "will-to-die.webp", title: "will to die"},
 ]
 
-function gamelink(link: string, content: string) {
+function gamelink(link: string, content: HtmlTemplate) {
 	return link
 		? html`<a class="unit" ${link ?"data-playable" :""} href="${link}">${content}</a>`
 		: html`<div class="unit" tabindex="0">${content}</div>`
@@ -63,7 +63,7 @@ export default ({debug}: {debug: boolean}) => html`
 					</div>
 					<div class="title">${title}</div>
 				`)}
-			`).join("\n")}
+			`)}
 		</nav>
 		<div class="qualityselector">
 			<label>

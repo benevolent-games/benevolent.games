@@ -1,5 +1,5 @@
 
-import {noop as html} from "../utils/template-noop.js"
+import {html, html as svg} from "xiome/x/toolbox/hamster-html/html.js"
 import headBasicsHtml from "../partials/head-basics.html.js"
 
 import benevolentSvg from "../icons/benevolent.svg.js"
@@ -32,13 +32,13 @@ export default ({debug}: {debug: boolean}) => html`
 		<div class=buttonbar>
 			<div class="hide-when-pointer-locked">
 				<a target="_blank" href="/" title="benevolent.games">
-					${benevolentSvg}
+					${svg(benevolentSvg)}
 				</a>
 			</div>
 			<div class="controls hide-when-pointer-locked">
 				<button class=fullscreen data-fullscreen=false title="toggle fullscreen">
-					<span class=max>${maximizeSvg}</span>
-					<span class=min>${minimizeSvg}</span>
+					<span class=max>${svg(maximizeSvg)}</span>
+					<span class=min>${svg(minimizeSvg)}</span>
 				</button>
 			</div>
 			<div class="networking hide-when-pointer-locked"></div>
