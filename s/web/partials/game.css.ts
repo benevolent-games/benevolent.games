@@ -30,6 +30,10 @@ export default () => css`
 	text-shadow: 1px 2px 3px #0008;
 }
 
+[data-modal-system] {
+	position: absolute;
+}
+
 canvas {
 	position: relative;
 	width: 100%;
@@ -37,6 +41,7 @@ canvas {
 }
 
 .stats {
+	margin: 0 1em;
 	font-family: monospace;
 	display: flex;
 	justify-content: center;
@@ -54,11 +59,30 @@ canvas {
 	left: 0;
 	right: 0;
 	padding: 0.5em;
+	--menu-lanesize: 0.5em;
 }
 
 .game .floating .buttonbar > div,
-.game .floating .debug {
+.game .floating .debug,
+.game .floating xio-menu {
 	pointer-events: auto;
+}
+
+.game xio-menu {
+	color: #222;
+	text-shadow: none;
+	--menu-gapsize: 0;
+	--avatar-size: 2em;
+	--menu-background: transparent;
+}
+
+.game xiome-my-avatar {
+	display: block;
+	border-radius: 0.5em;
+}
+
+.game xiome-my-avatar::part(xio-avatar) {
+	display: block;
 }
 
 .game .buttonbar {
@@ -74,6 +98,8 @@ canvas {
 }
 
 .game .buttonbar > div {
+	position: relative;
+	z-index: 100;
 	border-radius: 0.5rem;
 	background: transparent;
 	display: flex;
@@ -83,7 +109,6 @@ canvas {
 
 .game .buttonbar .indicators {
 	margin-left: auto;
-	margin-right: 1em;
 }
 
 .game .buttonbar > div > :is(button, div, a) {

@@ -7,6 +7,28 @@ export default () => css`
 	padding-bottom: 10em;
 }
 
+.home .menubar {
+	position: relative;
+	max-width: 1700px;
+	margin: auto;
+}
+
+.home xio-menu {
+	color: #222;
+	--menu-margin: 1em;
+	--avatar-size: 2em;
+	--menu-background: transparent;
+	--menu-gapsize: 0;
+}
+
+.home xiome-my-avatar {
+	display: block;
+}
+
+.home ::part(xio-avatar) {
+	display: block;
+}
+
 .home .slice {
 	max-width: 960px;
 	margin: auto;
