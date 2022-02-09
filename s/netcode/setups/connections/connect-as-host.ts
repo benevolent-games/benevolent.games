@@ -122,7 +122,7 @@ export async function connectAsHost({generateNickname, getAccess, update}: {
 					client.pingWaiters = client.pingWaiters.slice(-10)
 				}
 				const message: MessageFromHost = {
-					id: client.messageId++,
+					id,
 					scoreboard,
 				}
 				client.controls.send(JSON.stringify(message))

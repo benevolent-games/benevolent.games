@@ -14,7 +14,7 @@ export function renderScoreboard({sessionId, scoreboard}: {
 			<table>
 				<tbody>
 					${scoreboard.players.map(player => html`
-						<tr>
+						<tr data-client-id="${player.clientId}">
 							<td class=host>
 								${player.host
 									? svg(crownSvg)

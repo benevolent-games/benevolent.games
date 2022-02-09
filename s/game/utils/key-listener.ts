@@ -42,6 +42,8 @@ export function makeKeyListener() {
 	}
 
 	window.addEventListener("keydown", ({key}) => {
+		if (!document.pointerLockElement)
+			return
 		key = key.toLowerCase()
 		const isChanged = setKeyDownState(key, true)
 		if (isChanged)
@@ -49,6 +51,8 @@ export function makeKeyListener() {
 	})
 
 	window.addEventListener("keyup", ({key}) => {
+		if (!document.pointerLockElement)
+			return
 		key = key.toLowerCase()
 		const isChanged = setKeyDownState(key, false)
 		if (isChanged)

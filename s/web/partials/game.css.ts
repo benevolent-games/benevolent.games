@@ -272,6 +272,7 @@ canvas {
 .game .scoreboard .ping {
 	font-family: monospace;
 	width: 3em;
+	text-align: right;
 }
 
 .game .scoreboard .lag {
