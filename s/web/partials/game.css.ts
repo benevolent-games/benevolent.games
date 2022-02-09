@@ -177,7 +177,7 @@ canvas {
 }
 
 .game .buttonbar .busy {
-	animation: 5s linear spin;
+	animation: 5s linear infinite spin;
 }
 
 .game .buttonbar .fullscreen[data-fullscreen="false"] .min {
