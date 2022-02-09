@@ -93,7 +93,7 @@ canvas {
 	text-shadow: 1px 2px 3px #000a;
 }
 
-.game body[data-pointer-lock="true"] .buttonbar .hide-when-pointer-locked {
+.game body[data-pointer-lock="true"] .floating .hide-when-pointer-locked {
 	visibility: hidden;
 }
 
@@ -214,12 +214,92 @@ canvas {
 	color: yellow;
 }
 
+.game .scoreboard {
+	font-size: 0.6em;
+	margin-top: 0.5rem;
+	max-width: 48em;
+	color: white;
+	text-shadow: 1px 1px 0 #0008;
+	background: #0002;
+	border-radius: 0.5em;
+	pointer-events: auto;
+}
+
+.game .scoreboard * {
+	XXXoutline: 1px solid #f004;
+}
+
+.game .scoreboard table {
+	width: 100%;
+	text-align: left;
+}
+
+.game .scoreboard td {
+	padding: 0.1em 0.5em;
+}
+
+.game .scoreboard .host {
+	width: 2em;
+	height: 2em;
+}
+
+.game .scoreboard svg {
+	width: 1.5em;
+	height: 1.5em;
+}
+
+.game .scoreboard xio-avatar {
+	--avatar-size: 3em;
+	margin-right: 0.5em;
+}
+
+.game .scoreboard .user {
+	display: flex;
+	flex-direction: row;
+}
+
+.game .scoreboard .playername {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.game .scoreboard .playername > span:nth-child(2) {
+	font-size: 0.8em;
+	opacity: 0.8;
+}
+
+.game .scoreboard .ping {
+	font-family: monospace;
+	width: 3em;
+}
+
+.game .scoreboard .lag {
+	font-family: monospace;
+	width: 7em;
+	vertical-align: middle;
+}
+
+.game .scoreboard .lag span {
+	margin-left: 0.4em;
+}
+
+.game .scoreboard [data-laggy] {
+	color: orange;
+}
+
+.game .scoreboard .verticalcenter {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
 .game .mobile {
 	position: absolute;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	pointer-events: none;
+	pointer-events: auto;
 
 	display: flex;
 	flex-direction: row;
@@ -231,7 +311,6 @@ canvas {
 	width: 7em;
 	height: 7em;
 	margin: 2em;
-	pointer-events: auto;
 }
 
 `

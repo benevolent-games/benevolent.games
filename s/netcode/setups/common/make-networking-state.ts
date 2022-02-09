@@ -1,4 +1,5 @@
 
+import {Scoreboard} from "../types/world.js"
 import {snapstate} from "@chasemoskal/snapstate"
 
 export function makeNetworkingState() {
@@ -7,5 +8,9 @@ export function makeNetworkingState() {
 		sessionId: undefined as string | undefined,
 		loading: false,
 		inviteCopied: false,
+		scoreboard: {
+			runtime: 0,
+			players: [],
+		} as Scoreboard
 	})
 }

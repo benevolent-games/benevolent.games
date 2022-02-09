@@ -1,17 +1,26 @@
 
-import {createSessionAsHost, pub, JoinerControls, Session} from "sparrow-rtc"
+import {createSessionAsHost, pub, JoinerControls} from "sparrow-rtc"
 
-import {World} from "../types/world.js"
 import {rtcOptions} from "../common/rtc-options.js"
+import {AuthedUser, GuestUser, Scoreboard} from "../types/world.js"
+import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
+import {MessageFromClient, MessageFromHost} from "../types/messages.js"
 
 interface Client {
 	controls: JoinerControls
 	clientTime: number
 	lastTime: number
+	messageId: number
+	ping: number
+	guest: GuestUser
+	user?: AuthedUser
+	pingWaiters: {id: number, start: number}[]
 }
 
-export async function connectAsHost({update}: {
-		update: ({}: {sessionId: string, world: World}) => void
+export async function connectAsHost({generateNickname, getAccess, update}: {
+		generateNickname: () => string
+		getAccess: () => AccessPayload
+		update: ({}: {sessionId: string, scoreboard: Scoreboard}) => void
 	}) {
 	const clients = new Set<Client>()
 	const closeEvent = pub()
@@ -26,6 +35,11 @@ export async function connectAsHost({update}: {
 				controls,
 				clientTime: 0,
 				lastTime: Date.now(),
+				messageId: 0,
+				ping: 0,
+				guest: {nickname: generateNickname()},
+				user: undefined,
+				pingWaiters: [],
 			}
 			clients.add(client)
 			const unsubscribeCloseListener = closeEvent.subscribe(controls.close)
@@ -36,23 +50,52 @@ export async function connectAsHost({update}: {
 				},
 				handleMessage(message) {
 					client.lastTime = Date.now()
-					const {clientTime} = JSON.parse(<string>message)
-					if (typeof clientTime !== "number")
-						throw new Error("clientTime failed validation")
-					client.clientTime = clientTime
+					const {id, user} = <MessageFromClient>JSON.parse(<string>message)
+					const waiter = client.pingWaiters.find(w => w.id === id)
+					if (waiter) {
+						const ping = Date.now() - waiter.start
+						client.ping = ping
+						client.user = user
+					}
 				},
 			}
 		},
 	})
 
+	const runtimeStart = Date.now()
+	const hostGuest: GuestUser = {
+		nickname: generateNickname(),
+	}
+
 	const heartbeatRepeater = (() => {
-		function calculateWorld(): World {
+		function calculateScoreboard(): Scoreboard {
+			const hostAccess = getAccess()
+			const now = Date.now()
 			return {
-				hostTime: Date.now(),
-				clients: Array.from(clients).map(client => ({
-					clientId: client.controls.clientId,
-					clientTime: client.clientTime,
-				})),
+				runtime: now - runtimeStart,
+				players: [
+					{
+						clientId: "host",
+						host: true,
+						guest: hostGuest,
+						lag: 0,
+						ping: 0,
+						user: hostAccess?.user?.profile
+							? {
+								userId: hostAccess.user.userId,
+								profile: hostAccess.user.profile,
+							}
+							: undefined
+					},
+					...Array.from(clients).map(client => ({
+						clientId: client.controls.clientId,
+						host: false,
+						lag: now - client.lastTime,
+						ping: client.ping,
+						guest: client.guest,
+						user: client.user,
+					}))
+				],
 			}
 		}
 
@@ -71,16 +114,26 @@ export async function connectAsHost({update}: {
 			}
 		}
 
-		function sendWorldToEveryClient(world: World) {
-			for (const client of clients)
-				client.controls.send(JSON.stringify(world))
+		function sendScoreboardToEveryClient(scoreboard: Scoreboard) {
+			for (const client of clients) {
+				const id = client.messageId++
+				client.pingWaiters.push({id, start: Date.now()})
+				if (client.pingWaiters.length > 10) {
+					client.pingWaiters = client.pingWaiters.slice(-10)
+				}
+				const message: MessageFromHost = {
+					id: client.messageId++,
+					scoreboard,
+				}
+				client.controls.send(JSON.stringify(message))
+			}
 		}
 
 		return () => {
 			cullTimedOutClients()
-			const world = calculateWorld()
-			update({world, sessionId: hostConnection.state.session?.id})
-			sendWorldToEveryClient(world)
+			const scoreboard = calculateScoreboard()
+			update({scoreboard, sessionId: hostConnection.state.session?.id})
+			sendScoreboardToEveryClient(scoreboard)
 		}
 	})()
 

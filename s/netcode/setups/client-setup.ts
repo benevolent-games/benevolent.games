@@ -1,38 +1,43 @@
 
-import {TemplateResult, html} from "lit"
+import {html} from "lit"
 
 import {makeInviter} from "./common/make-inviter.js"
-import {makeNetworkingState} from "./common/make-networking-state.js"
+import {NetSetupOptions} from "./types/net-setup-options.js"
+import {renderScoreboard} from "./rendering/render-scoreboard.js"
 import {connectAsClient} from "./connections/connect-as-client.js"
-import {renderDebugWorld} from "./rendering/render-debug-world.js"
+// import {renderDebugWorld} from "./rendering/render-debug-world.js"
 import {renderInviteButton} from "./rendering/render-invite-button.js"
-import {renderLoadingSpinner} from "./rendering/render-loading-spinner.js"
 import {renderNetIndicator} from "./rendering/render-net-indicator.js"
+import {renderLoadingSpinner} from "./rendering/render-loading-spinner.js"
 
-export async function clientSetup({state, writeNetworking, writeIndicators, writeDebug}: {
-		state: ReturnType<typeof makeNetworkingState>
-		writeNetworking: (template: TemplateResult) => void
-		writeIndicators: (template: TemplateResult) => void
-		writeDebug: (template: TemplateResult) => void
-	}) {
+export async function clientSetup({state, accessModel, ...options}: NetSetupOptions) {
 
 	const invite = makeInviter(state)
 
-	state.track(({loading, sessionId, inviteCopied}) => writeNetworking(html`
-		${renderLoadingSpinner(loading)}
-		${!loading
-			? renderInviteButton({sessionId, inviteCopied, invite})
-			: null}
-	`))
+	state.track(({loading, sessionId, inviteCopied}) => options.writeNetworking(
+		html`
+			${renderLoadingSpinner(loading)}
+			${!loading
+				? renderInviteButton({sessionId, inviteCopied, invite})
+				: null}
+		`
+	))
 
-	state.track(({loading, sessionId}) => writeIndicators(html`
+	state.track(({loading, sessionId}) => options.writeIndicators(html`
 		${renderNetIndicator({loading, sessionId})}
 	`))
+
+	state.track(({sessionId, scoreboard}) => options.writeScoreboard(
+		renderScoreboard({sessionId, scoreboard})
+	))
 
 	state.writable.loading = true
 	await connectAsClient({
 		sessionId: state.readable.sessionId,
-		update: info => writeDebug(renderDebugWorld(info))
+		getAccess: () => accessModel.getAccess(),
+		update: data => {
+			state.writable.scoreboard = data.scoreboard
+		},
 	})
 	state.writable.loading = false
 }
