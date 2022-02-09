@@ -1,23 +1,23 @@
 
-import "./xiome.js"
-
 import {getRando} from "dbmage"
 
+import {installXiome} from "./xiome.js"
 import * as v3 from "./game/utils/v3.js"
 import "./game/utils/thumbsticks/thumbsticks.js"
 import {gameSetup} from "./game/startup/game-setup.js"
 import {makeNetworking} from "./netcode/networking.js"
-import {XiomeMyAvatar} from "xiome/x/features/auth/aspects/users/components/my-avatar/xiome-my-avatar"
 
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
 
+	const xiome = await installXiome()
+	const getAccess = () => xiome.models.accessModel.getAccess()
+
 	async function setupNetworking() {
 		const rando = await getRando()
-		const xiomeMyAvatar = document.querySelector<XiomeMyAvatar>("xiome-my-avatar")
 		await makeNetworking({
 			rando,
-			accessModel: xiomeMyAvatar.share.accessModel,
+			getAccess,
 			networkingPanel: document.querySelector(".networking"),
 			indicatorsDisplay: document.querySelector(".indicators"),
 			debugPanel: document.querySelector(".debug"),

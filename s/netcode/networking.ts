@@ -7,12 +7,12 @@ import {hostSetup} from "./setups/host-setup.js"
 import {clientSetup} from "./setups/client-setup.js"
 import {sessionTerm} from "./setups/common/session-term.js"
 import {NetSetupOptions} from "./setups/types/net-setup-options.js"
+import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
 import {makeNetworkingState} from "./setups/common/make-networking-state.js"
-import {makeAccessModel} from "xiome/x/features/auth/aspects/users/models/access-model"
 
-export async function makeNetworking({rando, accessModel, networkingPanel, indicatorsDisplay, debugPanel, scoreboard}: {
+export async function makeNetworking({rando, getAccess, networkingPanel, indicatorsDisplay, debugPanel, scoreboard}: {
 		rando: Rando
-		accessModel: ReturnType<typeof makeAccessModel>
+		getAccess: () => AccessPayload
 		networkingPanel: HTMLElement
 		indicatorsDisplay: HTMLElement
 		debugPanel: HTMLElement
@@ -24,7 +24,7 @@ export async function makeNetworking({rando, accessModel, networkingPanel, indic
 	const options: NetSetupOptions = {
 		state,
 		rando,
-		accessModel,
+		getAccess,
 		writeNetworking: (template: TemplateResult) => litRender(template, networkingPanel),
 		writeIndicators: (template: TemplateResult) => litRender(template, indicatorsDisplay),
 		writeDebug: (template: TemplateResult) => litRender(template, debugPanel),

@@ -10,7 +10,7 @@ import {renderInviteButton} from "./rendering/render-invite-button.js"
 import {renderNetIndicator} from "./rendering/render-net-indicator.js"
 import {renderLoadingSpinner} from "./rendering/render-loading-spinner.js"
 
-export async function clientSetup({state, accessModel, ...options}: NetSetupOptions) {
+export async function clientSetup({state, getAccess, ...options}: NetSetupOptions) {
 
 	const invite = makeInviter(state)
 
@@ -34,7 +34,7 @@ export async function clientSetup({state, accessModel, ...options}: NetSetupOpti
 	state.writable.loading = true
 	await connectAsClient({
 		sessionId: state.readable.sessionId,
-		getAccess: () => accessModel.getAccess(),
+		getAccess,
 		update: data => {
 			state.writable.scoreboard = data.scoreboard
 		},
