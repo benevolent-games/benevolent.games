@@ -53,6 +53,7 @@ export default ({debug}: {debug: boolean}) => html`
 				</xio-menu-item>
 			</xio-menu>
 		</div>
+		<div class="scoreboard hide-when-pointer-locked"></div>
 		<div class=debug></div>
 	</div>
 	<div class="mobile">
