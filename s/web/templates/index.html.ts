@@ -95,7 +95,7 @@ export default ({debug}: {debug: boolean}) => html`
 			<hr/>
 			<section>
 				<h2>community-powered games</h2>
-				<p>we're all growing tired of the greed and corporatism of the modern gaming industry. <em>let's make something different.</em></p>
+				<p>we're all growing tired of the greed and corporatism of the modern gaming industry. <em>let's make something new!</em></p>
 				<h3>introducing humanoid</h3>
 				<p><strong>humanoid</strong> is a prototype sandbox game template. it's where we experiment with new game mechanics, building a common platform for developers to make new games. it's an early prototype, and we make progress every week.</p>
 				<p>all of the source code and art assets are 100% open source.</p>

@@ -5,7 +5,7 @@
 
 # 👼 https://benevolent.games/
 
-community-powered games
+*community-powered games*
 
 see the new [discussions board](https://github.com/benevolent-bees/benevolent.games/discussions) for updates and asking questions
 
@@ -13,9 +13,26 @@ join our [discord](https://discord.gg/BnZx2utdev)
 
 <br/>
 
-## how to work on benevolent games as a developer
+## why are we making games on the web?
+
+*let's make something new!*
+
+➡️ our unifying vision is that modern games should be instantly playable on the web, for free, without game installations, and playing multiplayer with friends should be as easy as sharing simple invite links.
+
+➡️ we are building our web-native prototype with [babylonjs](https://www.babylonjs.com/). this provides some important qualities:
+
+- **flexibility** – on the web, we can seamlessly integrate with other web apis, to provide a great user experience.
+- **not monolithic** – we believe the best software systems are a mosaic of great purpose-driven tools. developers should be able to freely mix-and-match the best available tools.
+- **100% open source** – developers deserve a platform that is completely free of licensing restrictions, and completely open source.
+
+➡️ we're often asked, "why not use unity?" or "why not use unreal engine?"
+- we have plans to integrate game engines like `unity`, `unreal`, and `bevy`, later down the road.
+- ideally, we'd like benevolent technologies to be game-engine agnostic, allowing developers to use their favorite engine.
+- fully integrating these engines will take a great deal of research and development. we have to start somewhere, and web-native is a good choice for us to start prototyping.
 
 <br/>
+
+## how to work on benevolent games as a developer
 
 ### 💡 getting started
 
