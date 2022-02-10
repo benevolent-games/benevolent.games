@@ -13,15 +13,16 @@ export function spawnCorridor({scene}: SpawnOptions) {
 		const maxLightsPerMesh = 4
 
 		root.position.addInPlace(v3.toBabylon([10, -1, 20]))
-		scene.ambientColor = new BABYLON.Color3(1, 1, 1)
+		scene.ambientColor = new BABYLON.Color3(0.02, 0.02, 0.02)
 		for (const material of <BABYLON.StandardMaterial[]>scene.materials) {
-			material.ambientColor = new BABYLON.Color3(0.1, 0.1, 0.1)
+			material.ambientColor = new BABYLON.Color3(1, 1, 1)
+			material.maxSimultaneousLights = maxLightsPerMesh
 		}
 
 		for (const light of [...lights]) {
 			light.includedOnlyMeshes = [undefined]
 			console.log("light", light.name, light.range, light.radius)
-			light.range = cap(light.range, 0, 10)
+			light.intensityMode = BABYLON.Light.INTENSITYMODE_LUMINOUSPOWER
 		}
 
 		const lightsAndPositions = [...lights].map(light => ({
@@ -37,6 +38,12 @@ export function spawnCorridor({scene}: SpawnOptions) {
 			}))
 
 		for (const {mesh, meshPosition} of meshesAndPositions) {
+			const material = <BABYLON.PBRMaterial>mesh.material
+			material.backFaceCulling = true
+			if (material.bumpTexture) {
+				console.log("G", material.bumpTexture.gammaSpace)
+				material.bumpTexture.gammaSpace
+			}
 			let localLighting = [...lightsAndPositions]
 			localLighting.sort((a, b) => {
 				const aDistance = v3.distance(meshPosition, a.lightPosition)

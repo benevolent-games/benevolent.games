@@ -198,7 +198,7 @@ async function applyTerrainShader({scene, texturesDirectory, meshes}: {
 	const nodeMaterial = await loadMaterial({
 		scene,
 		label: "terrain-material",
-		path: "/assets/art/desert/terrain/terrain.shader.json",
+		path: "/assets/art/desert/terrain/terrain.shader.1.json",
 	}).then(m => m.assignTextures({
 		blendmask: `${texturesDirectory}/desert/terrain/blendmask.jpg`,
 		layer1_armd: `${texturesDirectory}/desert/terrain/layer1_armd.jpg`,
@@ -211,6 +211,8 @@ async function applyTerrainShader({scene, texturesDirectory, meshes}: {
 		layer3_color: `${texturesDirectory}/desert/terrain/layer3_color.jpg`,
 		layer3_normal: `${texturesDirectory}/desert/terrain/layer3_normal.jpg`,
 	}))
+	const block = <BABYLON.InputBlock>nodeMaterial.getBlockByName("ambientColor")
+	block.value = new BABYLON.Color3(1, 1, 1)
 	for (const mesh of meshes)
 		mesh.material = nodeMaterial
 }
@@ -231,6 +233,8 @@ async function applyRockslideShader({scene, texturesDirectory, meshes}: {
 		roughness: `${texturesDirectory}/desert/rockslides/rockslide_rgh.jpg`,
 		ao: `${texturesDirectory}/desert/rockslides/rockslide_ao.jpg`,
 	}))
+	// const block = <BABYLON.InputBlock>nodeMaterial.getBlockByName("ambientColor")
+	// block.value = new BABYLON.Color3(1, 1, 1)
 	const rockslideMeshes = meshes.filter(m => m.name.includes("rockslide"))
 	for (const mesh of rockslideMeshes) {
 		if (!mesh.isAnInstance)
