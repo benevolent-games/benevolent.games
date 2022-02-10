@@ -10,6 +10,7 @@ import {spawnPlayer} from "./spawn/player.js"
 import {spawnCharacter} from "./spawn/character.js"
 import {spawnDunebuggy} from "./spawn/dunebuggy.js"
 import {spawnEnvironment} from "./spawn/environment.js"
+import {spawnCorridor} from "./spawn/corridor.js"
 
 export async function makeGame({
 		quality,
@@ -73,6 +74,7 @@ export async function makeGame({
 			character: spawnCharacter(options),
 			environment: spawnEnvironment(options),
 			dunebuggy: spawnDunebuggy(options),
+			corridor: spawnCorridor(options),
 		}
 	}
 }

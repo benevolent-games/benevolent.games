@@ -64,31 +64,31 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions) {
 			],
 		})
 
-		const {sun} = makeSunlight({
-			scene,
-			renderLoop,
-			lightPositionRelativeToCamera: [1000, 1000, -1000],
-			getCameraPosition,
-		})
+		// const {sun} = makeSunlight({
+		// 	scene,
+		// 	renderLoop,
+		// 	lightPositionRelativeToCamera: [1000, 1000, -1000],
+		// 	getCameraPosition,
+		// })
 
-		const shadowy = select(
-			[
-				terrainMesh,
-				...selectLod(quality === "q0" ? 0 : 1, [...meshes]),
-			],
-			"terrain", "cliff", "rock",
-		)
+		// const shadowy = select(
+		// 	[
+		// 		terrainMesh,
+		// 		...selectLod(quality === "q0" ? 0 : 1, [...meshes]),
+		// 	],
+		// 	"terrain", "cliff", "rock",
+		// )
 
-		applyShadows({
-			quality,
-			light: sun,
-			casters: shadowy,
-			receivers: <BABYLON.Mesh[]>shadowy.filter(m => !m.isAnInstance),
-			bias: 0.0001,
-			resolution: quality === "q0"
-				? 4096
-				: 1024,
-		})
+		// applyShadows({
+		// 	quality,
+		// 	light: sun,
+		// 	casters: shadowy,
+		// 	receivers: <BABYLON.Mesh[]>shadowy.filter(m => !m.isAnInstance),
+		// 	bias: 0.0001,
+		// 	resolution: quality === "q0"
+		// 		? 4096
+		// 		: 1024,
+		// })
 	}
 }
 
@@ -170,12 +170,14 @@ function makeSunlight({
 		torus.position = position
 	})
 
-	const antidirection = lightDirection.negate().addInPlace(new BABYLON.Vector3(0.3, 0.2, 0.1))
-	const antilight = new BABYLON.HemisphericLight("antilight", antidirection, scene)
-	antilight.intensity = 0.05
-	antilight.shadowEnabled = false
+	console.log("SUN POSITION", sun.position)
 
-	return {sun, antilight, torus}
+	// const antidirection = lightDirection.negate().addInPlace(new BABYLON.Vector3(0.3, 0.2, 0.1))
+	// const antilight = new BABYLON.HemisphericLight("antilight", antidirection, scene)
+	// antilight.intensity = 0.05
+	// antilight.shadowEnabled = false
+
+	return {sun, torus, /*antilight*/}
 }
 
 function applySkyColor(scene: BABYLON.Scene, color: [number, number, number]) {

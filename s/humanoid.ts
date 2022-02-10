@@ -41,14 +41,15 @@ void async function main() {
 
 		await Promise.all([
 			game.spawn.environment({getCameraPosition: () => getCameraPosition()}),
-			game.spawn.character(),
+			// game.spawn.character(),
 		])
 
 		const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
 		getCameraPosition = player.getCameraPosition
 
 		await game.spawn.crate([10, 5, 10])
-		await game.spawn.dunebuggy([0, 0, 0])
+		// await game.spawn.dunebuggy([0, 0, 0])
+		await game.spawn.corridor()
 
 		finishLoading()
 	}
