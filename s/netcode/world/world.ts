@@ -1,5 +1,6 @@
 
-import {randomId} from "./helpers/id.js"
+import {randomId} from "sparrow-rtc"
+
 import {freeze} from "./helpers/freeze.js"
 import {mergeDeltas} from "./helpers/merge-deltas.js"
 import {Description, Delta, WorldEvent, Changes} from "./types.js"
