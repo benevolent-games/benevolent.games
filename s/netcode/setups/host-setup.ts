@@ -6,7 +6,6 @@ import {makeInviter} from "./common/make-inviter.js"
 import {NetSetupOptions} from "./types/net-setup-options.js"
 import {connectAsHost} from "./connections/connect-as-host.js"
 import {renderScoreboard} from "./rendering/render-scoreboard.js"
-// import {renderDebugWorld} from "./rendering/render-debug-world.js"
 import {renderInviteButton} from "./rendering/render-invite-button.js"
 import {renderNetIndicator} from "./rendering/render-net-indicator.js"
 import {renderLoadingSpinner} from "./rendering/render-loading-spinner.js"
@@ -20,7 +19,7 @@ export async function hostSetup({
 		handleClientDisconnected: (clientId: string) => void
 	}) {
 
-	const generateNickname = standardNicknameGenerator({rando})
+	const generateNickname = standardNicknameGenerator({rando: <any>rando})
 	const invite = makeInviter(state)
 
 	state.track(({sessionId, inviteCopied, loading}) => options.writeNetworking(html`
