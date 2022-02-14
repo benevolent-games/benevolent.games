@@ -55,7 +55,7 @@ export function spawnPlayer({
 
 			const interval = setInterval(
 				() => sendMemo(["walk", walking.getForce()]),
-				16.667,
+				33.333,
 			)
 
 			disposers.add(() => clearInterval(interval))

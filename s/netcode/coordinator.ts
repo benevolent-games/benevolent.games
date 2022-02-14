@@ -37,14 +37,14 @@ export function makeCoordinator({game, networking}: {
 	setInterval(() => {
 		for (const loop of networkLoop)
 			loop()
-	}, 16.6667)
+	}, 33.333)
 
 	// lower-frequency network loop
 	const slowNetworkLoop = new Set<() => void>()
 	setInterval(() => {
 		for (const loop of slowNetworkLoop)
 			loop()
-	}, 100)
+	}, 200)
 
 	function sendRequest(data: any) {
 		clientNet.sendToHost(<RequestUpdate>[
