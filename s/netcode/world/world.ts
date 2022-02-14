@@ -4,15 +4,15 @@ import {freeze} from "./helpers/freeze.js"
 import {Description, Delta, WorldEvent, Changes} from "./types.js"
 import {applyDeltaToDescriptions} from "./helpers/apply-deltas-to-descriptions.js"
 
-export function makeWorld() {
-	const descriptions = new Map<string, Description>()
+export function makeWorld<xDescription extends Description>() {
+	const descriptions = new Map<string, xDescription>()
 	const deltas = new Map<string, Delta>()
 	const events = new Map<string, WorldEvent>()
 
 	const descriptionListeners =
-		new Set<(id: string, description: Description) => void>()
+		new Set<(id: string, description: xDescription) => void>()
 
-	function callDescriptionListeners(id: string, description: Description) {
+	function callDescriptionListeners(id: string, description: xDescription) {
 		for (const listener of descriptionListeners)
 			listener(id, description)
 	}
@@ -20,7 +20,7 @@ export function makeWorld() {
 	return {
 		descriptionListeners,
 
-		createDescription(...newDescriptions: Description[]): string[] {
+		createDescriptions(...newDescriptions: xDescription[]): string[] {
 			return newDescriptions.map(description => {
 				const id = randomId()
 				descriptions.set(id, description)
@@ -30,11 +30,11 @@ export function makeWorld() {
 			})
 		},
 
-		readDescription(...ids: string[]) {
+		readDescriptions(...ids: string[]) {
 			return ids.map(id => freeze({...descriptions.get(id)}))
 		},
 
-		updateDescription(...changes: [string, Delta][]) {
+		updateDescriptions(...changes: [string, Delta][]) {
 			for (const [id, delta] of changes) {
 				applyDeltaToDescriptions(id, delta, descriptions)
 				applyDeltaToDescriptions(id, delta, deltas)
@@ -42,7 +42,7 @@ export function makeWorld() {
 			}
 		},
 
-		deleteDescription(...ids: string[]) {
+		deleteDescriptions(...ids: string[]) {
 			for (const id of ids) {
 				descriptions.delete(id)
 				deltas.set(id, undefined)
@@ -50,13 +50,15 @@ export function makeWorld() {
 			}
 		},
 
-		dispatchEvent(event: WorldEvent) {
-			const id = randomId()
-			events.set(id, event)
-			return id
+		dispatchEvents(...newEvents: WorldEvent[]) {
+			return newEvents.map(event => {
+				const id = randomId()
+				events.set(id, event)
+				return id
+			})
 		},
 
-		readAllDescriptions(): [string, Description][] {
+		readAllDescriptions(): [string, xDescription][] {
 			return [...descriptions.entries()]
 				.map(([id, description]) => [id, freeze({...description})])
 		},
@@ -81,7 +83,7 @@ export function makeWorld() {
 				events.set(id, event)
 		},
 
-		assertDescription(id: string, description: Description) {
+		assertDescription(id: string, description: xDescription) {
 			descriptions.set(id, description)
 			deltas.set(id, description)
 			callDescriptionListeners(id, description)

@@ -1,21 +1,25 @@
 
 import {Await} from "dbmage"
+
+import {Changes} from "./world/types.js"
+import {makeWorld} from "./world/world.js"
 import {makeGame} from "../game/make-game.js"
 import {makeNetworking} from "./networking.js"
-import {Changes, Description} from "./world/types.js"
-import {makeWorld} from "./world/world.js"
+import {RemotePromise, remotePromise} from "./utils/remote-promise.js"
+import {AnyEntityDescription, Entity, EntityDescription, Spawner} from "../game/types.js"
 
-export async function makeCoordinator({game, networking}: {
+export function makeCoordinator({game, networking}: {
 		game: Await<ReturnType<typeof makeGame>>
 		networking: Await<ReturnType<typeof makeNetworking>>
 	}) {
 
-	const world = makeWorld()
-	const entities = new Map()
-	const pendingEntities = new Set<string>()
+	const world = makeWorld<EntityDescription>()
+	const entities = new Map<string, Entity>()
+	const pendingEntitySpawns = new Set<string>()
+	const pendingAddToWorld = new Map<string, RemotePromise<Entity>>()
 
 	function hasEntityBeenAdded(id: string) {
-		return entities.has(id) || pendingEntities.has(id)
+		return entities.has(id) || pendingEntitySpawns.has(id)
 	}
 
 	const networkLoop = new Set<() => void>()
@@ -36,7 +40,8 @@ export async function makeCoordinator({game, networking}: {
 				const entity = entities.get(id)
 				if (entity) {
 					if (description) {
-						entity.update(description)
+						if (!networking.host)
+							entity.update(description)
 					}
 					else {
 						console.log(`entity removed "${id}"`)
@@ -46,19 +51,30 @@ export async function makeCoordinator({game, networking}: {
 				}
 			}
 			else {
-				const {entityType} = description
-				if (entityType === "crate") {
-					console.log(`adding entity "${entityType}"`)
-					pendingEntities.add(id)
-					game.spawn.crate({
+				const {type} = description
+				const spawner = <Spawner<EntityDescription>>game.spawn[type]
+				if (spawner) {
+					console.log(`adding entity "${type}"`)
+					pendingEntitySpawns.add(id)
+					spawner({
 							host: networking.host,
 							description: <any>description,
 						})
-						.then(entity => entities.set(id, entity))
-						.finally(() => pendingEntities.delete(id))
+						.then(entity => {
+							entities.set(id, entity)
+							pendingAddToWorld.get(id).resolve(entity)
+							entity.update(world.readDescriptions(id)[0])
+						})
+						.catch(error => {
+							pendingAddToWorld.get(id).reject(error)
+						})
+						.finally(() => {
+							pendingEntitySpawns.delete(id)
+							pendingAddToWorld.delete(id)
+						})
 				}
 				else {
-					console.error(`unknown entity type "${entityType}"`)
+					console.error(`unknown entity type "${type}"`)
 				}
 			}
 		}
@@ -71,7 +87,7 @@ export async function makeCoordinator({game, networking}: {
 
 	type DescriptionUpdate = [
 		UpdateType.Description,
-		[string, Description],
+		[string, EntityDescription],
 	]
 
 	type ChangesUpdate = [
@@ -82,21 +98,15 @@ export async function makeCoordinator({game, networking}: {
 	type Update = DescriptionUpdate | ChangesUpdate
 
 	if (networking.host) {
-		world.createDescription({
-			entityType: "crate",
-			position: [12, 5, 10]
-		})
-		world.createDescription({
-			entityType: "crate",
-			position: [14, 5, 10]
-		})
-		let descriptionIndex = 0
+
 		networkLoop.add(function describeEntities() {
 			for (const [id, entity] of entities) {
 				const description = entity.describe()
 				world.assertDescription(id, description)
 			}
 		})
+
+		let descriptionIndex = 0
 		slowNetworkLoop.add(function broadcastDescriptions() {
 			const allDescriptions = world.readAllDescriptions()
 			if (descriptionIndex > allDescriptions.length - 1)
@@ -108,6 +118,7 @@ export async function makeCoordinator({game, networking}: {
 			])
 			descriptionIndex += 1
 		})
+
 		networkLoop.add(function broadcastAllChanges() {
 			const changes = world.extractAllChanges()
 			networking.sendToAllClients(<ChangesUpdate>[
@@ -115,8 +126,10 @@ export async function makeCoordinator({game, networking}: {
 				changes,
 			])
 		})
+
 	}
 	else {
+
 		networking.receivers.add(([type, data]: Update) => {
 			if (type === UpdateType.Description) {
 				const [id, description] = <DescriptionUpdate[1]>data
@@ -127,5 +140,24 @@ export async function makeCoordinator({game, networking}: {
 				world.applyAllChanges(changes)
 			}
 		})
+	}
+
+	return {
+		async addToWorld(...descriptions: AnyEntityDescription[]) {
+			return Promise.all(descriptions.map(description => {
+				const remote = remotePromise<Entity>()
+				const [id] = world.createDescriptions(description)
+				pendingAddToWorld.set(id, remote)
+				return remote.promise
+			}))
+		},
+		removeFromWorld(ids: string[]) {
+			world.deleteDescriptions(...ids)
+			for (const id of ids) {
+				const entity = entities.get(id)
+				entity.dispose()
+				entities.delete(id)
+			}
+		}
 	}
 }

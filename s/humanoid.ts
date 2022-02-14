@@ -26,7 +26,7 @@ void async function main() {
 	}
 
 	async function setupGame() {
-		const {game, quality, middle, finishLoading} = await gameSetup({
+		const {game, quality, finishLoading} = await gameSetup({
 			statsArea: document.querySelector(".stats"),
 			fullscreenButton: document.querySelector(".buttonbar .fullscreen"),
 			thumbsticks: {
@@ -36,18 +36,7 @@ void async function main() {
 		})
 
 		console.log("💅 quality:", quality)
-	
-		let {getCameraPosition} = await game.spawn.camera()
-
-		await Promise.all([
-			game.spawn.environment({getCameraPosition: () => getCameraPosition()}),
-			game.spawn.character(),
-		])
-
-		const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
-		getCameraPosition = player.getCameraPosition
-
-		await game.spawn.dunebuggy([0, 0, 0])
+		await game.spawn.camera()
 
 		finishLoading()
 		return game
@@ -58,5 +47,29 @@ void async function main() {
 		setupGame(),
 	])
 
-	await makeCoordinator({networking, game})
+	const coordinator = makeCoordinator({networking, game})
+	if (networking.host) {
+		await coordinator.addToWorld(
+			{
+				type: "environment",
+			},
+		)
+		await coordinator.addToWorld(
+			{
+				type: "crate",
+				position: [8, 5, 10],
+			},
+			{
+				type: "crate",
+				position: [10, 5, 10],
+			},
+			{
+				type: "crate",
+				position: [12, 5, 10],
+			},
+		)
+	}
+
+	await game.spawn.player(v3.add(game.middle, [10, 5, 0]))
+	await game.spawn.dunebuggy([0, 0, 0])
 }()

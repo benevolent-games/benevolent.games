@@ -1,13 +1,15 @@
 
-import {V3} from "../utils/v3.js"
+import * as v3 from "../utils/v3.js"
 import {loadGlb} from "../babylon/load-glb.js"
-import {Quality, SpawnOptions} from "../types.js"
 import {loadMaterial} from "../babylon/load-material.js"
+import {EnvironmentDescription, Quality, Spawner, SpawnOptions} from "../types.js"
 
-export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions) {
-	return async function({getCameraPosition}: {
-			getCameraPosition: () => V3
-		}) {
+export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions): Spawner<EnvironmentDescription> {
+	return async function() {
+
+		const getCameraPosition = () => {
+			return v3.fromBabylon(scene.activeCamera.globalPosition)
+		}
 
 		const assets = await loadGlb(scene, `/assets/art/desert/terrain/terrain.${quality}.glb`)
 		const {meshes, deleteMeshes} = prepareAssets(assets)
@@ -89,6 +91,14 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions) {
 				? 4096
 				: 1024,
 		})
+
+		return {
+			update() {},
+			describe: () => ({type: "environment"}),
+			dispose() {
+				console.error("cannot dispose environment")
+			},
+		}
 	}
 }
 

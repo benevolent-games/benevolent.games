@@ -1,18 +1,9 @@
 
-import {V3} from "../utils/v3.js"
 import * as v3 from "../utils/v3.js"
-import {SpawnOptions} from "../types.js"
-import {Description} from "../../netcode/world/types.js"
+import {CrateDescription, Spawner, SpawnOptions} from "../types.js"
 
-export interface CrateDescription extends Description {
-	position: V3
-}
-
-export function spawnCrate({scene}: SpawnOptions) {
-	return async function({host, description}: {
-			host: boolean
-			description: CrateDescription
-		}) {
+export function spawnCrate({scene}: SpawnOptions): Spawner<CrateDescription> {
+	return async function({host}) {
 
 		const mesh = BABYLON.MeshBuilder.CreateBox("crate", {size: 1}, scene)
 		const material = new BABYLON.StandardMaterial("cratemat", scene)
@@ -34,25 +25,14 @@ export function spawnCrate({scene}: SpawnOptions) {
 			material.alpha = 0.5
 		}
 
-		function forceUpdate(description: CrateDescription) {
-			mesh.position = new BABYLON.Vector3(...description.position)
-		}
-
-		function update(description: CrateDescription) {
-			if (!host)
-				forceUpdate(description)
-		}
-
-		forceUpdate(description)
-
 		return {
-			update,
-			describe() {
-				return {
-					entityType: "crate",
-					position: v3.fromBabylon(mesh.position),
-				}
+			update: description => {
+				mesh.position = new BABYLON.Vector3(...description.position)
 			},
+			describe: () => ({
+				type: "crate",
+				position: v3.fromBabylon(mesh.position),
+			}),
 			dispose() {
 				mesh.dispose()
 			},
