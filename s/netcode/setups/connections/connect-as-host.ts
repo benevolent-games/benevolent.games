@@ -21,7 +21,7 @@ export async function connectAsHost({generateNickname, getAccess, update, receiv
 		generateNickname: () => string
 		getAccess: () => AccessPayload
 		update: ({}: {sessionId: string, scoreboard: Scoreboard}) => void
-		receive(data: any): void
+		receive(clientId: any, data: any): void
 	}) {
 
 	const clients = new Set<Client>()
@@ -64,7 +64,7 @@ export async function connectAsHost({generateNickname, getAccess, update, receiv
 						}
 					}
 					else {
-						receive(data)
+						receive(controls.clientId, data)
 					}
 				},
 			}

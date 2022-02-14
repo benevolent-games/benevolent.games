@@ -33,28 +33,37 @@ export async function makeNetworking({rando, getAccess, networkingPanel, indicat
 		writeScoreboard: (template: TemplateResult) => litRender(template, scoreboard),
 	}
 
-	const receivers = new Set<(data: any) => void>()
-	const receive = (data: any) => {
-		for (const receiver of receivers)
-			receiver(data)
-	}
+	const hostsideReceivers = new Set<(data: any) => void>()
+	const clientsideReceivers = new Set<(clientId: string, data: any) => void>()
 
 	if (state.readable.sessionId) {
-		const {getPlayerId, sendToHost} = await clientSetup({...options, receive})
+		const {getPlayerId, sendToHost} = await clientSetup({
+			...options,
+			receive(data: any) {
+				for (const receiver of hostsideReceivers)
+					receiver(data)
+			}
+		})
 		return {
 			host: false,
 			getPlayerId,
 			sendToHost,
-			receivers,
+			receivers: hostsideReceivers,
 		}
 	}
 	else {
-		const {getPlayerId, sendToAllClients} = await hostSetup({...options, receive})
+		const {getPlayerId, sendToAllClients} = await hostSetup({
+			...options,
+			receive(clientId: string, data: any) {
+				for (const receiver of clientsideReceivers)
+					receiver(clientId, data)
+			},
+		})
 		return {
 			host: true,
 			getPlayerId,
 			sendToAllClients,
-			receivers,
+			receivers: clientsideReceivers,
 		}
 	}
 }

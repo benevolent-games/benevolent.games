@@ -5,7 +5,7 @@ export interface HostNetworking {
 	host: true
 	getPlayerId(): string
 	sendToAllClients(data: any): void
-	receivers: Set<(data: any) => void>
+	receivers: Set<(clientId: string, data: any) => void>
 }
 
 export interface ClientNetworking {

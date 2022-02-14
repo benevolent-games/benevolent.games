@@ -89,7 +89,7 @@ export function spawnPlayer({
 				},
 			)
 			mesh.physicsImpostor.physicsBody.setAngularFactor(0)
-			{
+			if (isMe) {
 				function isPressed(key: string) {
 					return keyListener.getKeyState(key).isDown
 				}

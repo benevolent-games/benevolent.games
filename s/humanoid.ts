@@ -56,8 +56,21 @@ void async function main() {
 			{type: "crate", position: [10, 5, 10]},
 			{type: "crate", position: [12, 5, 10]},
 		)
+		coordinator.host.requestListeners.add((clientId, [type, request]) => {
+			console.log(`request to spawn player for "${clientId}"`)
+			if (request.subject === "spawn-player") {
+				coordinator.host.addToWorld({
+					type: "player",
+					position: [8, 5, 0],
+					playerId: clientId,
+				})
+			}
+		})
 	}
 	else {
 		// client should ask to spawn a player for themselves
+		coordinator.client.sendRequest({
+			subject: "spawn-player",
+		})
 	}
 }()

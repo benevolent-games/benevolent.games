@@ -7,7 +7,7 @@ import {makeGame} from "../game/make-game.js"
 import {makeNetworking} from "./networking.js"
 import {RemotePromise, remotePromise} from "./utils/remote-promise.js"
 import {AnyEntityDescription, Entity, EntityDescription, Spawner} from "../game/types.js"
-import {ChangesUpdate, ClientNetworking, DescriptionUpdate, RequestUpdate, Update, UpdateType} from "./types.js"
+import {ChangesUpdate, ClientNetworking, DescriptionUpdate, HostNetworking, RequestUpdate, Update, UpdateType} from "./types.js"
 
 export function makeCoordinator({game, networking}: {
 		game: Await<ReturnType<typeof makeGame>>
@@ -95,7 +95,9 @@ export function makeCoordinator({game, networking}: {
 		}
 	})
 
-	const requestListeners = new Set<(update: RequestUpdate) => void>()
+	const hostNet = <HostNetworking>networking
+	const clientNet = <ClientNetworking>networking
+	const requestListeners = new Set<(clientId: string, update: RequestUpdate) => void>()
 
 	if (networking.host) {
 
@@ -120,7 +122,7 @@ export function makeCoordinator({game, networking}: {
 			if (descriptionIndex > allDescriptions.length - 1)
 				descriptionIndex = 0
 			const [id, description] = allDescriptions[descriptionIndex]
-			networking.sendToAllClients(<DescriptionUpdate>[
+			hostNet.sendToAllClients(<DescriptionUpdate>[
 				UpdateType.Description,
 				[id, description],
 			])
@@ -130,17 +132,17 @@ export function makeCoordinator({game, networking}: {
 		// routinely send all world changes
 		networkLoop.add(function broadcastAllChanges() {
 			const changes = world.extractAllChanges()
-			networking.sendToAllClients(<ChangesUpdate>[
+			hostNet.sendToAllClients(<ChangesUpdate>[
 				UpdateType.Changes,
 				changes,
 			])
 		})
 
 		// host listens for incoming requests
-		networking.receivers.add((update: Update) => {
+		hostNet.receivers.add((clientId, update: Update) => {
 			if (update[0] === UpdateType.Request) {
 				for (const listener of requestListeners)
-					listener(update)
+					listener(clientId, update)
 			}
 		})
 
@@ -148,7 +150,7 @@ export function makeCoordinator({game, networking}: {
 	else {
 
 		// client listens for incoming changes
-		networking.receivers.add(([type, data]: Update) => {
+		clientNet.receivers.add(([type, data]: Update) => {
 			if (type === UpdateType.Description) {
 				const [id, description] = <DescriptionUpdate[1]>data
 				world.assertDescription(id, description)
@@ -159,9 +161,6 @@ export function makeCoordinator({game, networking}: {
 			}
 		})
 	}
-
-	const clientNetworking = <ClientNetworking>networking
-	// const hostNetworking = <HostNetworking>networking
 
 	return {
 		isGameHost: networking.host,
@@ -191,7 +190,7 @@ export function makeCoordinator({game, networking}: {
 		client: !networking.host
 			? {
 				sendRequest(data: any) {
-					clientNetworking.sendToHost(<RequestUpdate>[
+					clientNet.sendToHost(<RequestUpdate>[
 						UpdateType.Request,
 						data,
 					])

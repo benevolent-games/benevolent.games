@@ -13,7 +13,11 @@ import {renderLoadingSpinner} from "./rendering/render-loading-spinner.js"
 
 import crownSvg from "../../web/icons/tabler/crown.svg.js"
 
-export async function hostSetup({state, rando, receive, getAccess, ...options}: NetSetupOptions) {
+export async function hostSetup({
+		state, rando, receive, getAccess, ...options
+	}: NetSetupOptions & {
+		receive: (clientId: string, data: any) => void
+	}) {
 
 	const generateNickname = standardNicknameGenerator({rando})
 	const invite = makeInviter(state)
