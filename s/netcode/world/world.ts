@@ -1,20 +1,32 @@
 
 import {randomId} from "./helpers/id.js"
 import {freeze} from "./helpers/freeze.js"
+import {mergeDeltas} from "./helpers/merge-deltas.js"
 import {Description, Delta, WorldEvent, Changes} from "./types.js"
 import {applyDeltaToDescriptions} from "./helpers/apply-deltas-to-descriptions.js"
 
 export function makeWorld<xDescription extends Description>() {
 	const descriptions = new Map<string, xDescription>()
-	const deltas = new Map<string, Delta>()
+
+	const additions = new Map<string, xDescription>()
+	const removals = new Set<string>()
+	const deltas = new Map<string, Delta<xDescription>>()
 	const events = new Map<string, WorldEvent>()
 
 	const descriptionListeners =
 		new Set<(id: string, description: xDescription) => void>()
 
+	const eventListeners =
+		new Set<(id: string, event: WorldEvent) => void>()
+
 	function callDescriptionListeners(id: string, description: xDescription) {
 		for (const listener of descriptionListeners)
 			listener(id, description)
+	}
+
+	function callEventListeners(id: string, event: WorldEvent) {
+		for (const listener of eventListeners)
+			listener(id, event)
 	}
 
 	return {
@@ -24,7 +36,7 @@ export function makeWorld<xDescription extends Description>() {
 			return newDescriptions.map(description => {
 				const id = randomId()
 				descriptions.set(id, description)
-				deltas.set(id, description)
+				additions.set(id, description)
 				callDescriptionListeners(id, description)
 				return id
 			})
@@ -34,10 +46,16 @@ export function makeWorld<xDescription extends Description>() {
 			return ids.map(id => freeze({...descriptions.get(id)}))
 		},
 
-		updateDescriptions(...changes: [string, Delta][]) {
-			for (const [id, delta] of changes) {
+		updateDescriptions(...changes: [string, Delta<xDescription>][]) {
+			for (const [id, proposedDelta] of changes) {
+				const oldDescription = descriptions.get(id)
+				const delta: Delta = {}
+				for (const [key, value] of Object.entries(proposedDelta)) {
+					if (value !== oldDescription[key])
+						delta[key] = value
+				}
 				applyDeltaToDescriptions(id, delta, descriptions)
-				applyDeltaToDescriptions(id, delta, deltas)
+				mergeDeltas(id, delta, deltas)
 				callDescriptionListeners(id, descriptions.get(id))
 			}
 		},
@@ -45,7 +63,7 @@ export function makeWorld<xDescription extends Description>() {
 		deleteDescriptions(...ids: string[]) {
 			for (const id of ids) {
 				descriptions.delete(id)
-				deltas.set(id, undefined)
+				removals.add(id)
 				callDescriptionListeners(id, undefined)
 			}
 		},
@@ -63,29 +81,45 @@ export function makeWorld<xDescription extends Description>() {
 				.map(([id, description]) => [id, freeze({...description})])
 		},
 
-		extractAllChanges(): Changes {
-			const deltaEntries = [...deltas.entries()]
-			const eventEntries = [...events.entries()]
-			deltas.clear()
-			events.clear()
-			return {
-				deltaEntries,
-				eventEntries,
+		extractAllChanges(): Changes<xDescription> {
+			const changes: Changes<xDescription> = {
+				additions: [...additions],
+				deltas: [...deltas],
+				removals: [...removals],
+				events: [...events],
 			}
+			deltas.clear()
+			additions.clear()
+			removals.clear()
+			events.clear()
+			return changes
 		},
 
-		applyAllChanges({deltaEntries, eventEntries}: Changes) {
-			for (const [id, delta] of deltaEntries) {
-				applyDeltaToDescriptions(id, delta, descriptions)
-				callDescriptionListeners(id, descriptions.get(id))
+		applyAllChanges(changes: Changes<xDescription>) {
+			const affectedDescriptions = new Map<string, xDescription>()
+
+			for (const [id, description] of changes.additions) {
+				descriptions.set(id, description)
+				affectedDescriptions.set(id, description)
 			}
-			for (const [id, event] of eventEntries)
-				events.set(id, event)
+
+			for (const id of changes.removals) {
+				descriptions.delete(id)
+				affectedDescriptions.set(id, undefined)
+			}
+
+			for (const [id, delta] of changes.deltas) {
+				const description = applyDeltaToDescriptions(id, delta, descriptions)
+				if (description)
+					affectedDescriptions.set(id, description)
+			}
+
+			for (const [id, event] of changes.events)
+				callEventListeners(id, event)
 		},
 
 		assertDescription(id: string, description: xDescription) {
 			descriptions.set(id, description)
-			deltas.set(id, description)
 			callDescriptionListeners(id, description)
 		}
 	}

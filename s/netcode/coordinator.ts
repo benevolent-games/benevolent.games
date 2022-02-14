@@ -103,7 +103,7 @@ export function makeCoordinator({game, networking}: {
 
 	type ChangesUpdate = [
 		UpdateType.Changes,
-		Changes,
+		Changes<EntityDescription>,
 	]
 
 	type Update = DescriptionUpdate | ChangesUpdate
@@ -171,6 +171,6 @@ export function makeCoordinator({game, networking}: {
 				entity.dispose()
 				entities.delete(id)
 			}
-		}
+		},
 	}
 }
