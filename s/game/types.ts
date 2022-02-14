@@ -22,6 +22,7 @@ export interface SpawnOptions {
 	looker: ReturnType<typeof makeMouseLooker>
 	keyListener: ReturnType<typeof makeKeyListener>
 	thumbsticks: Thumbsticks
+	playerId: string
 }
 
 export interface EntityDescription extends Description {
@@ -55,6 +56,7 @@ export interface CrateDescription extends EntityDescription {
 export interface PlayerDescription extends EntityDescription {
 	type: "player"
 	position: V3
+	playerId: string
 }
 
 export interface DunebuggyDescription extends EntityDescription {

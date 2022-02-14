@@ -40,17 +40,19 @@ export async function makeNetworking({rando, getAccess, networkingPanel, indicat
 	}
 
 	if (state.readable.sessionId) {
-		const {sendToHost} = await clientSetup({...options, receive})
+		const {getPlayerId, sendToHost} = await clientSetup({...options, receive})
 		return {
 			host: false,
+			getPlayerId,
 			sendToHost,
 			receivers,
 		}
 	}
 	else {
-		const {sendToAllClients} = await hostSetup({...options, receive})
+		const {getPlayerId, sendToAllClients} = await hostSetup({...options, receive})
 		return {
 			host: true,
+			getPlayerId,
 			sendToAllClients,
 			receivers,
 		}

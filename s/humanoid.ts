@@ -2,7 +2,6 @@
 import {getRando} from "dbmage"
 
 import {installXiome} from "./xiome.js"
-import * as v3 from "./game/utils/v3.js"
 import "./game/utils/thumbsticks/thumbsticks.js"
 import {gameSetup} from "./game/startup/game-setup.js"
 import {makeNetworking} from "./netcode/networking.js"
@@ -14,19 +13,18 @@ void async function main() {
 	const xiome = await installXiome()
 	const getAccess = () => xiome.models.accessModel.getAccess()
 
-	async function setupNetworking() {
-		return makeNetworking({
-			rando: await getRando(),
-			networkingPanel: document.querySelector(".networking"),
-			indicatorsDisplay: document.querySelector(".indicators"),
-			debugPanel: document.querySelector(".debug"),
-			scoreboard: document.querySelector(".scoreboard"),
-			getAccess,
-		})
-	}
+	const networking = await makeNetworking({
+		rando: await getRando(),
+		networkingPanel: document.querySelector(".networking"),
+		indicatorsDisplay: document.querySelector(".indicators"),
+		debugPanel: document.querySelector(".debug"),
+		scoreboard: document.querySelector(".scoreboard"),
+		getAccess,
+	})
 
-	async function setupGame() {
+	async function setupGame(playerId: string) {
 		const {game, quality, finishLoading} = await gameSetup({
+			playerId,
 			statsArea: document.querySelector(".stats"),
 			fullscreenButton: document.querySelector(".buttonbar .fullscreen"),
 			thumbsticks: {
@@ -42,40 +40,24 @@ void async function main() {
 		return game
 	}
 
-	const [networking, game] = await Promise.all([
-		setupNetworking(),
-		setupGame(),
-	])
+	const playerId = networking.getPlayerId()
+	const game = await setupGame(playerId)
+
+	console.log("player id", playerId)
 
 	const coordinator = makeCoordinator({networking, game})
-	if (coordinator.isGameHost) {
-		await coordinator.addToWorld(
-			{
-				type: "environment",
-			},
+	if (coordinator.host) {
+		await coordinator.host.addToWorld(
+			{type: "environment"},
 		)
-		await coordinator.addToWorld(
-			{
-				type: "crate",
-				position: [8, 5, 10],
-			},
-			{
-				type: "crate",
-				position: [10, 5, 10],
-			},
-			{
-				type: "crate",
-				position: [12, 5, 10],
-			},
+		await coordinator.host.addToWorld(
+			{type: "player", position: [10, 5, 0], playerId},
+			{type: "crate", position: [8, 5, 10]},
+			{type: "crate", position: [10, 5, 10]},
+			{type: "crate", position: [12, 5, 10]},
 		)
-		await game.spawn.player(v3.add(game.middle, [10, 5, 0]))
 	}
 	else {
-		coordinator.spawnListeners.add(async({description}) => {
-			if (description.type === "environment")
-				await game.spawn.player(v3.add(game.middle, [10, 5, -2]))
-		})
+		// client should ask to spawn a player for themselves
 	}
-
-	// await game.spawn.dunebuggy([0, 0, 0])
 }()

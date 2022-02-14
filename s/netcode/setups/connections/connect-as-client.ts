@@ -17,17 +17,18 @@ export async function connectAsClient({
 		update: ({}: {sessionId: string, scoreboard: Scoreboard}) => void
 	}) {
 
+	let outerClientId: string
+	let outerSend: (data: any) => void
 	let outerClose = () => {}
 	window.onbeforeunload = outerClose
-
-	let outerSend: (data: any) => void
 
 	await joinSessionAsClient({
 		sessionId,
 		signalServerUrl: rtcOptions.signalServerUrl,
 		rtcConfig: standardRtcConfig,
 		onStateChange() {},
-		handleJoin({send, close}) {
+		handleJoin({send, close, clientId}) {
+			outerClientId = clientId
 			outerSend = send
 			outerClose = close
 			let lastCommunication = Date.now()
@@ -65,6 +66,7 @@ export async function connectAsClient({
 	})
 
 	return {
+		getPlayerId: () => outerClientId,
 		sendToHost(data: any) {
 			const datagram: Datagram = [
 				DatagramPurpose.App,

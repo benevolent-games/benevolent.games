@@ -1,12 +1,13 @@
 
 import {Await} from "dbmage"
 
-import {Changes} from "./world/types.js"
+import {Delta} from "./world/types.js"
 import {makeWorld} from "./world/world.js"
 import {makeGame} from "../game/make-game.js"
 import {makeNetworking} from "./networking.js"
 import {RemotePromise, remotePromise} from "./utils/remote-promise.js"
 import {AnyEntityDescription, Entity, EntityDescription, Spawner} from "../game/types.js"
+import {ChangesUpdate, ClientNetworking, DescriptionUpdate, RequestUpdate, Update, UpdateType} from "./types.js"
 
 export function makeCoordinator({game, networking}: {
 		game: Await<ReturnType<typeof makeGame>>
@@ -27,18 +28,21 @@ export function makeCoordinator({game, networking}: {
 		return entities.has(id) || pendingEntitySpawns.has(id)
 	}
 
+	// high-frequency network loop
 	const networkLoop = new Set<() => void>()
 	setInterval(() => {
 		for (const loop of networkLoop)
 			loop()
 	}, 16.6667)
 
+	// lower-frequency network loop
 	const slowNetworkLoop = new Set<() => void>()
 	setInterval(() => {
 		for (const loop of slowNetworkLoop)
 			loop()
 	}, 100)
 
+	// replication of the world as game entities
 	networkLoop.add(function replicate() {
 		for (const [id, description] of world.readAllDescriptions()) {
 			if (hasEntityBeenAdded(id)) {
@@ -91,32 +95,25 @@ export function makeCoordinator({game, networking}: {
 		}
 	})
 
-	enum UpdateType {
-		Description,
-		Changes,
-	}
-
-	type DescriptionUpdate = [
-		UpdateType.Description,
-		[string, EntityDescription],
-	]
-
-	type ChangesUpdate = [
-		UpdateType.Changes,
-		Changes<EntityDescription>,
-	]
-
-	type Update = DescriptionUpdate | ChangesUpdate
+	const requestListeners = new Set<(update: RequestUpdate) => void>()
 
 	if (networking.host) {
 
+		// update the world with entity changes
 		networkLoop.add(function describeEntities() {
-			for (const [id, entity] of entities) {
-				const description = entity.describe()
-				world.assertDescription(id, description)
-			}
+			world.updateDescriptions(
+				...[...entities]
+					.map(([id, entity]) => <[string, Delta<EntityDescription>]>[
+						id,
+						entity.describe()
+					])
+			)
 		})
 
+		// force full whole-entity description updates,
+		// sending only one description at a time,
+		// so as to eventually update everything in the world
+		// that could have missed deltas due to packet loss
 		let descriptionIndex = 0
 		slowNetworkLoop.add(function broadcastDescriptions() {
 			const allDescriptions = world.readAllDescriptions()
@@ -130,6 +127,7 @@ export function makeCoordinator({game, networking}: {
 			descriptionIndex += 1
 		})
 
+		// routinely send all world changes
 		networkLoop.add(function broadcastAllChanges() {
 			const changes = world.extractAllChanges()
 			networking.sendToAllClients(<ChangesUpdate>[
@@ -138,9 +136,18 @@ export function makeCoordinator({game, networking}: {
 			])
 		})
 
+		// host listens for incoming requests
+		networking.receivers.add((update: Update) => {
+			if (update[0] === UpdateType.Request) {
+				for (const listener of requestListeners)
+					listener(update)
+			}
+		})
+
 	}
 	else {
 
+		// client listens for incoming changes
 		networking.receivers.add(([type, data]: Update) => {
 			if (type === UpdateType.Description) {
 				const [id, description] = <DescriptionUpdate[1]>data
@@ -153,24 +160,43 @@ export function makeCoordinator({game, networking}: {
 		})
 	}
 
+	const clientNetworking = <ClientNetworking>networking
+	// const hostNetworking = <HostNetworking>networking
+
 	return {
 		isGameHost: networking.host,
+		getPlayerId: networking.getPlayerId,
 		spawnListeners,
-		async addToWorld(...descriptions: AnyEntityDescription[]) {
-			return Promise.all(descriptions.map(description => {
-				const remote = remotePromise<Entity>()
-				const [id] = world.createDescriptions(description)
-				pendingAddToWorld.set(id, remote)
-				return remote.promise
-			}))
-		},
-		removeFromWorld(ids: string[]) {
-			world.deleteDescriptions(...ids)
-			for (const id of ids) {
-				const entity = entities.get(id)
-				entity.dispose()
-				entities.delete(id)
+		host: networking.host
+			? {
+				requestListeners,
+				async addToWorld(...descriptions: AnyEntityDescription[]) {
+					return Promise.all(descriptions.map(description => {
+						const remote = remotePromise<Entity>()
+						const [id] = world.createDescriptions(description)
+						pendingAddToWorld.set(id, remote)
+						return remote.promise
+					}))
+				},
+				removeFromWorld(ids: string[]) {
+					world.deleteDescriptions(...ids)
+					for (const id of ids) {
+						const entity = entities.get(id)
+						entity.dispose()
+						entities.delete(id)
+					}
+				},
 			}
-		},
+			: undefined,
+		client: !networking.host
+			? {
+				sendRequest(data: any) {
+					clientNetworking.sendToHost(<RequestUpdate>[
+						UpdateType.Request,
+						data,
+					])
+				},
+			}
+			: undefined,
 	}
 }

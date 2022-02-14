@@ -46,8 +46,8 @@ export function makeWorld<xDescription extends Description>() {
 			return ids.map(id => freeze({...descriptions.get(id)}))
 		},
 
-		updateDescriptions(...changes: [string, Delta<xDescription>][]) {
-			for (const [id, proposedDelta] of changes) {
+		updateDescriptions(...updates: [string, Delta<xDescription>][]) {
+			for (const [id, proposedDelta] of updates) {
 				const oldDescription = descriptions.get(id)
 				const delta: Delta = {}
 				for (const [key, value] of Object.entries(proposedDelta)) {

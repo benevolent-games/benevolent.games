@@ -5,7 +5,10 @@ import {makeGame} from "../make-game.js"
 import {makeFramerateDisplay} from "../utils/make-framerate-display.js"
 import {getGameQualityMode, startLoading, wirePointerLockAttribute, setupFullscreenToggling, enableDebugMeshPicking} from "./startup-routines.js"
 
-export async function gameSetup({statsArea, thumbsticks, fullscreenButton}: {
+export async function gameSetup({
+		playerId, statsArea, thumbsticks, fullscreenButton,
+	}: {
+		playerId: string
 		statsArea: HTMLElement
 		thumbsticks: Thumbsticks
 		fullscreenButton: HTMLButtonElement
@@ -23,6 +26,7 @@ export async function gameSetup({statsArea, thumbsticks, fullscreenButton}: {
 		quality,
 		middle,
 		thumbsticks,
+		playerId,
 	})
 	document.body.prepend(game.canvas)
 	window.addEventListener("resize", game.resize)
