@@ -17,6 +17,11 @@ export function makeCoordinator({game, networking}: {
 	const entities = new Map<string, Entity>()
 	const pendingEntitySpawns = new Set<string>()
 	const pendingAddToWorld = new Map<string, RemotePromise<Entity>>()
+	const spawnListeners = new Set<(data: {
+		id: string
+		entity: Entity
+		description: EntityDescription
+	}) => void>()
 
 	function hasEntityBeenAdded(id: string) {
 		return entities.has(id) || pendingEntitySpawns.has(id)
@@ -56,17 +61,23 @@ export function makeCoordinator({game, networking}: {
 				if (spawner) {
 					console.log(`adding entity "${type}"`)
 					pendingEntitySpawns.add(id)
+					const addToWorldOperation = pendingAddToWorld.get(id)
 					spawner({
 							host: networking.host,
 							description: <any>description,
 						})
 						.then(entity => {
 							entities.set(id, entity)
-							pendingAddToWorld.get(id).resolve(entity)
 							entity.update(world.readDescriptions(id)[0])
+							if (addToWorldOperation)
+								addToWorldOperation.resolve(entity)
+							for (const listener of spawnListeners)
+								listener({id, description, entity})
 						})
 						.catch(error => {
-							pendingAddToWorld.get(id).reject(error)
+							console.error(error)
+							if (addToWorldOperation)
+								addToWorldOperation.reject(error)
 						})
 						.finally(() => {
 							pendingEntitySpawns.delete(id)
@@ -143,6 +154,8 @@ export function makeCoordinator({game, networking}: {
 	}
 
 	return {
+		isGameHost: networking.host,
+		spawnListeners,
 		async addToWorld(...descriptions: AnyEntityDescription[]) {
 			return Promise.all(descriptions.map(description => {
 				const remote = remotePromise<Entity>()

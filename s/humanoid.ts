@@ -48,7 +48,7 @@ void async function main() {
 	])
 
 	const coordinator = makeCoordinator({networking, game})
-	if (networking.host) {
+	if (coordinator.isGameHost) {
 		await coordinator.addToWorld(
 			{
 				type: "environment",
@@ -68,8 +68,14 @@ void async function main() {
 				position: [12, 5, 10],
 			},
 		)
+		await game.spawn.player(v3.add(game.middle, [10, 5, 0]))
+	}
+	else {
+		coordinator.spawnListeners.add(async({description}) => {
+			if (description.type === "environment")
+				await game.spawn.player(v3.add(game.middle, [10, 5, -2]))
+		})
 	}
 
-	await game.spawn.player(v3.add(game.middle, [10, 5, 0]))
-	await game.spawn.dunebuggy([0, 0, 0])
+	// await game.spawn.dunebuggy([0, 0, 0])
 }()
