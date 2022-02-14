@@ -46,20 +46,20 @@ void async function main() {
 	console.log("player id", playerId)
 
 	const coordinator = makeCoordinator({networking, game})
-	if (coordinator.host) {
-		await coordinator.host.addToWorld(
+	if (coordinator.hostAccess) {
+		await coordinator.hostAccess.addToWorld(
 			{type: "environment"},
 		)
-		await coordinator.host.addToWorld(
+		await coordinator.hostAccess.addToWorld(
 			{type: "player", position: [10, 5, 0], playerId},
 			{type: "crate", position: [8, 5, 10]},
-			// {type: "crate", position: [10, 5, 10]},
-			// {type: "crate", position: [12, 5, 10]},
+			{type: "crate", position: [10, 5, 10]},
+			{type: "crate", position: [12, 5, 10]},
 		)
-		coordinator.host.requestListeners.add((clientId, [type, request]) => {
+		coordinator.hostAccess.requestListeners.add((clientId, [type, request]) => {
 			if (request.subject === "spawn-player") {
 				console.log(`request to spawn player for "${clientId}"`)
-				coordinator.host.addToWorld({
+				coordinator.hostAccess.addToWorld({
 					type: "player",
 					position: [-0.5, 5, 0],
 					playerId: clientId,
@@ -69,7 +69,7 @@ void async function main() {
 	}
 	else {
 		// client should ask to spawn a player for themselves
-		coordinator.client.sendRequest({
+		coordinator.clientAccess.sendRequest({
 			subject: "spawn-player",
 		})
 	}

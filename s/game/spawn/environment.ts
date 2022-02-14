@@ -2,10 +2,10 @@
 import * as v3 from "../utils/v3.js"
 import {loadGlb} from "../babylon/load-glb.js"
 import {loadMaterial} from "../babylon/load-material.js"
-import {EnvironmentDescription, Quality, Spawner, SpawnOptions} from "../types.js"
+import {asEntity, EnvironmentDescription, Quality, Spawner, SpawnOptions} from "../types.js"
 
 export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions): Spawner<EnvironmentDescription> {
-	return async function() {
+	return async function({description}) {
 
 		const getCameraPosition = () => {
 			return v3.fromBabylon(scene.activeCamera.globalPosition)
@@ -92,13 +92,14 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions): Sp
 				: 1024,
 		})
 
-		return {
+		return asEntity<EnvironmentDescription>({
 			update() {},
-			describe: () => ({type: "environment"}),
+			describe: () => description,
 			dispose() {
 				console.error("cannot dispose environment")
 			},
-		}
+			receiveMemo() {},
+		})
 	}
 }
 

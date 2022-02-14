@@ -7,12 +7,15 @@ import {makeGame} from "../game/make-game.js"
 import {makeNetworking} from "./networking.js"
 import {RemotePromise, remotePromise} from "./utils/remote-promise.js"
 import {AnyEntityDescription, Entity, EntityDescription, Spawner} from "../game/types.js"
-import {ChangesUpdate, ClientNetworking, DescriptionUpdate, HostNetworking, RequestUpdate, Update, UpdateType} from "./types.js"
+import {ChangesUpdate, ClientNetworking, DescriptionUpdate, HostNetworking, MemoIncoming, MemoOutgoing, MemoUpdate, RequestUpdate, Update, UpdateType} from "./types.js"
 
 export function makeCoordinator({game, networking}: {
 		game: Await<ReturnType<typeof makeGame>>
 		networking: Await<ReturnType<typeof makeNetworking>>
 	}) {
+
+	const hostNet = <HostNetworking>networking
+	const clientNet = <ClientNetworking>networking
 
 	const world = makeWorld<EntityDescription>()
 	;(<any>window).world = world
@@ -43,6 +46,37 @@ export function makeCoordinator({game, networking}: {
 			loop()
 	}, 100)
 
+	function sendRequest(data: any) {
+		clientNet.sendToHost(<RequestUpdate>[
+			UpdateType.Request,
+			data,
+		])
+	}
+
+	const memos = new Set<MemoOutgoing>()
+
+	function executeMemo(incoming: MemoIncoming) {
+		const entity = entities.get(incoming.entityId)
+		if (entity)
+			entity.receiveMemo(incoming)
+	}
+
+	function queueOutgoingMemo(outgoing: MemoOutgoing) {
+		if (networking.host)
+			executeMemo({...outgoing, playerId: networking.playerId})
+		else
+			memos.add(outgoing)
+	}
+
+	function sendQueuedMemosToHost() {
+		const outgoings = [...memos]
+		memos.clear()
+		clientNet.sendToHost(<MemoUpdate>[
+			UpdateType.Memo,
+			outgoings.map(({entityId, memo}) => [entityId, memo]),
+		])
+	}
+
 	// replication of the world as game entities
 	networkLoop.add(function replicate() {
 		for (const [id, description] of world.readAllDescriptions()) {
@@ -70,6 +104,10 @@ export function makeCoordinator({game, networking}: {
 					spawner({
 							host: networking.host,
 							description: <any>description,
+							sendMemo: memo => queueOutgoingMemo({
+								memo,
+								entityId: id,
+							}),
 						})
 						.then(entity => {
 							entities.set(id, entity)
@@ -96,8 +134,6 @@ export function makeCoordinator({game, networking}: {
 		}
 	})
 
-	const hostNet = <HostNetworking>networking
-	const clientNet = <ClientNetworking>networking
 	const requestListeners = new Set<(clientId: string, update: RequestUpdate) => void>()
 
 	if (networking.host) {
@@ -147,6 +183,16 @@ export function makeCoordinator({game, networking}: {
 			}
 		})
 
+		// host listens for incoming memos,
+		// and delivers them to entities
+		hostNet.receivers.add((clientId, update: Update) => {
+			if (update[0] === UpdateType.Memo) {
+				const memoList = update[1]
+				for (const [entityId, memo] of memoList)
+				executeMemo({entityId, playerId: clientId, memo})
+			}
+		})
+
 	}
 	else {
 
@@ -161,13 +207,16 @@ export function makeCoordinator({game, networking}: {
 				world.applyAllChanges(changes)
 			}
 		})
+
+		// client sends queued memos
+		networkLoop.add(() => sendQueuedMemosToHost)
 	}
 
 	return {
 		isGameHost: networking.host,
 		playerId: networking.playerId,
 		spawnListeners,
-		host: networking.host
+		hostAccess: networking.host
 			? {
 				requestListeners,
 				async addToWorld(...descriptions: AnyEntityDescription[]) {
@@ -188,15 +237,8 @@ export function makeCoordinator({game, networking}: {
 				},
 			}
 			: undefined,
-		client: !networking.host
-			? {
-				sendRequest(data: any) {
-					clientNet.sendToHost(<RequestUpdate>[
-						UpdateType.Request,
-						data,
-					])
-				},
-			}
+		clientAccess: !networking.host
+			? {sendRequest}
 			: undefined,
 	}
 }

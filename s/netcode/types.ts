@@ -21,10 +21,22 @@ export type Networking = HostNetworking | ClientNetworking
 // coordinator types
 //
 
+export interface MemoOutgoing {
+	entityId: string
+	memo: any
+}
+
+export interface MemoIncoming {
+	entityId: string
+	playerId: string
+	memo: any
+}
+
 export enum UpdateType {
 	Description,
 	Changes,
 	Request,
+	Memo,
 }
 
 export type DescriptionUpdate = [
@@ -42,4 +54,15 @@ export type RequestUpdate = [
 	any,
 ]
 
-export type Update = DescriptionUpdate | ChangesUpdate | RequestUpdate
+export type MemoUpdate = [
+	UpdateType.Memo,
+
+	// entityId, memo
+	[string, any][],
+]
+
+export type Update =
+	| DescriptionUpdate
+	| ChangesUpdate
+	| RequestUpdate
+	| MemoUpdate

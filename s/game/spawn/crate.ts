@@ -1,7 +1,7 @@
 
 import * as v3 from "../utils/v3.js"
 import * as quat from "../utils/quat.js"
-import {CrateDescription, Spawner, SpawnOptions} from "../types.js"
+import {asEntity, CrateDescription, Spawner, SpawnOptions} from "../types.js"
 
 export function spawnCrate({scene}: SpawnOptions): Spawner<CrateDescription> {
 	return async function({host}) {
@@ -26,7 +26,7 @@ export function spawnCrate({scene}: SpawnOptions): Spawner<CrateDescription> {
 			material.alpha = 0.5
 		}
 
-		return {
+		return asEntity<CrateDescription>({
 			update: description => {
 				mesh.position = v3.toBabylon(description.position)
 				if (description.rotation)
@@ -40,6 +40,7 @@ export function spawnCrate({scene}: SpawnOptions): Spawner<CrateDescription> {
 			dispose() {
 				mesh.dispose()
 			},
-		}
+			receiveMemo() {},
+		})
 	}
 }

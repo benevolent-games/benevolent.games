@@ -26,7 +26,7 @@ export function makeMouseLooker() {
 	return {
 		add,
 		get mouseLook() {
-			return {horizontalRadians, verticalRadians}
+			return {x: horizontalRadians, y: verticalRadians}
 		},
 	}
 }
