@@ -190,7 +190,6 @@ export function makeCoordinator({game, networking}: {
 				executeMemo({entityId, playerId: clientId, memo})
 			}
 		})
-
 	}
 	else {
 
@@ -216,6 +215,8 @@ export function makeCoordinator({game, networking}: {
 		spawnListeners,
 		hostAccess: networking.host
 			? {
+				world,
+				entities,
 				requestListeners,
 				async addToWorld(...descriptions: AnyEntityDescription[]) {
 					return Promise.all(descriptions.map(description => {
@@ -225,7 +226,7 @@ export function makeCoordinator({game, networking}: {
 						return remote.promise
 					}))
 				},
-				removeFromWorld(ids: string[]) {
+				removeFromWorld(...ids: string[]) {
 					world.deleteDescriptions(...ids)
 					for (const id of ids) {
 						const entity = entities.get(id)

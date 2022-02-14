@@ -6,6 +6,8 @@ import {installXiome} from "./xiome.js"
 import {gameSetup} from "./game/startup/game-setup.js"
 import {makeNetworking} from "./netcode/networking.js"
 import {makeCoordinator} from "./netcode/coordinator.js"
+import {HostNetworking} from "./netcode/types.js"
+import {PlayerDescription} from "./game/types.js"
 
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
@@ -61,6 +63,18 @@ void async function main() {
 					position: [-0.5, 5, 0],
 					playerId: clientId,
 				})
+			}
+		})
+		const hostNet = <HostNetworking>networking
+		hostNet.handlersForDisconnectedClients.add(clientId => {
+			const descriptions = coordinator.hostAccess.world.readAllDescriptions()
+			const foundDescription = descriptions.find(([,description]) => {
+				const player = <PlayerDescription>description
+				return player.type === "player" && player.playerId === clientId
+			})
+			if (foundDescription) {
+				const [id] = foundDescription
+				coordinator.hostAccess.removeFromWorld(id)
 			}
 		})
 	}

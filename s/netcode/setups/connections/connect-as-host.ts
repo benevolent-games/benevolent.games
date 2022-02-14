@@ -17,16 +17,24 @@ interface Client {
 	pingWaiters: {id: number, start: number}[]
 }
 
-export async function connectAsHost({generateNickname, getAccess, update, receive}: {
+export async function connectAsHost({
+		generateNickname, getAccess, update, receive, handleClientDisconnected,
+	}: {
 		generateNickname: () => string
 		getAccess: () => AccessPayload
 		update: ({}: {sessionId: string, scoreboard: Scoreboard}) => void
-		receive(clientId: any, data: any): void
+		receive(clientId: string, data: any): void
+		handleClientDisconnected(clientId: string): void
 	}) {
 
 	const clients = new Set<Client>()
 	const closeEvent = pub()
 	const playerId = "host"
+
+	function registerClientDisconnected(client: Client) {
+		clients.delete(client)
+		handleClientDisconnected(client.controls.clientId)
+	}
 
 	const hostConnection = await createSessionAsHost({
 		label: "game",
@@ -48,7 +56,7 @@ export async function connectAsHost({generateNickname, getAccess, update, receiv
 			const unsubscribeCloseListener = closeEvent.subscribe(controls.close)
 			return {
 				handleClose() {
-					clients.delete(client)
+					registerClientDisconnected(client)
 					unsubscribeCloseListener()
 				},
 				handleMessage(incoming) {
@@ -119,7 +127,7 @@ export async function connectAsHost({generateNickname, getAccess, update, receiv
 			for (const client of timedOutClients) {
 				console.log(`client timed out ${client.controls.clientId}`)
 				client.controls.close()
-				clients.delete(client)
+				registerClientDisconnected(client)
 			}
 		}
 

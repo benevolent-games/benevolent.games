@@ -6,6 +6,7 @@ export interface HostNetworking {
 	playerId: string
 	sendToAllClients(data: any): void
 	receivers: Set<(clientId: string, data: any) => void>
+	handlersForDisconnectedClients: Set<(clientId: string) => void>
 }
 
 export interface ClientNetworking {
