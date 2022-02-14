@@ -1,4 +1,5 @@
 
+import {Quat} from "./utils/quat.js"
 import type {V3} from "./utils/v3.js"
 import {Description} from "../netcode/world/types.js"
 import {ThumbStick} from "./utils/thumbsticks/thumb-stick.js"
@@ -51,6 +52,7 @@ export interface EnvironmentDescription extends EntityDescription {
 export interface CrateDescription extends EntityDescription {
 	type: "crate"
 	position: V3
+	rotation?: Quat
 }
 
 export interface PlayerDescription extends EntityDescription {

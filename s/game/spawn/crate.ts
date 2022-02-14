@@ -1,4 +1,5 @@
 
+import * as quat from "../utils/quat.js"
 import * as v3 from "../utils/v3.js"
 import {CrateDescription, Spawner, SpawnOptions} from "../types.js"
 
@@ -27,11 +28,14 @@ export function spawnCrate({scene}: SpawnOptions): Spawner<CrateDescription> {
 
 		return {
 			update: description => {
-				mesh.position = new BABYLON.Vector3(...description.position)
+				mesh.position = v3.toBabylon(description.position)
+				if (description.rotation)
+					mesh.rotationQuaternion = quat.toBabylon(description.rotation)
 			},
 			describe: () => ({
 				type: "crate",
 				position: v3.fromBabylon(mesh.position),
+				rotation: quat.fromBabylon(mesh.rotationQuaternion),
 			}),
 			dispose() {
 				mesh.dispose()
