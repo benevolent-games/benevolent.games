@@ -4,7 +4,6 @@ import {makeMouseLooker} from "../../utils/mouse-looker.js"
 
 export function setupLooking({
 		looker,
-		camera,
 		capsule,
 		thumbsticks,
 		thumbSensitivity,
@@ -15,7 +14,6 @@ export function setupLooking({
 		thumbsticks: Thumbsticks
 		looker: ReturnType<typeof makeMouseLooker>
 		capsule: BABYLON.Mesh
-		camera: BABYLON.TargetCamera
 	}) {
 
 	const thumb = {
@@ -32,7 +30,7 @@ export function setupLooking({
 		getLook() {
 			return combined
 		},
-		applyLook() {
+		applyLook(camera: BABYLON.TargetCamera) {
 
 			// mouse look
 			const mouse = looker.mouseLook

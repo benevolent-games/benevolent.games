@@ -88,7 +88,6 @@ export function makeCoordinator({game, networking}: {
 							entity.update(description)
 					}
 					else {
-						console.log(`entity removed "${id}"`)
 						entity.dispose()
 						entities.delete(id)
 					}
@@ -98,7 +97,6 @@ export function makeCoordinator({game, networking}: {
 				const {type} = description
 				const spawner = <Spawner<EntityDescription>>game.spawn[type]
 				if (spawner) {
-					console.log(`adding entity "${type}"`)
 					pendingEntitySpawns.add(id)
 					const addToWorldOperation = pendingAddToWorld.get(id)
 					spawner({
@@ -209,7 +207,7 @@ export function makeCoordinator({game, networking}: {
 		})
 
 		// client sends queued memos
-		networkLoop.add(() => sendQueuedMemosToHost)
+		networkLoop.add(sendQueuedMemosToHost)
 	}
 
 	return {

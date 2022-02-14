@@ -1,8 +1,8 @@
 
 import {getRando} from "dbmage"
+import "./game/utils/thumbsticks/thumbsticks.js"
 
 import {installXiome} from "./xiome.js"
-import "./game/utils/thumbsticks/thumbsticks.js"
 import {gameSetup} from "./game/startup/game-setup.js"
 import {makeNetworking} from "./netcode/networking.js"
 import {makeCoordinator} from "./netcode/coordinator.js"
@@ -43,8 +43,6 @@ void async function main() {
 	const {playerId} = networking
 	const game = await setupGame(playerId)
 
-	console.log("player id", playerId)
-
 	const coordinator = makeCoordinator({networking, game})
 	if (coordinator.hostAccess) {
 		await coordinator.hostAccess.addToWorld(
@@ -58,7 +56,6 @@ void async function main() {
 		)
 		coordinator.hostAccess.requestListeners.add((clientId, [type, request]) => {
 			if (request.subject === "spawn-player") {
-				console.log(`request to spawn player for "${clientId}"`)
 				coordinator.hostAccess.addToWorld({
 					type: "player",
 					position: [-0.5, 5, 0],
