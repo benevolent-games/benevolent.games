@@ -40,7 +40,7 @@ void async function main() {
 		return game
 	}
 
-	const playerId = networking.getPlayerId()
+	const {playerId} = networking
 	const game = await setupGame(playerId)
 
 	console.log("player id", playerId)
@@ -57,8 +57,8 @@ void async function main() {
 			// {type: "crate", position: [12, 5, 10]},
 		)
 		coordinator.host.requestListeners.add((clientId, [type, request]) => {
-			console.log(`request to spawn player for "${clientId}"`)
 			if (request.subject === "spawn-player") {
+				console.log(`request to spawn player for "${clientId}"`)
 				coordinator.host.addToWorld({
 					type: "player",
 					position: [-0.5, 5, 0],

@@ -35,7 +35,7 @@ export async function clientSetup({
 	))
 
 	state.writable.loading = true
-	const {sendToHost, getPlayerId} = await connectAsClient({
+	const {sendToHost, playerId} = await connectAsClient({
 		sessionId: state.readable.sessionId,
 		receive,
 		getAccess,
@@ -45,5 +45,5 @@ export async function clientSetup({
 	})
 	state.writable.loading = false
 
-	return {sendToHost, getPlayerId}
+	return {sendToHost, playerId}
 }

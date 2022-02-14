@@ -1,6 +1,6 @@
 
-import * as quat from "../utils/quat.js"
 import * as v3 from "../utils/v3.js"
+import * as quat from "../utils/quat.js"
 import {CrateDescription, Spawner, SpawnOptions} from "../types.js"
 
 export function spawnCrate({scene}: SpawnOptions): Spawner<CrateDescription> {

@@ -15,6 +15,7 @@ export function makeCoordinator({game, networking}: {
 	}) {
 
 	const world = makeWorld<EntityDescription>()
+	;(<any>window).world = world
 	const entities = new Map<string, Entity>()
 	const pendingEntitySpawns = new Set<string>()
 	const pendingAddToWorld = new Map<string, RemotePromise<Entity>>()
@@ -164,7 +165,7 @@ export function makeCoordinator({game, networking}: {
 
 	return {
 		isGameHost: networking.host,
-		getPlayerId: networking.getPlayerId,
+		playerId: networking.playerId,
 		spawnListeners,
 		host: networking.host
 			? {

@@ -35,6 +35,7 @@ export function spawnPlayer({
 		mesh.position = v3.toBabylon(description.position)
 
 		if (isMe) {
+			console.log("PLAYER IS ME!!!!", playerId, description)
 			const camera = new BABYLON.TargetCamera(
 				"camera",
 				BABYLON.Vector3.Zero(),
@@ -76,6 +77,9 @@ export function spawnPlayer({
 					0, verticalRadians, 0,
 				)
 			})
+		}
+		else {
+			console.log("PLAYER IS NOT ME!!", playerId, description)
 		}
 
 		if (host) {
@@ -164,7 +168,7 @@ export function spawnPlayer({
 			describe: () => ({
 				type: "player",
 				position: v3.fromBabylon(mesh.position),
-				playerId,
+				playerId: description.playerId,
 			}),
 			dispose() {
 				for (const disposable of disposables)

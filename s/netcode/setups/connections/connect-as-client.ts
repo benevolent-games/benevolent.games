@@ -17,25 +17,15 @@ export async function connectAsClient({
 		update: ({}: {sessionId: string, scoreboard: Scoreboard}) => void
 	}) {
 
-	let outerClientId: string
-	let outerSend: (data: any) => void
-	let outerClose = () => {}
-	window.onbeforeunload = outerClose
-
-	await joinSessionAsClient({
+	const {controls} = await joinSessionAsClient({
 		sessionId,
 		signalServerUrl: rtcOptions.signalServerUrl,
 		rtcConfig: standardRtcConfig,
 		onStateChange() {},
-		handleJoin({send, close, clientId}) {
-			outerClientId = clientId
-			outerSend = send
-			outerClose = close
+		handleJoin({send, close}) {
 			let lastCommunication = Date.now()
 			return {
-				handleClose() {
-					outerSend = () => {}
-				},
+				handleClose() {},
 				handleMessage(incoming) {
 					const [purpose, data] = <Datagram>JSON.parse(<string>incoming)
 					if (purpose === DatagramPurpose.Bookkeeping) {
@@ -65,14 +55,16 @@ export async function connectAsClient({
 		},
 	})
 
+	window.onbeforeunload = controls.close
+
 	return {
-		getPlayerId: () => outerClientId,
+		playerId: controls.clientId,
 		sendToHost(data: any) {
 			const datagram: Datagram = [
 				DatagramPurpose.App,
 				data,
 			]
-			outerSend(JSON.stringify(datagram))
+			controls.send(JSON.stringify(datagram))
 		},
 	}
 }

@@ -3,14 +3,14 @@ import {Changes} from "./world/types.js"
 
 export interface HostNetworking {
 	host: true
-	getPlayerId(): string
+	playerId: string
 	sendToAllClients(data: any): void
 	receivers: Set<(clientId: string, data: any) => void>
 }
 
 export interface ClientNetworking {
 	host: false
-	getPlayerId(): string
+	playerId: string
 	sendToHost(data: any): void
 	receivers: Set<(data: any) => void>
 }

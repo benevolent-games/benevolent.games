@@ -26,7 +26,7 @@ export async function connectAsHost({generateNickname, getAccess, update, receiv
 
 	const clients = new Set<Client>()
 	const closeEvent = pub()
-	const getPlayerId = () => "host"
+	const playerId = "host"
 
 	const hostConnection = await createSessionAsHost({
 		label: "game",
@@ -84,7 +84,7 @@ export async function connectAsHost({generateNickname, getAccess, update, receiv
 				runtime: now - runtimeStart,
 				players: [
 					{
-						clientId: getPlayerId(),
+						clientId: playerId,
 						host: true,
 						guest: hostGuest,
 						lag: 0,
@@ -153,7 +153,7 @@ export async function connectAsHost({generateNickname, getAccess, update, receiv
 
 	return {
 		hostConnection,
-		getPlayerId,
+		playerId,
 		sendToAllClients(data: string) {
 			const datagram: Datagram = [
 				DatagramPurpose.App,

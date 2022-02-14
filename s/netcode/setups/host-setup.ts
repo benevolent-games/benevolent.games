@@ -43,7 +43,7 @@ export async function hostSetup({
 	))
 
 	state.writable.loading = true
-	const {hostConnection, getPlayerId, sendToAllClients, sendCloseToAllClients} = await connectAsHost({
+	const {hostConnection, playerId, sendToAllClients, sendCloseToAllClients} = await connectAsHost({
 		receive,
 		generateNickname,
 		getAccess,
@@ -56,7 +56,7 @@ export async function hostSetup({
 	state.writable.loading = false
 
 	return {
-		getPlayerId,
+		playerId,
 		sendToAllClients,
 	}
 }
