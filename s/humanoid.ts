@@ -6,6 +6,7 @@ import * as v3 from "./game/utils/v3.js"
 import "./game/utils/thumbsticks/thumbsticks.js"
 import {gameSetup} from "./game/startup/game-setup.js"
 import {makeNetworking} from "./netcode/networking.js"
+import {makeCoordinator} from "./netcode/coordinator.js"
 
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
@@ -14,14 +15,13 @@ void async function main() {
 	const getAccess = () => xiome.models.accessModel.getAccess()
 
 	async function setupNetworking() {
-		const rando = await getRando()
-		await makeNetworking({
-			rando,
-			getAccess,
+		return makeNetworking({
+			rando: await getRando(),
 			networkingPanel: document.querySelector(".networking"),
 			indicatorsDisplay: document.querySelector(".indicators"),
 			debugPanel: document.querySelector(".debug"),
 			scoreboard: document.querySelector(".scoreboard"),
+			getAccess,
 		})
 	}
 
@@ -47,14 +47,16 @@ void async function main() {
 		const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
 		getCameraPosition = player.getCameraPosition
 
-		await game.spawn.crate([10, 5, 10])
 		await game.spawn.dunebuggy([0, 0, 0])
 
 		finishLoading()
+		return game
 	}
 
-	await Promise.all([
+	const [networking, game] = await Promise.all([
 		setupNetworking(),
 		setupGame(),
 	])
+
+	await makeCoordinator({networking, game})
 }()
