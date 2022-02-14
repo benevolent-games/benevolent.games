@@ -9,6 +9,7 @@ import {sessionTerm} from "./setups/common/session-term.js"
 import {NetSetupOptions} from "./setups/types/net-setup-options.js"
 import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
 import {makeNetworkingState} from "./setups/common/make-networking-state.js"
+import {makeWorld} from "./world/make-world.js"
 
 export async function makeNetworking({rando, getAccess, networkingPanel, indicatorsDisplay, debugPanel, scoreboard}: {
 		rando: Rando
@@ -21,7 +22,8 @@ export async function makeNetworking({rando, getAccess, networkingPanel, indicat
 
 	const state = makeNetworkingState()
 	state.writable.sessionId = parseHashForSessionId(location.hash, sessionTerm)
-	const options: NetSetupOptions = {
+
+	const options: Omit<NetSetupOptions, "receive"> = {
 		state,
 		rando,
 		getAccess,
@@ -31,8 +33,18 @@ export async function makeNetworking({rando, getAccess, networkingPanel, indicat
 		writeScoreboard: (template: TemplateResult) => litRender(template, scoreboard),
 	}
 
-	if (state.readable.sessionId)
-		await clientSetup(options)
-	else
-		await hostSetup(options)
+	const world = makeWorld()
+
+	if (state.readable.sessionId) {
+		const {sendToHost} = await clientSetup({
+			...options,
+			receive() {},
+		})
+	}
+	else {
+		const {sendToAllClients} = await hostSetup({
+			...options,
+			receive() {},
+		})
+	}
 }

@@ -13,7 +13,7 @@ import {renderLoadingSpinner} from "./rendering/render-loading-spinner.js"
 
 import crownSvg from "../../web/icons/tabler/crown.svg.js"
 
-export async function hostSetup({state, rando, getAccess, ...options}: NetSetupOptions) {
+export async function hostSetup({state, rando, receive, getAccess, ...options}: NetSetupOptions) {
 
 	const generateNickname = standardNicknameGenerator({rando})
 	const invite = makeInviter(state)
@@ -39,7 +39,8 @@ export async function hostSetup({state, rando, getAccess, ...options}: NetSetupO
 	))
 
 	state.writable.loading = true
-	const {hostConnection, sendCloseToAllClients} = await connectAsHost({
+	const {hostConnection, sendToAllClients, sendCloseToAllClients} = await connectAsHost({
+		receive,
 		generateNickname,
 		getAccess,
 		update: data => {
@@ -49,4 +50,8 @@ export async function hostSetup({state, rando, getAccess, ...options}: NetSetupO
 	window.onbeforeunload = sendCloseToAllClients
 	state.writable.sessionId = hostConnection.state.session?.id
 	state.writable.loading = false
+
+	return {
+		sendToAllClients,
+	}
 }

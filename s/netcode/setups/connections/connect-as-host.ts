@@ -3,8 +3,8 @@ import {createSessionAsHost, pub, JoinerControls} from "sparrow-rtc"
 
 import {rtcOptions} from "../common/rtc-options.js"
 import {AuthedUser, GuestUser, Scoreboard} from "../types/world.js"
+import {Datagram, DatagramPurpose, MessageFromClient, MessageFromHost} from "../types/messages.js"
 import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
-import {MessageFromClient, MessageFromHost} from "../types/messages.js"
 
 interface Client {
 	controls: JoinerControls
@@ -17,10 +17,11 @@ interface Client {
 	pingWaiters: {id: number, start: number}[]
 }
 
-export async function connectAsHost({generateNickname, getAccess, update}: {
+export async function connectAsHost({generateNickname, getAccess, update, receive}: {
 		generateNickname: () => string
 		getAccess: () => AccessPayload
 		update: ({}: {sessionId: string, scoreboard: Scoreboard}) => void
+		receive(data: any): void
 	}) {
 	const clients = new Set<Client>()
 	const closeEvent = pub()
@@ -48,14 +49,20 @@ export async function connectAsHost({generateNickname, getAccess, update}: {
 					clients.delete(client)
 					unsubscribeCloseListener()
 				},
-				handleMessage(message) {
-					client.lastTime = Date.now()
-					const {id, user} = <MessageFromClient>JSON.parse(<string>message)
-					const waiter = client.pingWaiters.find(w => w.id === id)
-					if (waiter) {
-						const ping = Date.now() - waiter.start
-						client.ping = ping
-						client.user = user
+				handleMessage(incoming) {
+					const [purpose, data] = <Datagram>JSON.parse(<string>incoming)
+					if (purpose === DatagramPurpose.Bookkeeping) {
+						client.lastTime = Date.now()
+						const {id, user} = <MessageFromClient>data
+						const waiter = client.pingWaiters.find(w => w.id === id)
+						if (waiter) {
+							const ping = Date.now() - waiter.start
+							client.ping = ping
+							client.user = user
+						}
+					}
+					else {
+						receive(data)
 					}
 				},
 			}
@@ -125,7 +132,10 @@ export async function connectAsHost({generateNickname, getAccess, update}: {
 					id,
 					scoreboard,
 				}
-				client.controls.send(JSON.stringify(message))
+				client.controls.send(JSON.stringify(<Datagram>[
+					DatagramPurpose.Bookkeeping,
+					message,
+				]))
 			}
 		}
 
@@ -141,6 +151,16 @@ export async function connectAsHost({generateNickname, getAccess, update}: {
 
 	return {
 		hostConnection,
+		sendToAllClients(data: string) {
+			const datagram: Datagram = [
+				DatagramPurpose.App,
+				data,
+			]
+			const serialized = JSON.stringify(datagram)
+			for (const client of clients) {
+				client.controls.send(serialized)
+			}
+		},
 		sendCloseToAllClients: () => closeEvent.publish(),
 	}
 }
