@@ -1,124 +1,103 @@
 
-import {V3} from "../utils/v3.js"
-import * as v2 from "../utils/v2.js"
-import {SpawnOptions} from "../types.js"
+import {V2} from "../utils/v2.js"
+import * as v3 from "../utils/v3.js"
+import {walker} from "./player-tools/walker.js"
+import {MemoIncoming} from "../../netcode/types.js"
+import {makeCapsule} from "./player-tools/capsule.js"
+import {setupLooking} from "./player-tools/looking.js"
+import {makeReticule} from "./player-tools/reticule.js"
+import {makePlayerCamera} from "./player-tools/player-camera.js"
+import {asEntity, PlayerDescription, Spawner, SpawnOptions} from "../types.js"
 
 export function spawnPlayer({
-		scene, renderLoop, looker, keyListener, thumbsticks,
-	}: SpawnOptions) {
-	return async function(position: V3) {
-		const mesh = BABYLON.MeshBuilder.CreateCapsule(
-			"player",
-			{
-				subdivisions: 2,
-				tessellation: 16,
-				capSubdivisions: 6,
-				height: 1.75,
-				radius: 0.25,
-			},
-			scene,
-		)
-		mesh.physicsImpostor = new BABYLON.PhysicsImpostor(
-			mesh,
-			BABYLON.PhysicsImpostor.CapsuleImpostor,
-			{
-				mass: 75,
-				friction: 2,
-				restitution: 0,
-			},
-		)
-		mesh.position = new BABYLON.Vector3(...position)
+		scene, renderLoop, looker, keyListener, thumbsticks, playerId,
+	}: SpawnOptions): Spawner<PlayerDescription> {
 
-		const camera = new BABYLON.TargetCamera(
-			"camera",
-			BABYLON.Vector3.Zero(),
-			scene
-		)
-		camera.minZ = 0.3
-		camera.maxZ = 20_000
-		camera.position = new BABYLON.Vector3(0, 0.75, 0)
-		camera.parent = mesh
-		scene.activeCamera = camera
+	return async function({host, description, sendMemo}) {
+		const disposers = new Set<() => void>()
+		const isMe = description.playerId === playerId
 
-		const box = BABYLON.MeshBuilder.CreateIcoSphere("box1", {radius: 0.003}, scene)
-		box.position = new BABYLON.Vector3(0, 0, 1)
-		box.parent = camera
-		box.isPickable = false
-		const boxMaterial = new BABYLON.StandardMaterial("box1-material", scene)
-		boxMaterial.emissiveColor = new BABYLON.Color3(1, 1, 1)
-		boxMaterial.disableLighting = true
-		box.material = boxMaterial
+		const capsule = makeCapsule({scene, disposers})
+		capsule.position = v3.toBabylon(description.position)
+		capsule.material.alpha = host ? 1 : 0.5
 
-		renderLoop.add(() => {
-			{ // thumblook
-				const sensitivity = 0.02
-				const {x, y} = thumbsticks.right.values
-				looker.add(x * sensitivity, -y * sensitivity)
-			}
-			const {horizontalRadians, verticalRadians} = looker.mouseLook
-			mesh.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
-				horizontalRadians,
-				0,
-				0
+		if (host) {
+			capsule.physicsImpostor = new BABYLON.PhysicsImpostor(
+				capsule,
+				BABYLON.PhysicsImpostor.CapsuleImpostor,
+				{mass: 75, friction: 2, restitution: 0},
 			)
-			camera.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
-				0,
-				verticalRadians,
-				0
-			)
+			capsule.physicsImpostor.physicsBody.setAngularFactor(0)
+		}
+
+		const looking = setupLooking({
+			looker,
+			thumbsticks,
+			thumbSensitivity: 0.04,
+			mouseSensitivity: 1,
+			capsule,
 		})
 
-		{
-			mesh.physicsImpostor.physicsBody.setAngularFactor(0)
-			function isPressed(key: string) {
-				return keyListener.getKeyState(key).isDown
-			}
-			// const topSpeed = 2
-			const power = 10
-			mesh.physicsImpostor.registerBeforePhysicsStep(impostor => {
+		const walking = walker({
+			walk: 5,
+			sprint: 5 * 2,
+			thumbsticks,
+			keyListener,
+			getLook: looking.getLook,
+		})
+
+		let currentWalkForce: V2 = [0, 0]
+
+		if (isMe) {
+			const camera = makePlayerCamera({scene, capsule: capsule, disposers})
+			makeReticule({scene, camera, disposers})
+			renderLoop.add(() => looking.applyLook(camera))
+
+			const interval = setInterval(
+				() => sendMemo(["walk", walking.getForce()]),
+				33.333,
+			)
+
+			disposers.add(() => clearInterval(interval))
+		}
+
+		if (host) {
+			capsule.physicsImpostor.registerBeforePhysicsStep(impostor => {
 				impostor.wakeUp()
-				const willpower = isPressed("shift")
-					? power * 2.5
-					: power
-
-				let stride = 0
-				let strafe = 0
-				if (isPressed("w")) stride += 1
-				if (isPressed("s")) stride -= 1
-				if (isPressed("a")) strafe -= 1
-				if (isPressed("d")) strafe += 1
-				stride += thumbsticks.left.values.y
-				strafe += thumbsticks.left.values.x
-
-				const intention = v2.rotate(
-					...v2.normalize([strafe, stride]),
-					-looker.mouseLook.horizontalRadians
-				)
-
-				const force = v2.multiplyBy(
-					intention,
-					willpower,
-				)
-
+				const [x, z] = currentWalkForce
 				const velocity3d = impostor.getLinearVelocity()
-				// const velocity: V2 = [velocity3d.x, velocity3d.z]
-				// const difference = v2.dot(forceDirection, velocity)
-				// const distance = v2.distance(forceDirection, velocity)
-				// const tanny = v2.atan2(intention, velocity)
-
-				const [x, z] = force
 				impostor.setLinearVelocity(new BABYLON.Vector3(x, velocity3d.y, z))
 			})
 		}
 
-		return {
-			getCameraPosition(): V3 {
-				return [
-					camera.globalPosition.x,
-					camera.globalPosition.y,
-					camera.globalPosition.z,
-				]
-			},
+		function handleWalkingMemo(incoming: MemoIncoming) {
+			const [subject, walkingForce] = incoming.memo
+			if (subject === "walk") {
+				if (incoming.playerId === description.playerId)
+					currentWalkForce = walking.capTopSpeed(walkingForce)
+				else
+					console.error(`walk memo for wrong player "${playerId}"`, incoming)
+			}
+			else
+				console.error("unknown player memo", incoming)
 		}
+
+		return asEntity<PlayerDescription>({
+			update(description) {
+				capsule.position = v3.toBabylon(description.position)
+			},
+			describe: () => ({
+				type: "player",
+				position: v3.fromBabylon(capsule.position),
+				playerId: description.playerId,
+			}),
+			dispose() {
+				for (const disposer of disposers)
+					disposer()
+			},
+			receiveMemo(incoming) {
+				handleWalkingMemo(incoming)
+			},
+		})
 	}
 }

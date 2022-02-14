@@ -12,10 +12,12 @@ import {spawnDunebuggy} from "./spawn/dunebuggy.js"
 import {spawnEnvironment} from "./spawn/environment.js"
 
 export async function makeGame({
+		playerId,
 		quality,
 		thumbsticks,
 		middle = [0, 0, 0],
 	}: {
+		playerId: string
 		quality: Quality
 		thumbsticks: Thumbsticks
 		middle?: V3
@@ -58,6 +60,7 @@ export async function makeGame({
 		thumbsticks,
 		looker: makeMouseLooker(),
 		keyListener: makeKeyListener(),
+		playerId,
 	}
 
 	return {

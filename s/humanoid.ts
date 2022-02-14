@@ -1,11 +1,13 @@
 
 import {getRando} from "dbmage"
+import "./game/utils/thumbsticks/thumbsticks.js"
 
 import {installXiome} from "./xiome.js"
-import * as v3 from "./game/utils/v3.js"
-import "./game/utils/thumbsticks/thumbsticks.js"
 import {gameSetup} from "./game/startup/game-setup.js"
 import {makeNetworking} from "./netcode/networking.js"
+import {makeCoordinator} from "./netcode/coordinator.js"
+import {HostNetworking} from "./netcode/types.js"
+import {PlayerDescription} from "./game/types.js"
 
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
@@ -13,20 +15,18 @@ void async function main() {
 	const xiome = await installXiome()
 	const getAccess = () => xiome.models.accessModel.getAccess()
 
-	async function setupNetworking() {
-		const rando = await getRando()
-		await makeNetworking({
-			rando,
-			getAccess,
-			networkingPanel: document.querySelector(".networking"),
-			indicatorsDisplay: document.querySelector(".indicators"),
-			debugPanel: document.querySelector(".debug"),
-			scoreboard: document.querySelector(".scoreboard"),
-		})
-	}
+	const networking = await makeNetworking({
+		rando: await getRando(),
+		networkingPanel: document.querySelector(".networking"),
+		indicatorsDisplay: document.querySelector(".indicators"),
+		debugPanel: document.querySelector(".debug"),
+		scoreboard: document.querySelector(".scoreboard"),
+		getAccess,
+	})
 
-	async function setupGame() {
-		const {game, quality, middle, finishLoading} = await gameSetup({
+	async function setupGame(playerId: string) {
+		const {game, quality, finishLoading} = await gameSetup({
+			playerId,
 			statsArea: document.querySelector(".stats"),
 			fullscreenButton: document.querySelector(".buttonbar .fullscreen"),
 			thumbsticks: {
@@ -36,25 +36,52 @@ void async function main() {
 		})
 
 		console.log("💅 quality:", quality)
-	
-		let {getCameraPosition} = await game.spawn.camera()
-
-		await Promise.all([
-			game.spawn.environment({getCameraPosition: () => getCameraPosition()}),
-			game.spawn.character(),
-		])
-
-		const player = await game.spawn.player(v3.add(middle, [10, 5, 0]))
-		getCameraPosition = player.getCameraPosition
-
-		await game.spawn.crate([10, 5, 10])
-		await game.spawn.dunebuggy([0, 0, 0])
+		await game.spawn.camera()
 
 		finishLoading()
+		return game
 	}
 
-	await Promise.all([
-		setupNetworking(),
-		setupGame(),
-	])
+	const {playerId} = networking
+	const game = await setupGame(playerId)
+
+	const coordinator = makeCoordinator({networking, game})
+	if (coordinator.hostAccess) {
+		await coordinator.hostAccess.addToWorld(
+			{type: "environment"},
+		)
+		await coordinator.hostAccess.addToWorld(
+			{type: "player", position: [10, 5, 0], playerId},
+			{type: "crate", position: [8, 5, 10]},
+			{type: "crate", position: [10, 5, 10]},
+			{type: "crate", position: [12, 5, 10]},
+		)
+		coordinator.hostAccess.requestListeners.add((clientId, [type, request]) => {
+			if (request.subject === "spawn-player") {
+				coordinator.hostAccess.addToWorld({
+					type: "player",
+					position: [-0.5, 5, 0],
+					playerId: clientId,
+				})
+			}
+		})
+		const hostNet = <HostNetworking>networking
+		hostNet.handlersForDisconnectedClients.add(clientId => {
+			const descriptions = coordinator.hostAccess.world.readAllDescriptions()
+			const foundDescription = descriptions.find(([,description]) => {
+				const player = <PlayerDescription>description
+				return player.type === "player" && player.playerId === clientId
+			})
+			if (foundDescription) {
+				const [id] = foundDescription
+				coordinator.hostAccess.removeFromWorld(id)
+			}
+		})
+	}
+	else {
+		// client should ask to spawn a player for themselves
+		coordinator.clientAccess.sendRequest({
+			subject: "spawn-player",
+		})
+	}
 }()

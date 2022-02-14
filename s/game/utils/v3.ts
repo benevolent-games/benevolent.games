@@ -1,6 +1,14 @@
 
 export type V3 = [number, number, number]
 
+export function fromBabylon(vector: BABYLON.Vector3): V3 {
+	return [vector.x, vector.y, vector.z]
+}
+
+export function toBabylon(v: V3): BABYLON.Vector3 {
+	return new BABYLON.Vector3(...v)
+}
+
 export function zero(): V3 {
 	return [0, 0, 0]
 }
@@ -72,4 +80,12 @@ export function normalize(vector: V3): V3 {
 			y / length,
 			z / length,
 		]
+}
+
+export function distance([ax, ay, az]: V3, [bx, by, bz]: V3) {
+	return Math.sqrt(
+		((ax - bx) ** 2) +
+		((ay - by) ** 2) +
+		((az - bz) ** 2)
+	)
 }

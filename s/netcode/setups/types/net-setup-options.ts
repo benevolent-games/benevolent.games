@@ -1,8 +1,8 @@
 
 import {Rando} from "dbmage"
 import {TemplateResult} from "lit"
-import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
 import {makeNetworkingState} from "../common/make-networking-state.js"
+import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
 
 export interface NetSetupOptions {
 	rando: Rando

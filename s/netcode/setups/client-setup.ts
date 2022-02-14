@@ -5,12 +5,15 @@ import {makeInviter} from "./common/make-inviter.js"
 import {NetSetupOptions} from "./types/net-setup-options.js"
 import {renderScoreboard} from "./rendering/render-scoreboard.js"
 import {connectAsClient} from "./connections/connect-as-client.js"
-// import {renderDebugWorld} from "./rendering/render-debug-world.js"
 import {renderInviteButton} from "./rendering/render-invite-button.js"
 import {renderNetIndicator} from "./rendering/render-net-indicator.js"
 import {renderLoadingSpinner} from "./rendering/render-loading-spinner.js"
 
-export async function clientSetup({state, getAccess, ...options}: NetSetupOptions) {
+export async function clientSetup({
+		state, receive, getAccess, ...options
+	}: NetSetupOptions & {
+		receive: (data: any) => void
+	}) {
 
 	const invite = makeInviter(state)
 
@@ -32,12 +35,15 @@ export async function clientSetup({state, getAccess, ...options}: NetSetupOption
 	))
 
 	state.writable.loading = true
-	await connectAsClient({
+	const {sendToHost, playerId} = await connectAsClient({
 		sessionId: state.readable.sessionId,
+		receive,
 		getAccess,
 		update: data => {
 			state.writable.scoreboard = data.scoreboard
 		},
 	})
 	state.writable.loading = false
+
+	return {sendToHost, playerId}
 }

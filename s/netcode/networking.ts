@@ -3,6 +3,7 @@ import {Rando} from "dbmage"
 import {parseHashForSessionId} from "sparrow-rtc"
 import {render as litRender, TemplateResult} from "lit"
 
+import {Networking} from "./types.js"
 import {hostSetup} from "./setups/host-setup.js"
 import {clientSetup} from "./setups/client-setup.js"
 import {sessionTerm} from "./setups/common/session-term.js"
@@ -17,11 +18,12 @@ export async function makeNetworking({rando, getAccess, networkingPanel, indicat
 		indicatorsDisplay: HTMLElement
 		debugPanel: HTMLElement
 		scoreboard: HTMLElement
-	}) {
+	}): Promise<Networking> {
 
 	const state = makeNetworkingState()
 	state.writable.sessionId = parseHashForSessionId(location.hash, sessionTerm)
-	const options: NetSetupOptions = {
+
+	const options: Omit<NetSetupOptions, "receive"> = {
 		state,
 		rando,
 		getAccess,
@@ -31,8 +33,43 @@ export async function makeNetworking({rando, getAccess, networkingPanel, indicat
 		writeScoreboard: (template: TemplateResult) => litRender(template, scoreboard),
 	}
 
-	if (state.readable.sessionId)
-		await clientSetup(options)
-	else
-		await hostSetup(options)
+	const hostsideReceivers = new Set<(data: any) => void>()
+	const clientsideReceivers = new Set<(clientId: string, data: any) => void>()
+	const handlersForDisconnectedClients = new Set<(clientId: string) => void>()
+
+	if (state.readable.sessionId) {
+		const {playerId, sendToHost} = await clientSetup({
+			...options,
+			receive(data: any) {
+				for (const receiver of hostsideReceivers)
+					receiver(data)
+			}
+		})
+		return {
+			host: false,
+			playerId,
+			sendToHost,
+			receivers: hostsideReceivers,
+		}
+	}
+	else {
+		const {playerId, sendToAllClients} = await hostSetup({
+			...options,
+			receive(clientId: string, data: any) {
+				for (const receiver of clientsideReceivers)
+					receiver(clientId, data)
+			},
+			handleClientDisconnected(clientId) {
+				for (const handler of handlersForDisconnectedClients)
+					handler(clientId)
+			},
+		})
+		return {
+			host: true,
+			playerId,
+			sendToAllClients,
+			handlersForDisconnectedClients,
+			receivers: clientsideReceivers,
+		}
+	}
 }

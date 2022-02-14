@@ -3,8 +3,8 @@ import {createSessionAsHost, pub, JoinerControls} from "sparrow-rtc"
 
 import {rtcOptions} from "../common/rtc-options.js"
 import {AuthedUser, GuestUser, Scoreboard} from "../types/world.js"
+import {Datagram, DatagramPurpose, MessageFromClient, MessageFromHost} from "../types/messages.js"
 import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
-import {MessageFromClient, MessageFromHost} from "../types/messages.js"
 
 interface Client {
 	controls: JoinerControls
@@ -17,13 +17,24 @@ interface Client {
 	pingWaiters: {id: number, start: number}[]
 }
 
-export async function connectAsHost({generateNickname, getAccess, update}: {
+export async function connectAsHost({
+		generateNickname, getAccess, update, receive, handleClientDisconnected,
+	}: {
 		generateNickname: () => string
 		getAccess: () => AccessPayload
 		update: ({}: {sessionId: string, scoreboard: Scoreboard}) => void
+		receive(clientId: string, data: any): void
+		handleClientDisconnected(clientId: string): void
 	}) {
+
 	const clients = new Set<Client>()
 	const closeEvent = pub()
+	const playerId = "host"
+
+	function registerClientDisconnected(client: Client) {
+		clients.delete(client)
+		handleClientDisconnected(client.controls.clientId)
+	}
 
 	const hostConnection = await createSessionAsHost({
 		label: "game",
@@ -45,17 +56,23 @@ export async function connectAsHost({generateNickname, getAccess, update}: {
 			const unsubscribeCloseListener = closeEvent.subscribe(controls.close)
 			return {
 				handleClose() {
-					clients.delete(client)
+					registerClientDisconnected(client)
 					unsubscribeCloseListener()
 				},
-				handleMessage(message) {
-					client.lastTime = Date.now()
-					const {id, user} = <MessageFromClient>JSON.parse(<string>message)
-					const waiter = client.pingWaiters.find(w => w.id === id)
-					if (waiter) {
-						const ping = Date.now() - waiter.start
-						client.ping = ping
-						client.user = user
+				handleMessage(incoming) {
+					const [purpose, data] = <Datagram>JSON.parse(<string>incoming)
+					if (purpose === DatagramPurpose.Bookkeeping) {
+						client.lastTime = Date.now()
+						const {id, user} = <MessageFromClient>data
+						const waiter = client.pingWaiters.find(w => w.id === id)
+						if (waiter) {
+							const ping = Date.now() - waiter.start
+							client.ping = ping
+							client.user = user
+						}
+					}
+					else {
+						receive(controls.clientId, data)
 					}
 				},
 			}
@@ -75,7 +92,7 @@ export async function connectAsHost({generateNickname, getAccess, update}: {
 				runtime: now - runtimeStart,
 				players: [
 					{
-						clientId: "host",
+						clientId: playerId,
 						host: true,
 						guest: hostGuest,
 						lag: 0,
@@ -110,7 +127,7 @@ export async function connectAsHost({generateNickname, getAccess, update}: {
 			for (const client of timedOutClients) {
 				console.log(`client timed out ${client.controls.clientId}`)
 				client.controls.close()
-				clients.delete(client)
+				registerClientDisconnected(client)
 			}
 		}
 
@@ -125,7 +142,10 @@ export async function connectAsHost({generateNickname, getAccess, update}: {
 					id,
 					scoreboard,
 				}
-				client.controls.send(JSON.stringify(message))
+				client.controls.send(JSON.stringify(<Datagram>[
+					DatagramPurpose.Bookkeeping,
+					message,
+				]))
 			}
 		}
 
@@ -141,6 +161,17 @@ export async function connectAsHost({generateNickname, getAccess, update}: {
 
 	return {
 		hostConnection,
+		playerId,
+		sendToAllClients(data: string) {
+			const datagram: Datagram = [
+				DatagramPurpose.App,
+				data,
+			]
+			const serialized = JSON.stringify(datagram)
+			for (const client of clients) {
+				client.controls.send(serialized)
+			}
+		},
 		sendCloseToAllClients: () => closeEvent.publish(),
 	}
 }
