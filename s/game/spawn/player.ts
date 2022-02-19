@@ -49,19 +49,33 @@ export function spawnPlayer({
 		let currentWalkForce: V2 = [0, 0]
 
 		if (isMe) {
-			const {firstPersonCamera} = makePlayerCameras({
+			const {camera, thirdPersonCamera} = makePlayerCameras({
 				scene,
 				capsule,
 				disposers
 			})
-			makeReticule({scene, camera: firstPersonCamera, disposers})
+			scene.activeCamera = camera
+			makeReticule({scene, camera: camera, disposers})
 
 			mouseTracker.listeners.add(looking.addMouseforce)
 
 			renderLoop.add(() => {
 				const thumbforce = thumbsticks.right.values
 				looking.addThumbforce(thumbforce)
-				looking.applyPlayerLook(capsule, firstPersonCamera)
+				looking.applyPlayerLook(capsule, camera)
+			})
+
+			let thirdPerson = false
+			function toggleThirdPerson(value = !thirdPerson) {
+				thirdPerson = value
+				scene.activeCamera = thirdPerson
+					? thirdPersonCamera
+					: camera
+			}
+
+			keyListener.on("p", state => {
+				if (state.isDown)
+					toggleThirdPerson()
 			})
 
 			const interval = setInterval(
