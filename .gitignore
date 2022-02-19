@@ -3,6 +3,8 @@
 /s/**/_*
 /node_modules
 
+/assets/art/temp/
+
 /*.pem
 /*.tgz
 
