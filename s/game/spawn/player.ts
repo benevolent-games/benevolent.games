@@ -6,6 +6,7 @@ import {MemoIncoming} from "../../netcode/types.js"
 import {makeCapsule} from "./player-tools/capsule.js"
 import {makeReticule} from "./player-tools/reticule.js"
 import {playerLooking} from "./player-tools/player-looking.js"
+import {loadCharacter} from "./player-tools/load-character.js"
 import {makePlayerCameras} from "./player-tools/player-cameras.js"
 import {asEntity, PlayerDescription, Spawner, SpawnOptions} from "../types.js"
 
@@ -22,7 +23,20 @@ export function spawnPlayer({
 
 		const capsule = makeCapsule({scene, disposers})
 		capsule.position = v3.toBabylon(description.position)
-		capsule.material.alpha = host ? 1 : 0.5
+		capsule.material.alpha = host ? 0.2 : 0.1
+
+		const robot = await loadCharacter({
+			scene,
+			capsule,
+			path: "assets/art/temp/robot.glb",
+		})
+
+		// const skeleton = robotAssets.skeletons[0]
+		// for (const mesh of robotMeshes) {
+		// 	mesh.position = v3.toBabylon(description.position)
+		// 	mesh.parent = capsule
+		// }
+		// console.log(robotAssets.skeletons.map(s => s.name))
 
 		if (host) {
 			capsule.physicsImpostor = new BABYLON.PhysicsImpostor(
