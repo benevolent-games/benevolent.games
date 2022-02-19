@@ -12,9 +12,9 @@ export function playerLooking({mouseSensitivity, thumbSensitivity}: {
 	let currentLook = v2.zero()
 
 	function lookAdd(vector: V2) {
-		const halfPi = Math.PI / 2
+		const radian = Math.PI / 2
 		currentLook = v2.add(currentLook, vector)
-		currentLook[1] = cap(currentLook[1], -halfPi, halfPi)
+		currentLook[1] = cap(currentLook[1], -radian, radian)
 	}
 
 	return {

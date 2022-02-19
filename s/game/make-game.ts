@@ -1,7 +1,7 @@
 
 import {V3} from "./utils/v3.js"
 import {makeKeyListener} from "./utils/key-listener.js"
-import {makeMouseLooker} from "./utils/mouse-looker.js"
+import {makeMouseTracker} from "./utils/mouse-tracker.js"
 import {Quality, SpawnOptions, Thumbsticks} from "./types.js"
 
 import {spawnCrate} from "./spawn/crate.js"
@@ -58,7 +58,7 @@ export async function makeGame({
 		quality,
 		renderLoop,
 		thumbsticks,
-		looker: makeMouseLooker(),
+		mouseTracker: makeMouseTracker(),
 		keyListener: makeKeyListener(),
 		playerId,
 	}

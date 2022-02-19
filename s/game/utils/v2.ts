@@ -11,7 +11,7 @@ export function zero(): V2 {
 	return [0, 0]
 }
 
-export function rotate(x: number, y: number, radians: number): V2 {
+export function rotate([x, y]: V2, radians: number): V2 {
 	return [
 		(x * Math.cos(radians)) - (y * Math.sin(radians)),
 		(x * Math.sin(radians)) + (y * Math.cos(radians)),

@@ -1,6 +1,5 @@
 
 import {V2} from "../utils/v2.js"
-import * as v2 from "../utils/v2.js"
 import * as v3 from "../utils/v3.js"
 import {walker} from "./player-tools/walker.js"
 import {MemoIncoming} from "../../netcode/types.js"
@@ -14,7 +13,7 @@ const mouseSensitivity = 1 / 1_000
 const thumbSensitivity = 0.04
 
 export function spawnPlayer({
-		scene, renderLoop, looker, keyListener, thumbsticks, playerId,
+		scene, renderLoop, mouseTracker, keyListener, thumbsticks, playerId,
 	}: SpawnOptions): Spawner<PlayerDescription> {
 
 	return async function({host, description, sendMemo}) {
@@ -42,8 +41,8 @@ export function spawnPlayer({
 		const walking = walker({
 			walk: 5,
 			sprint: 5 * 2,
-			thumbsticks,
 			keyListener,
+			thumbstick: thumbsticks.left,
 			getLook: () => looking.look,
 		})
 
@@ -57,7 +56,7 @@ export function spawnPlayer({
 			})
 			makeReticule({scene, camera: firstPersonCamera, disposers})
 
-			looker.listeners.add(looking.addMouseforce)
+			mouseTracker.listeners.add(looking.addMouseforce)
 
 			renderLoop.add(() => {
 				const thumbforce = thumbsticks.right.values

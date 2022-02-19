@@ -5,7 +5,7 @@ import {MemoIncoming} from "../netcode/types.js"
 import {Description} from "../netcode/world/types.js"
 import {ThumbStick} from "./utils/thumbsticks/thumb-stick.js"
 import type {makeKeyListener} from "./utils/key-listener.js"
-import type {makeMouseLooker} from "./utils/mouse-looker.js"
+import type {makeMouseTracker} from "./utils/mouse-tracker.js"
 
 export type Quality = "q0" | "q1"
 
@@ -21,7 +21,7 @@ export interface SpawnOptions {
 	canvas: HTMLCanvasElement
 	engine: BABYLON.Engine
 	renderLoop: Set<() => void>
-	looker: ReturnType<typeof makeMouseLooker>
+	mouseTracker: ReturnType<typeof makeMouseTracker>
 	keyListener: ReturnType<typeof makeKeyListener>
 	thumbsticks: Thumbsticks
 	playerId: string
