@@ -1,13 +1,17 @@
 
 import {V2} from "../utils/v2.js"
+import * as v2 from "../utils/v2.js"
 import * as v3 from "../utils/v3.js"
 import {walker} from "./player-tools/walker.js"
 import {MemoIncoming} from "../../netcode/types.js"
 import {makeCapsule} from "./player-tools/capsule.js"
-import {setupLooking} from "./player-tools/looking.js"
 import {makeReticule} from "./player-tools/reticule.js"
-import {makePlayerCamera} from "./player-tools/player-camera.js"
+import {playerLooking} from "./player-tools/player-looking.js"
+import {makePlayerCameras} from "./player-tools/player-cameras.js"
 import {asEntity, PlayerDescription, Spawner, SpawnOptions} from "../types.js"
+
+const mouseSensitivity = 1 / 1_000
+const thumbSensitivity = 0.04
 
 export function spawnPlayer({
 		scene, renderLoop, looker, keyListener, thumbsticks, playerId,
@@ -30,12 +34,9 @@ export function spawnPlayer({
 			capsule.physicsImpostor.physicsBody.setAngularFactor(0)
 		}
 
-		const looking = setupLooking({
-			looker,
-			thumbsticks,
-			thumbSensitivity: 0.04,
-			mouseSensitivity: 1,
-			capsule,
+		const looking = playerLooking({
+			mouseSensitivity,
+			thumbSensitivity,
 		})
 
 		const walking = walker({
@@ -43,15 +44,26 @@ export function spawnPlayer({
 			sprint: 5 * 2,
 			thumbsticks,
 			keyListener,
-			getLook: looking.getLook,
+			getLook: () => looking.look,
 		})
 
 		let currentWalkForce: V2 = [0, 0]
 
 		if (isMe) {
-			const camera = makePlayerCamera({scene, capsule: capsule, disposers})
-			makeReticule({scene, camera, disposers})
-			renderLoop.add(() => looking.applyLook(camera))
+			const {firstPersonCamera} = makePlayerCameras({
+				scene,
+				capsule,
+				disposers
+			})
+			makeReticule({scene, camera: firstPersonCamera, disposers})
+
+			looker.listeners.add(looking.addMouseforce)
+
+			renderLoop.add(() => {
+				const thumbforce = thumbsticks.right.values
+				looking.addThumbforce(thumbforce)
+				looking.applyPlayerLook(capsule, firstPersonCamera)
+			})
 
 			const interval = setInterval(
 				() => sendMemo(["walk", walking.getForce()]),

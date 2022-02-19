@@ -1,4 +1,6 @@
 
+import {V2} from "../v2.js"
+import * as v2 from "../v2.js"
 import {LitElement, html, css} from "lit"
 
 export class ThumbStick extends LitElement {
@@ -34,8 +36,8 @@ export class ThumbStick extends LitElement {
 	}
 	`
 
-	values: {x: number, y: number} = {x: 0, y: 0}
-	onstickmove = (values: {x: number, y: number}) => {}
+	values: V2 = v2.zero()
+	onstickmove = (vector: V2) => {}
 
 	#basis: {
 		rect: DOMRect
@@ -70,10 +72,10 @@ export class ThumbStick extends LitElement {
 		}
 
 		const registerFinalValues = (x: number, y: number) => {
-			const values = {
-				x: x / this.#basis.radius,
-				y: -(y / this.#basis.radius),
-			}
+			const values: V2 = [
+				x / this.#basis.radius,
+				-(y / this.#basis.radius),
+			]
 			this.values = values
 			this.onstickmove(values)
 			stick.style.transform = `translate(${x}px, ${y}px)`

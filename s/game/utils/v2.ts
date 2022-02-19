@@ -1,5 +1,11 @@
 
+import {cap as scalarCap} from "./numpty.js"
+
 export type V2 = [number, number]
+
+export function is(v: V2) {
+	return v
+}
 
 export function zero(): V2 {
 	return [0, 0]
@@ -41,6 +47,13 @@ export function add([x, y]: V2, ...vectors: V2[]): V2 {
 	return [x, y]
 }
 
+export function multiply(a: V2, b: V2): V2 {
+	return [
+		a[0] * b[0],
+		a[1] * b[1],
+	]
+}
+
 export function subtract(a: V2, b: V2): V2 {
 	return [
 		a[0] - b[0],
@@ -64,6 +77,10 @@ export function applyBy(vector: V2, change: (a: number) => number): V2 {
 		change(vector[0]),
 		change(vector[1]),
 	]
+}
+
+export function cap(vector: V2, min: number, max: number) {
+	return applyBy(vector, a => scalarCap(a, min, max))
 }
 
 export function negate(vector: V2): V2 {
