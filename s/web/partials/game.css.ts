@@ -160,7 +160,7 @@ canvas {
 	position: relative;
 	z-index: 1;
 }
-.game .buttonbar .invite[data-copied]::after {
+.game .buttonbar .invite:is([data-copied="true"], [data-copied="blocked"])::after {
 	content: "copied invite link";
 	display: block;
 	width: max-content;
@@ -173,6 +173,10 @@ canvas {
 	color: white;
 	text-shadow: 1px 2px 3px #000a;
 	pointer-events: none;
+}
+.game .buttonbar .invite[data-copied="blocked"]::after {
+	content: "copy was blocked";
+	background: red;
 }
 
 @keyframes spin {

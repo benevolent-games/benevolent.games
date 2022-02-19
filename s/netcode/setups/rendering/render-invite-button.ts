@@ -4,14 +4,14 @@ import userPlusSvg from "../../../web/icons/feather/user-plus.svg.js"
 
 export function renderInviteButton({sessionId, inviteCopied, invite}: {
 		sessionId: string | undefined
-		inviteCopied: boolean
+		inviteCopied: boolean | "blocked"
 		invite: () => void
 	}) {
 	return sessionId
 		? html`
 			<button
 				class=invite
-				?data-copied=${inviteCopied}
+				data-copied=${inviteCopied}
 				title="copy invite link"
 				@click=${invite}>
 					${svg(userPlusSvg)}

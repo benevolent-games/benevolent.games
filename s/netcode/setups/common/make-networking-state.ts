@@ -7,7 +7,7 @@ export function makeNetworkingState() {
 		host: false,
 		sessionId: undefined as string | undefined,
 		loading: false,
-		inviteCopied: false,
+		inviteCopied: false as boolean | "blocked",
 		scoreboard: {
 			runtime: 0,
 			players: [],
