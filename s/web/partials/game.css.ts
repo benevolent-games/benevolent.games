@@ -107,6 +107,10 @@ canvas {
 	gap: 0.2em;
 }
 
+.game .buttonbar .fullscreen {
+	margin-right: 2em;
+}
+
 .game .buttonbar .indicators {
 	margin-left: auto;
 }

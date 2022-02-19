@@ -30,16 +30,16 @@ export default ({debug}: {debug: boolean}) => html`
 	</div>
 	<div class=floating>
 		<div class=buttonbar>
-			<div class="hide-when-pointer-locked">
-				<a target="_blank" href="/" title="benevolent.games">
-					${svg(benevolentSvg)}
-				</a>
-			</div>
 			<div class="controls hide-when-pointer-locked">
 				<button class=fullscreen data-fullscreen=false title="toggle fullscreen">
 					<span class=max>${svg(maximizeSvg)}</span>
 					<span class=min>${svg(minimizeSvg)}</span>
 				</button>
+			</div>
+			<div class="benevolent-button hide-when-pointer-locked">
+				<a target="_blank" href="/" title="benevolent.games">
+					${svg(benevolentSvg)}
+				</a>
 			</div>
 			<div class="networking hide-when-pointer-locked"></div>
 			<div class="indicators hide-when-pointer-locked"></div>
