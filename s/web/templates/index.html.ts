@@ -54,8 +54,8 @@ export default ({debug}: {debug: boolean}) => html`
 		<div class=menubar>
 			<xio-menu sticky initially-hidden>
 				<xio-menu-item>
-					<xiome-my-avatar slot=button></xiome-my-avatar>
-					<xiome-login-panel show-logout>
+					<xiome-my-avatar></xiome-my-avatar>
+					<xiome-login-panel slot=panel show-logout>
 						<xiome-my-account></xiome-my-account>
 					</xiome-login-panel>
 				</xio-menu-item>

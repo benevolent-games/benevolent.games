@@ -40,12 +40,12 @@
 		"babylonjs": "5.0.0-alpha.65",
 		"babylonjs-loaders": "5.0.0-alpha.65",
 		"babylonjs-materials": "5.0.0-alpha.65",
-		"dbmage": "^0.0.0-dev.6",
-		"es-module-shims": "^1.4.5",
+		"dbmage": "^0.0.0-dev.7",
+		"es-module-shims": "^1.4.6",
 		"import": "^0.0.6",
-		"lit": "^2.1.3",
+		"lit": "^2.2.0",
 		"sparrow-rtc": "0.0.0-dev.6",
-		"xiome": "0.0.22-dev.1"
+		"xiome": "^0.0.30"
 	},
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^13.1.3",
@@ -57,7 +57,7 @@
 		"mkdirp": "^1.0.4",
 		"npm-run-all": "^4.1.5",
 		"rimraf": "^3.0.2",
-		"rollup": "^2.67.2",
+		"rollup": "^2.67.3",
 		"rollup-plugin-sizes": "^1.0.4",
 		"serve": "^13.0.2",
 		"terser": "^5.10.0",
