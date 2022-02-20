@@ -70,7 +70,7 @@ export interface PlayerDescription extends EntityDescription {
 	position: V3
 	playerId: string
 	movement?: V2
-	rotation?: number
+	rotation?: V2
 }
 
 export interface DunebuggyDescription extends EntityDescription {

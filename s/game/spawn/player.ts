@@ -57,8 +57,8 @@ export function spawnPlayer({
 		})
 
 		// robot animations
-		let rotation = 0
-		let movement: V2 = [0, 0]
+		let rotation = v2.zero()
+		let movement = v2.zero()
 
 		if (isMe) {
 			const {camera, thirdPersonCamera} = makePlayerCameras({
@@ -74,9 +74,8 @@ export function spawnPlayer({
 			renderLoop.add(() => {
 				const thumbforce = thumbsticks.right.values
 				looking.addThumbforce(thumbforce)
-				robot.animateVerticalLooking(looking.look[1])
 				looking.applyPlayerLook(capsule, camera)
-				rotation = looking.look[0]
+				rotation = looking.look
 			})
 
 			let thirdPerson = false
@@ -106,19 +105,20 @@ export function spawnPlayer({
 		else {
 			renderLoop.add(() => {
 				capsule.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
-					rotation, 0, 0,
+					rotation[0], 0, 0,
 				)
 			})
 		}
 
 		renderLoop.add(() => {
 			robot.animateWalking(movement)
+			robot.animateVerticalLooking(rotation[1])
 		})
 
 		if (host) {
 			capsule.physicsImpostor.registerBeforePhysicsStep(impostor => {
 				impostor.wakeUp()
-				const [x, z] = v2.rotate(movement, -rotation)
+				const [x, z] = v2.rotate(movement, -rotation[0])
 				const velocity3d = impostor.getLinearVelocity()
 				impostor.setLinearVelocity(new BABYLON.Vector3(x, velocity3d.y, z))
 			})
@@ -128,7 +128,8 @@ export function spawnPlayer({
 			update(description) {
 				capsule.position = v3.toBabylon(description.position)
 				movement = description.movement ?? v2.zero()
-				rotation = description.rotation ?? 0
+				if (!isMe)
+					rotation = description.rotation ?? v2.zero()
 			},
 			describe: () => ({
 				type: "player",

@@ -90,8 +90,6 @@ export async function loadCharacter({scene, capsule, path, topSpeed}: {
 			animations.straferight.speedRatio = rightSpeed * 2
 			animations.strafeleft.speedRatio = leftSpeed * 2
 
-			console.log(forwardness, leftness, rightness)
-
 			animations.walking.setWeightForAllAnimatables(Math.abs(forwardness))
 			animations.straferight.setWeightForAllAnimatables(cap(rightness, 0, 1))
 			animations.strafeleft.setWeightForAllAnimatables(cap(leftness, 0, 1))
