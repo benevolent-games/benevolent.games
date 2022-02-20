@@ -32,13 +32,13 @@ export function playerLooking({mouseSensitivity, thumbSensitivity}: {
 		},
 		applyPlayerLook(
 				capsule: BABYLON.Mesh,
-				camera: BABYLON.TargetCamera,
+				headLocus: BABYLON.TransformNode,
 			) {
 			const [x, y] = currentLook
 			capsule.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
 				x, 0, 0,
 			)
-			camera.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
+			headLocus.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
 				0, y, 0,
 			)
 		}

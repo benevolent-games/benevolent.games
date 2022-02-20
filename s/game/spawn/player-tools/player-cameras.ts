@@ -1,13 +1,25 @@
 
 import * as v3 from "../../utils/v3.js"
 
-export function makePlayerCameras({scene, capsule, disposers}: {
+export function makePlayerCameras({
+		scene, capsule, disposers, robot, headBone, fieldOfView,
+	}: {
 		scene: BABYLON.Scene
 		capsule: BABYLON.Mesh
 		disposers: Set<() => void>
+		robot: BABYLON.Mesh
+		headBone: BABYLON.Bone
+		fieldOfView: number
 	}) {
 
 	const height = 0.75
+
+	const headBoneTransform = new BABYLON.TransformNode("", scene)
+	headBoneTransform.attachToBone(headBone, robot)
+
+	const headLocus = new BABYLON.TransformNode("", scene)
+	headLocus.position = v3.toBabylon([0, height, 0])
+	headLocus.parent = capsule
 
 	const camera = new BABYLON.TargetCamera(
 		"camera_firstPerson",
@@ -16,12 +28,13 @@ export function makePlayerCameras({scene, capsule, disposers}: {
 	)
 	camera.minZ = 0.3
 	camera.maxZ = 20_000
-	camera.position = v3.toBabylon([0, height, 0])
-	camera.parent = capsule
+	camera.parent = headBoneTransform
+	camera.ignoreParentScaling = true
+	camera.fov = fieldOfView
 	disposers.add(() => camera.dispose())
 
 	const rise = 0
-	const distance = 2
+	const distance = 1
 	const thirdPersonCamera = new BABYLON.TargetCamera(
 		"camera_thirdPerson",
 		v3.toBabylon([0, rise, -distance]),
@@ -29,8 +42,9 @@ export function makePlayerCameras({scene, capsule, disposers}: {
 	)
 	thirdPersonCamera.minZ = 0.3
 	thirdPersonCamera.maxZ = 20_000
-	thirdPersonCamera.parent = camera
+	thirdPersonCamera.fov = fieldOfView
+	thirdPersonCamera.parent = headLocus
 	disposers.add(() => thirdPersonCamera.dispose())
 
-	return {camera, thirdPersonCamera}
+	return {camera, thirdPersonCamera, headLocus}
 }

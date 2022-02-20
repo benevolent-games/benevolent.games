@@ -67,7 +67,11 @@ export async function loadCharacter({scene, capsule, path, topSpeed}: {
 	animations.strafeleft.start(true, 1)
 	animations.walking.start(true, 1)
 
+	const skeleton = assets.skeletons[0]
+
 	return {
+		mesh: <BABYLON.Mesh>robot,
+		headBone: skeleton.bones.find(b => b.name === "head"),
 		animateVerticalLooking(radians: number) {
 			const fraction = between(radians, -radian, radian)
 			const seconds = fraction * lookingSeconds

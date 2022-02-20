@@ -13,6 +13,7 @@ const walk = 5
 const sprint = walk * 2
 const mouseSensitivity = 1 / 1_000
 const thumbSensitivity = 0.04
+const fieldOfView = 1.2
 
 export function spawnPlayer({
 		scene, renderLoop, mouseTracker, keyListener, thumbsticks, playerId,
@@ -26,7 +27,7 @@ export function spawnPlayer({
 		capsule.position = v3.toBabylon(description.position)
 		capsule.material.alpha = host ? 0.1 : 0.05
 
-		const robot = await loadCharacter({
+		const character = await loadCharacter({
 			scene,
 			capsule,
 			path: "/assets/art/character/robot.glb",
@@ -59,20 +60,23 @@ export function spawnPlayer({
 		let movement = v2.zero()
 
 		if (isMe) {
-			const {camera, thirdPersonCamera} = makePlayerCameras({
+			const {camera, thirdPersonCamera, headLocus} = makePlayerCameras({
 				scene,
 				capsule,
 				disposers,
+				robot: character.mesh,
+				headBone: character.headBone,
+				fieldOfView,
 			})
 			scene.activeCamera = camera
-			makeReticule({scene, camera: camera, disposers})
+			makeReticule({scene, camera, disposers})
 
 			mouseTracker.listeners.add(looking.addMouseforce)
 
 			renderLoop.add(() => {
 				const thumbforce = thumbsticks.right.values
 				looking.addThumbforce(thumbforce)
-				looking.applyPlayerLook(capsule, camera)
+				looking.applyPlayerLook(capsule, headLocus)
 				rotation = looking.look
 			})
 
@@ -109,8 +113,8 @@ export function spawnPlayer({
 		}
 
 		renderLoop.add(() => {
-			robot.animateWalking(movement)
-			robot.animateVerticalLooking(rotation[1])
+			character.animateWalking(movement)
+			character.animateVerticalLooking(rotation[1])
 		})
 
 		if (host) {
