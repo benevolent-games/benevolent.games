@@ -1,4 +1,5 @@
 
+import {BenevolentWebsiteContext} from "../types.js"
 import headBasicsHtml from "../partials/head-basics.html.js"
 import {html, html as svg} from "xiome/x/toolbox/hamster-html/html.js"
 
@@ -6,23 +7,23 @@ import benevolentSvg from "../icons/benevolent.svg.js"
 import maximizeSvg from "../icons/feather/maximize.svg.js"
 import minimizeSvg from "../icons/feather/minimize.svg.js"
 
-export default ({debug}: {debug: boolean}) => html`
+export default ({mode, v, ...options}: BenevolentWebsiteContext) => html`
 
 <!doctype html>
 <html class="game">
 <head>
-	${headBasicsHtml({title: "humanoid – benevolent"})}
+	${headBasicsHtml({...options, mode, v, title: "humanoid – benevolent"})}
 	<script defer src="/node_modules/babylonjs/babylon.js"></script>
 	<script defer src="/node_modules/babylonjs-loaders/babylonjs.loaders.min.js"></script>
 	<script defer src="/node_modules/babylonjs-materials/babylonjs.materials.min.js"></script>
 	<script defer src="/assets/ammo/ammo.wasm.js"></script>
-	${debug
+	${mode === "debug"
 		? html`
 			<script defer src="/node_modules/es-module-shims/dist/es-module-shims.js"></script>
-			<script defer type=importmap-shim src="/importmap.json"></script>
-			<script defer type=module-shim src="/humanoid.js"></script>
+			<script defer type=importmap-shim src="${v("/importmap.json")}"></script>
+			<script defer type=module-shim src="${v("/humanoid.js")}"></script>
 		`
-		: html`<script defer type=module src="humanoid.bundle.min.js"></script>`}
+		: html`<script defer type=module src="${v("humanoid.bundle.min.js")}"></script>`}
 </head>
 <body data-pointer-lock="false">
 	<div class=loading>

@@ -1,17 +1,21 @@
 
-import {prepareTransformer} from "./utils/prepare-transformer.js"
+import {BenevolentWebsiteContext} from "./types.js"
+import {buildWebsite} from "xiome/x/toolbox/hamster-html/website/build-website.js"
 
-import styleCss from "./templates/style.css.js"
-import indexHtml from "./templates/index.html.js"
-import humanoidHtml from "./templates/humanoid.html.js"
-import thumbHtml from "./templates/thumb.html.js"
-
-const options = {
-	debug: process.argv.includes("debug")
+const mode = <BenevolentWebsiteContext["mode"]>process.argv[2]
+if (!mode) {
+	console.error(`website build requires argument "mode"`)
+	process.exit(-1)
 }
 
-const transform = prepareTransformer("./x/")
-await transform("style.css", styleCss())
-await transform("index.html", indexHtml(options))
-await transform("thumb.html", thumbHtml(options))
-await transform("humanoid.html", humanoidHtml(options))
+await buildWebsite<BenevolentWebsiteContext>({
+	inputDirectory: "x/web/templates",
+	outputDirectory: "x",
+	excludes: [],
+	logWrittenFile: path => console.log("write", path),
+	context: {
+		mode,
+	},
+})
+
+console.log("website done")

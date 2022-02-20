@@ -1,15 +1,16 @@
 
+import {BenevolentWebsiteContext} from "../types.js"
 import {html} from "xiome/x/toolbox/hamster-html/html.js"
 import headBasicsHtml from "../partials/head-basics.html.js"
 
-export default ({debug}: {debug: boolean}) => html`
+export default ({mode, v, ...options}: BenevolentWebsiteContext) => html`
 
 <!doctype html>
 <html>
 <head class=thumb>
-	${headBasicsHtml({title: "thumb - benevolent"})}
-	<script defer type=importmap-shim src="/importmap.json"></script>
-	<script defer type=module-shim src="/game/utils/thumbsticks/thumbsticks.js"></script>
+	${headBasicsHtml({...options, mode, v, title: "thumb - benevolent"})}
+	<script defer type=importmap-shim src="${v("/importmap.json")}"></script>
+	<script defer type=module-shim src="${v("/game/utils/thumbsticks/thumbsticks.js")}"></script>
 	<script defer src="/node_modules/es-module-shims/dist/es-module-shims.js"></script>
 	<style>
 		thumb-stick {

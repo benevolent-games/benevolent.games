@@ -1,8 +1,4 @@
 
-import {noop as css} from "../utils/template-noop.js"
-
-export default () => css`
-
 .home {
 	padding-bottom: 10em;
 }
@@ -304,5 +300,3 @@ export default () => css`
 	margin: auto;
 	text-align: center;
 }
-
-`

@@ -1,6 +1,7 @@
 
 import headBasicsHtml from "../partials/head-basics.html.js"
 import {html, HtmlTemplate} from "xiome/x/toolbox/hamster-html/html.js"
+import {BenevolentWebsiteContext} from "../types.js"
 
 const urls = {
 	discord: "https://discord.gg/BnZx2utdev",
@@ -28,21 +29,21 @@ function gamelink(link: string, content: HtmlTemplate) {
 		: html`<div class="unit" tabindex="0">${content}</div>`
 }
 
-export default ({debug}: {debug: boolean}) => html`
+export default ({mode, v, ...options}: BenevolentWebsiteContext) => html`
 
 <!doctype html>
 <html class="home">
 <head>
-	${headBasicsHtml({title: "benevolent.games"})}
+	${headBasicsHtml({...options, mode, v, title: "benevolent.games"})}
 
-	${debug
+	${mode === "debug"
 		? html`
 			<script defer src="/node_modules/es-module-shims/dist/es-module-shims.js"></script>
-			<script defer type=importmap-shim src="/importmap.json"></script>
-			<script defer type=module-shim src="/website.js"></script>
+			<script defer type=importmap-shim src="${v("/importmap.json")}"></script>
+			<script defer type=module-shim src="${v("/website.js")}"></script>
 		`
 		: html`
-			<script defer src="/website.bundle.min.js"></script>
+			<script defer src="${v("/website.bundle.min.js")}"></script>
 		`}
 
 	<style>

@@ -1,8 +1,4 @@
 
-import {noop as css} from "../utils/template-noop.js"
-
-export default () => css`
-
 .game, .game body {
 	height: 100%;
 	user-select: none;
@@ -321,5 +317,3 @@ canvas {
 	height: 7em;
 	margin: 2em;
 }
-
-`
