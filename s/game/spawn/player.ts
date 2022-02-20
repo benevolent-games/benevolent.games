@@ -1,9 +1,7 @@
 
-import {V2} from "../utils/v2.js"
 import * as v2 from "../utils/v2.js"
 import * as v3 from "../utils/v3.js"
 import {walker} from "./player-tools/walker.js"
-import {MemoIncoming} from "../../netcode/types.js"
 import {makeCapsule} from "./player-tools/capsule.js"
 import {makeReticule} from "./player-tools/reticule.js"
 import {playerLooking} from "./player-tools/player-looking.js"
@@ -31,7 +29,7 @@ export function spawnPlayer({
 		const robot = await loadCharacter({
 			scene,
 			capsule,
-			path: "/assets/art/temp/robot.glb",
+			path: "/assets/art/character/robot.glb",
 			topSpeed: sprint,
 		})
 
