@@ -8,7 +8,7 @@
 	"type": "module",
 	"files": [],
 	"scripts": {
-		"build": "run-s clean && run-p importmap links copy compile-typescript && run-p compress-textures compile-bundle web && run-s test",
+		"build": "run-s clean && run-p importmap links copy compile-typescript compile-sass && run-p compress-textures compile-bundle web && run-s test",
 		"clean": "rimraf x && mkdirp x",
 		"links": "run-s link-s link-assets link-node_modules",
 		"link-s": "ln -s $(realpath s) x/s",
@@ -20,6 +20,7 @@
 		"compress-textures-0": "jpegger --indir assets/textures --outdir x/textures/lod0 --quality 70 --size 1024",
 		"compress-textures-1": "jpegger --indir assets/textures --outdir x/textures/lod1 --quality 40 --size 256",
 		"compile-typescript": "tsc",
+		"compile-sass": "sass s/web/templates/:x/",
 		"compile-bundle": "run-s compile-bundle-rollup compile-bundle-minify",
 		"compile-bundle-rollup": "rollup --silent --sourcemap -p rollup-plugin-sizes -p @rollup/plugin-node-resolve -f iife -i x/humanoid.js -o x/humanoid.bundle.js",
 		"compile-bundle-minify": "terser x/humanoid.bundle.js -cm --source-map --comments false -o x/humanoid.bundle.min.js",
@@ -29,7 +30,8 @@
 		"web-bundle-minify": "terser x/website.bundle.js -cm --source-map --comments false -o x/website.bundle.min.js",
 		"watch-typescript": "npm run -s compile-typescript -- -w",
 		"watch-web": "chokidar \"x/web/**/*.js\" -c \"npm run web-debug -s && echo 'rebuilt web'\"",
-		"watch": "run-s web-debug && run-p watch-typescript watch-web",
+		"watch-sass": "npm run compile-sass -s -- --watch",
+		"watch": "run-s web-debug && run-p watch-typescript watch-sass watch-web",
 		"test": "cynic node --label='test suite' x/tests.test.js",
 		"start": "http-server x"
 	},
@@ -59,6 +61,7 @@
 		"rimraf": "^3.0.2",
 		"rollup": "^2.67.3",
 		"rollup-plugin-sizes": "^1.0.4",
+		"sass": "^1.49.8",
 		"serve": "^13.0.2",
 		"terser": "^5.10.0",
 		"typescript": "^4.5.5"
