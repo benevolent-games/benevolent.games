@@ -64,9 +64,9 @@ export function spawnPlayer({
 				scene,
 				capsule,
 				disposers,
-				robot: character.mesh,
-				headBone: character.headBone,
 				fieldOfView,
+				headBone: character.headBone,
+				characterTransform: character.transform,
 			})
 			scene.activeCamera = camera
 			makeReticule({scene, camera, disposers})

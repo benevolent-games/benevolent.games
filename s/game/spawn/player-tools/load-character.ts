@@ -6,6 +6,12 @@ import * as v3 from "../../utils/v3.js"
 import {loadGlb} from "../../babylon/load-glb.js"
 import {between, cap} from "../../utils/numpty.js"
 
+export enum Character {
+	Robot,
+	Man,
+	Woman,
+}
+
 export async function loadCharacter({scene, capsule, path, topSpeed}: {
 		path: string
 		scene: BABYLON.Scene
@@ -15,36 +21,55 @@ export async function loadCharacter({scene, capsule, path, topSpeed}: {
 
 	const assets = await loadGlb(scene, path)
 
-	assets.meshes
-		.filter(m => m.name.includes("female") || m.name.includes("male"))
-		.forEach(m => m.isVisible = false)
+	const robotMeshes = assets.meshes.filter(m => m.name.includes("robot"))
+	const manMeshes = assets.meshes.filter(m => m.name.includes("male"))
+	const womanMeshes = assets.meshes.filter(m => m.name.includes("female"))
 
-	for (const mesh of assets.meshes) {
-		if (mesh.name.includes("female") || mesh.name.includes("male")) {
-			mesh.isVisible = false
-		}
-		else {
-			const material = <BABYLON.PBRMaterial>mesh.material
-			if (material)
-				material.ambientColor = new BABYLON.Color3(1, 1, 1)
-		}
+	// set colors for man and woman
+	for (const mesh of [manMeshes, womanMeshes].flat()) {
+		const material = new BABYLON.StandardMaterial("", scene)
+		material.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5)
+		mesh.material = material
 	}
 
-	const robot = assets.meshes.find(m => m.name !== "robot")
+	// set ambient color
+	for (const mesh of assets.meshes) {
+		const material = <BABYLON.PBRMaterial>mesh.material
+		if (material)
+			material.ambientColor = new BABYLON.Color3(1, 1, 1)
+	}
 
-	// const scale = 0.5
-	// robot.scaling = v3.toBabylon([scale, scale, -scale])
-	robot.position.addInPlaceFromFloats(0, -(1.75 / 2), 0)
-	robot.parent = capsule
+	const root = assets.meshes.find(m => m.name === "__root__")
+	root.position.addInPlaceFromFloats(0, -(1.75 / 2), 0)
+	root.parent = capsule
+
+	const transform = new BABYLON.TransformNode("", scene)
+	transform.parent = root
+
+	function visibility(meshes: BABYLON.AbstractMesh[], visible: boolean) {
+		for (const mesh of meshes)
+			mesh.isVisible = visible
+	}
+
+	function setCharacter(character: Character) {
+		visibility(robotMeshes, false)
+		visibility(manMeshes, false)
+		visibility(womanMeshes, false)
+		if (character === Character.Robot)
+			visibility(robotMeshes, true)
+		else if (character === Character.Man)
+			visibility(manMeshes, true)
+		else
+			visibility(womanMeshes, true)
+	}
+
+	setCharacter(Character.Robot)
 
 	const findAnimation = (name: string) =>
 		assets.animationGroups.find(a => a.name === name)
 
-	for (const group of assets.animationGroups) {
+	for (const group of assets.animationGroups)
 		group.stop()
-	}
-
-	console.log("animations", assets.animationGroups.map(a => a.name))
 
 	const animations = {
 		tpose: findAnimation("tpose"),
@@ -70,8 +95,9 @@ export async function loadCharacter({scene, capsule, path, topSpeed}: {
 	const skeleton = assets.skeletons[0]
 
 	return {
-		mesh: <BABYLON.Mesh>robot,
+		transform,
 		headBone: skeleton.bones.find(b => b.name === "head"),
+		setCharacter,
 		animateVerticalLooking(radians: number) {
 			const fraction = between(radians, -radian, radian)
 			const seconds = fraction * lookingSeconds

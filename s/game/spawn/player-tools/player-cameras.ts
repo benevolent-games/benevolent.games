@@ -2,12 +2,12 @@
 import * as v3 from "../../utils/v3.js"
 
 export function makePlayerCameras({
-		scene, capsule, disposers, robot, headBone, fieldOfView,
+		scene, capsule, disposers, headBone, fieldOfView, characterTransform,
 	}: {
 		scene: BABYLON.Scene
 		capsule: BABYLON.Mesh
 		disposers: Set<() => void>
-		robot: BABYLON.Mesh
+		characterTransform: BABYLON.TransformNode
 		headBone: BABYLON.Bone
 		fieldOfView: number
 	}) {
@@ -15,7 +15,7 @@ export function makePlayerCameras({
 	const height = 0.75
 
 	const headBoneTransform = new BABYLON.TransformNode("", scene)
-	headBoneTransform.attachToBone(headBone, robot)
+	headBoneTransform.attachToBone(headBone, characterTransform)
 
 	const headLocus = new BABYLON.TransformNode("", scene)
 	headLocus.position = v3.toBabylon([0, height, 0])
