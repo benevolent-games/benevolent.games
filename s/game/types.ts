@@ -6,6 +6,7 @@ import {Description} from "../netcode/world/types.js"
 import {ThumbStick} from "./utils/thumbsticks/thumb-stick.js"
 import type {makeKeyListener} from "./utils/key-listener.js"
 import type {makeMouseTracker} from "./utils/mouse-tracker.js"
+import {V2} from "./utils/v2.js"
 
 export type Quality = "q0" | "q1"
 
@@ -68,6 +69,8 @@ export interface PlayerDescription extends EntityDescription {
 	type: "player"
 	position: V3
 	playerId: string
+	movement?: V2
+	rotation?: V2
 }
 
 export interface DunebuggyDescription extends EntityDescription {

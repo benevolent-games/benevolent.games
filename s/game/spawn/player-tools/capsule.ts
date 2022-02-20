@@ -18,6 +18,7 @@ export function makeCapsule({scene, disposers}: {
 
 	const material = new BABYLON.StandardMaterial("player", scene)
 	material.diffuseColor = new BABYLON.Color3(0.7, 0.7, 0.7)
+	material.ambientColor = new BABYLON.Color3(1, 1, 1)
 	capsule.material = material
 
 	disposers.add(() => capsule.material.dispose())

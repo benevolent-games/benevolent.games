@@ -7,6 +7,8 @@ import {asEntity, EnvironmentDescription, Quality, Spawner, SpawnOptions} from "
 export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions): Spawner<EnvironmentDescription> {
 	return async function({description}) {
 
+		scene.ambientColor = new BABYLON.Color3(0.1, 0.1, 0.1)
+
 		const getCameraPosition = () => {
 			return v3.fromBabylon(scene.activeCamera.globalPosition)
 		}
@@ -19,6 +21,17 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions): Sp
 		if (quality === "q0") {
 			hideMeshes(selectLod(1, select([...meshes], "cliff", "rock")))
 		}
+
+		const cliffMaterials = new Set<BABYLON.PBRMaterial>()
+		for (const cliff of select([...meshes], "cliff")) {
+			if (cliff.material)
+				cliffMaterials.add(<BABYLON.PBRMaterial>cliff.material)
+		}
+		const white = new BABYLON.Color3(1, 1, 1)
+		for (const material of cliffMaterials) {
+			material.ambientColor = white
+		}
+		
 
 		const unwantedOriginMeshCopies = except(selectOriginMeshes([...meshes]), "terrain")
 		hideMeshes(unwantedOriginMeshCopies)
@@ -104,8 +117,6 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions): Sp
 }
 
 function prepareAssets(assets: BABYLON.AssetContainer) {
-	assets.removeAllFromScene()
-	assets.addAllToScene()
 	const meshes = new Set(assets.meshes)
 	function deleteMeshes(toDelete: BABYLON.AbstractMesh[]) {
 		for (const mesh of toDelete) {
@@ -181,18 +192,12 @@ function makeSunlight({
 		torus.position = position
 	})
 
-	const antidirection = lightDirection.negate().addInPlace(new BABYLON.Vector3(0.3, 0.2, 0.1))
-	const antilight = new BABYLON.HemisphericLight("antilight", antidirection, scene)
-	antilight.intensity = 0.05
-	antilight.shadowEnabled = false
-
-	return {sun, antilight, torus}
+	return {sun, torus}
 }
 
 function applySkyColor(scene: BABYLON.Scene, color: [number, number, number]) {
 	const skycolor = new BABYLON.Color3(...color)
 	scene.clearColor = new BABYLON.Color4(...color, 1)
-	// scene.ambientColor = skycolor
 	scene.fogColor = skycolor
 	scene.fogMode = BABYLON.Scene.FOGMODE_EXP2
 	scene.fogDensity = 0.00007
@@ -220,6 +225,8 @@ async function applyTerrainShader({scene, texturesDirectory, meshes}: {
 		layer3_color: `${texturesDirectory}/desert/terrain/layer3_color.jpg`,
 		layer3_normal: `${texturesDirectory}/desert/terrain/layer3_normal.jpg`,
 	}))
+	// const block = <BABYLON.InputBlock>nodeMaterial.getBlockByName("ambientColor")
+	// block.value = new BABYLON.Color3(1, 1, 1)
 	for (const mesh of meshes)
 		mesh.material = nodeMaterial
 }

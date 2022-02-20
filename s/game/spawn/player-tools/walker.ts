@@ -5,26 +5,23 @@ import {makeKeyListener} from "../../utils/key-listener.js"
 import {ThumbStick} from "../../utils/thumbsticks/thumb-stick.js"
 
 export function walker({
-		walk, sprint, thumbstick, keyListener, getLook,
+		walk, sprint, thumbstick, keyListener,
 	}: {
 		walk: number
 		sprint: number
 		thumbstick: ThumbStick
 		keyListener: ReturnType<typeof makeKeyListener>
-		getLook: () => V2
 	}) {
 
 	function isPressed(key: string) {
 		return keyListener.getKeyState(key).isDown
 	}
 
-	function directionalizeAndCap(vector: V2) {
-		const will = v2.rotate(vector, -getLook()[0])
-		const magnitude = v2.magnitude(will)
-		const capped = (magnitude > 1)
-			? v2.normalize(will)
-			: will
-		return capped
+	function cap(vector: V2) {
+		const magnitude = v2.magnitude(vector)
+		return (magnitude > 1)
+			? v2.normalize(vector)
+			: vector
 	}
 
 	function getKeyboardForce() {
@@ -34,7 +31,7 @@ export function walker({
 		if (isPressed("s")) stride -= 1
 		if (isPressed("a")) strafe -= 1
 		if (isPressed("d")) strafe += 1
-		const capped = directionalizeAndCap([strafe, stride])
+		const capped = cap([strafe, stride])
 		return v2.multiplyBy(
 			capped,
 			isPressed("shift")
@@ -48,7 +45,7 @@ export function walker({
 		let strafe = 0
 		stride += thumbstick.values[1]
 		strafe += thumbstick.values[0]
-		const capped = directionalizeAndCap([strafe, stride])
+		const capped = cap([strafe, stride])
 		return v2.multiplyBy(capped, sprint)
 	}
 

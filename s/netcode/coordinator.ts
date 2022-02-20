@@ -20,6 +20,7 @@ export function makeCoordinator({game, networking}: {
 	const world = makeWorld<EntityDescription>()
 	;(<any>window).world = world
 	const entities = new Map<string, Entity>()
+	const erroredEntities = new Set<string>()
 	const pendingEntitySpawns = new Set<string>()
 	const pendingAddToWorld = new Map<string, RemotePromise<Entity>>()
 	const spawnListeners = new Set<(data: {
@@ -29,7 +30,9 @@ export function makeCoordinator({game, networking}: {
 	}) => void>()
 
 	function hasEntityBeenAdded(id: string) {
-		return entities.has(id) || pendingEntitySpawns.has(id)
+		return entities.has(id)
+			|| pendingEntitySpawns.has(id)
+			|| erroredEntities.has(id)
 	}
 
 	// high-frequency network loop
@@ -116,7 +119,8 @@ export function makeCoordinator({game, networking}: {
 								listener({id, description, entity})
 						})
 						.catch(error => {
-							console.error(error)
+							console.error("entity spawn error", error)
+							erroredEntities.add(id)
 							if (addToWorldOperation)
 								addToWorldOperation.reject(error)
 						})

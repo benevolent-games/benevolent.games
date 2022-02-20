@@ -55,6 +55,7 @@ void async function main() {
 			{type: "crate", position: [8, 5, 10]},
 			{type: "crate", position: [10, 5, 10]},
 			{type: "crate", position: [12, 5, 10]},
+			{type: "dunebuggy", position: [0, -1, 0]},
 		)
 		coordinator.hostAccess.requestListeners.add((clientId, [type, request]) => {
 			if (request.subject === "spawn-player") {

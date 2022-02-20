@@ -6,3 +6,9 @@ export function cap(value: number, min: number, max: number) {
 			? max
 			: value
 }
+
+export function between(value: number, min: number, max: number) {
+	const space = max - min
+	const amount = value - min
+	return amount / space
+}
