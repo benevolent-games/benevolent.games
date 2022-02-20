@@ -23,6 +23,8 @@ export function spawnPlayer({
 		const disposers = new Set<() => void>()
 		const isMe = description.playerId === playerId
 
+		let characterType = description.character
+
 		const capsule = makeCapsule({scene, disposers})
 		capsule.position = v3.toBabylon(description.position)
 		capsule.material.alpha = host ? 0.1 : 0.05
@@ -102,6 +104,20 @@ export function spawnPlayer({
 				33.333,
 			)
 
+			let currentCharacter = 0
+			const finalCharacter = 2
+			function nextCharacter() {
+				currentCharacter += 1
+				if (currentCharacter > finalCharacter)
+					currentCharacter = 0
+			}
+			keyListener.on("m", state => {
+				if (state.isDown) {
+					nextCharacter()
+					sendMemo(["character", currentCharacter])
+				}
+			})
+
 			disposers.add(() => clearInterval(interval))
 		}
 		else {
@@ -132,11 +148,16 @@ export function spawnPlayer({
 				movement = description.movement ?? v2.zero()
 				if (!isMe)
 					rotation = description.rotation ?? v2.zero()
+				if (description.character !== characterType) {
+					characterType = description.character
+					character.setCharacter(characterType)
+				}
 			},
 			describe: () => ({
 				type: "player",
 				position: v3.fromBabylon(capsule.position),
 				playerId: description.playerId,
+				character: characterType,
 				movement,
 				rotation,
 			}),
@@ -157,6 +178,10 @@ export function spawnPlayer({
 				}
 				else if (subject === "rotate") {
 					rotation = incoming.memo[1]
+				}
+				else if (subject === "character") {
+					characterType = incoming.memo[1]
+					character.setCharacter(characterType)
 				}
 				else
 					console.error("unknown player memo", incoming)

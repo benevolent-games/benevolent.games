@@ -28,6 +28,12 @@ export interface SpawnOptions {
 	playerId: string
 }
 
+export enum CharacterType {
+	Robot,
+	Man,
+	Woman,
+}
+
 export interface EntityDescription extends Description {
 	type: string
 }
@@ -69,6 +75,7 @@ export interface PlayerDescription extends EntityDescription {
 	type: "player"
 	position: V3
 	playerId: string
+	character: CharacterType
 	movement?: V2
 	rotation?: V2
 }

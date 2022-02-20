@@ -3,14 +3,9 @@ import {V3} from "../../utils/v3.js"
 import {V2} from "../../utils/v2.js"
 import * as v2 from "../../utils/v2.js"
 import * as v3 from "../../utils/v3.js"
+import {CharacterType} from "../../types.js"
 import {loadGlb} from "../../babylon/load-glb.js"
 import {between, cap} from "../../utils/numpty.js"
-
-export enum Character {
-	Robot,
-	Man,
-	Woman,
-}
 
 export async function loadCharacter({scene, capsule, path, topSpeed}: {
 		path: string
@@ -21,9 +16,9 @@ export async function loadCharacter({scene, capsule, path, topSpeed}: {
 
 	const assets = await loadGlb(scene, path)
 
-	const robotMeshes = assets.meshes.filter(m => m.name.includes("robot"))
-	const manMeshes = assets.meshes.filter(m => m.name.includes("male"))
-	const womanMeshes = assets.meshes.filter(m => m.name.includes("female"))
+	const robotMeshes = assets.meshes.filter(m => m.name.startsWith("robot"))
+	const manMeshes = assets.meshes.filter(m => m.name.startsWith("male"))
+	const womanMeshes = assets.meshes.filter(m => m.name.startsWith("female"))
 
 	// set colors for man and woman
 	for (const mesh of [manMeshes, womanMeshes].flat()) {
@@ -51,19 +46,19 @@ export async function loadCharacter({scene, capsule, path, topSpeed}: {
 			mesh.isVisible = visible
 	}
 
-	function setCharacter(character: Character) {
+	function setCharacter(character: CharacterType) {
 		visibility(robotMeshes, false)
 		visibility(manMeshes, false)
 		visibility(womanMeshes, false)
-		if (character === Character.Robot)
+		if (character === CharacterType.Robot)
 			visibility(robotMeshes, true)
-		else if (character === Character.Man)
+		else if (character === CharacterType.Man)
 			visibility(manMeshes, true)
 		else
 			visibility(womanMeshes, true)
 	}
 
-	setCharacter(Character.Robot)
+	setCharacter(CharacterType.Robot)
 
 	const findAnimation = (name: string) =>
 		assets.animationGroups.find(a => a.name === name)
