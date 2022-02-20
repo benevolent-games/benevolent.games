@@ -20,10 +20,11 @@ export function makePlayerCameras({scene, capsule, disposers}: {
 	camera.parent = capsule
 	disposers.add(() => camera.dispose())
 
-	const distance = 3
+	const rise = 0
+	const distance = 2
 	const thirdPersonCamera = new BABYLON.TargetCamera(
 		"camera_thirdPerson",
-		v3.toBabylon([0, height, -distance]),
+		v3.toBabylon([0, rise, -distance]),
 		scene,
 	)
 	thirdPersonCamera.minZ = 0.3

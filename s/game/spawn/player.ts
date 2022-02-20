@@ -1,5 +1,6 @@
 
 import {V2} from "../utils/v2.js"
+import * as v2 from "../utils/v2.js"
 import * as v3 from "../utils/v3.js"
 import {walker} from "./player-tools/walker.js"
 import {MemoIncoming} from "../../netcode/types.js"
@@ -28,7 +29,7 @@ export function spawnPlayer({
 		const robot = await loadCharacter({
 			scene,
 			capsule,
-			path: "assets/art/temp/robot.glb",
+			path: "/assets/art/temp/robot.glb",
 		})
 
 		if (host) {
@@ -50,16 +51,17 @@ export function spawnPlayer({
 			sprint: 5 * 2,
 			keyListener,
 			thumbstick: thumbsticks.left,
-			getLook: () => looking.look,
 		})
 
-		let currentWalkForce: V2 = [0, 0]
+		// robot animations
+		let rotation = 0
+		let movement: V2 = [0, 0]
 
 		if (isMe) {
 			const {camera, thirdPersonCamera} = makePlayerCameras({
 				scene,
 				capsule,
-				disposers
+				disposers,
 			})
 			scene.activeCamera = camera
 			makeReticule({scene, camera: camera, disposers})
@@ -69,7 +71,9 @@ export function spawnPlayer({
 			renderLoop.add(() => {
 				const thumbforce = thumbsticks.right.values
 				looking.addThumbforce(thumbforce)
+				robot.animateVerticalLooking(looking.look[1])
 				looking.applyPlayerLook(capsule, camera)
+				rotation = looking.look[0]
 			})
 
 			let thirdPerson = false
@@ -79,6 +83,7 @@ export function spawnPlayer({
 					? thirdPersonCamera
 					: camera
 			}
+			toggleThirdPerson(true)
 
 			keyListener.on("p", state => {
 				if (state.isDown)
@@ -86,49 +91,69 @@ export function spawnPlayer({
 			})
 
 			const interval = setInterval(
-				() => sendMemo(["walk", walking.getForce()]),
+				() => {
+					sendMemo(["walk", walking.getForce()])
+					sendMemo(["rotate", rotation])
+				},
 				33.333,
 			)
 
 			disposers.add(() => clearInterval(interval))
 		}
+		else {
+			renderLoop.add(() => {
+				capsule.rotationQuaternion = BABYLON.Quaternion.RotationYawPitchRoll(
+					rotation, 0, 0,
+				)
+			})
+		}
+
+		renderLoop.add(() => {
+			robot.animateWalking(movement)
+		})
 
 		if (host) {
 			capsule.physicsImpostor.registerBeforePhysicsStep(impostor => {
 				impostor.wakeUp()
-				const [x, z] = currentWalkForce
+				const [x, z] = v2.rotate(movement, -rotation)
 				const velocity3d = impostor.getLinearVelocity()
 				impostor.setLinearVelocity(new BABYLON.Vector3(x, velocity3d.y, z))
 			})
 		}
 
-		function handleWalkingMemo(incoming: MemoIncoming) {
-			const [subject, walkingForce] = incoming.memo
-			if (subject === "walk") {
-				if (incoming.playerId === description.playerId)
-					currentWalkForce = walking.capTopSpeed(walkingForce)
-				else
-					console.error(`walk memo for wrong player "${playerId}"`, incoming)
-			}
-			else
-				console.error("unknown player memo", incoming)
-		}
-
 		return asEntity<PlayerDescription>({
 			update(description) {
 				capsule.position = v3.toBabylon(description.position)
+				movement = description.movement ?? v2.zero()
+				rotation = description.rotation ?? 0
 			},
 			describe: () => ({
 				type: "player",
 				position: v3.fromBabylon(capsule.position),
 				playerId: description.playerId,
+				movement,
+				rotation,
 			}),
 			dispose() {
 				for (const disposer of disposers)
 					disposer()
 			},
 			receiveMemo(incoming) {
-				handleWalkingMemo(incoming)
+				const [subject] = incoming.memo
+				if (incoming.playerId !== description.playerId) {
+					console.error(`memo for wrong player "${playerId}"`, incoming)
+					return
+				}
+
+				if (subject === "walk") {
+					const [,walkingForce] = incoming.memo
+					movement = walking.capTopSpeed(walkingForce)
+				}
+				else if (subject === "rotate") {
+					rotation = incoming.memo[1]
+				}
+				else
+					console.error("unknown player memo", incoming)
 			},
 		})
 	}
