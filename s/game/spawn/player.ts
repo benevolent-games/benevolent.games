@@ -11,6 +11,8 @@ import {loadCharacter} from "./player-tools/load-character.js"
 import {makePlayerCameras} from "./player-tools/player-cameras.js"
 import {asEntity, PlayerDescription, Spawner, SpawnOptions} from "../types.js"
 
+const walk = 5
+const sprint = walk * 2
 const mouseSensitivity = 1 / 1_000
 const thumbSensitivity = 0.04
 
@@ -30,6 +32,7 @@ export function spawnPlayer({
 			scene,
 			capsule,
 			path: "/assets/art/temp/robot.glb",
+			topSpeed: sprint,
 		})
 
 		if (host) {
@@ -47,8 +50,8 @@ export function spawnPlayer({
 		})
 
 		const walking = walker({
-			walk: 5,
-			sprint: 5 * 2,
+			walk,
+			sprint,
 			keyListener,
 			thumbstick: thumbsticks.left,
 		})
