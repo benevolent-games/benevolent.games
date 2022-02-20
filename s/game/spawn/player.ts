@@ -23,20 +23,13 @@ export function spawnPlayer({
 
 		const capsule = makeCapsule({scene, disposers})
 		capsule.position = v3.toBabylon(description.position)
-		capsule.material.alpha = host ? 0.2 : 0.1
+		capsule.material.alpha = host ? 0.1 : 0.05
 
 		const robot = await loadCharacter({
 			scene,
 			capsule,
 			path: "assets/art/temp/robot.glb",
 		})
-
-		// const skeleton = robotAssets.skeletons[0]
-		// for (const mesh of robotMeshes) {
-		// 	mesh.position = v3.toBabylon(description.position)
-		// 	mesh.parent = capsule
-		// }
-		// console.log(robotAssets.skeletons.map(s => s.name))
 
 		if (host) {
 			capsule.physicsImpostor = new BABYLON.PhysicsImpostor(
