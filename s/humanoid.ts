@@ -3,11 +3,11 @@ import {getRando} from "dbmage"
 import "./game/utils/thumbsticks/thumbsticks.js"
 
 import {installXiome} from "./xiome.js"
+import {HostNetworking} from "./netcode/types.js"
+import {PlayerDescription} from "./game/types.js"
 import {gameSetup} from "./game/startup/game-setup.js"
 import {makeNetworking} from "./netcode/networking.js"
 import {makeCoordinator} from "./netcode/coordinator.js"
-import {HostNetworking} from "./netcode/types.js"
-import {PlayerDescription} from "./game/types.js"
 
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
@@ -85,4 +85,7 @@ void async function main() {
 			subject: "spawn-player",
 		})
 	}
+
+	const loadingTime = (Date.now() - (<any>window).loadingTimeStart)
+	console.log(`⏱️ humanoid ${(loadingTime / 1000).toFixed(1)}s to gameplay`)
 }()

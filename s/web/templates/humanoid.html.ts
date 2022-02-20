@@ -13,6 +13,9 @@ export default ({mode, v, ...options}: BenevolentWebsiteContext) => html`
 <html class="game">
 <head>
 	${headBasicsHtml({...options, mode, v, title: "humanoid – benevolent"})}
+	<script>
+		window.loadingTimeStart = Date.now()
+	</script>
 	<script defer src="/node_modules/babylonjs/babylon.js"></script>
 	<script defer src="/node_modules/babylonjs-loaders/babylonjs.loaders.min.js"></script>
 	<script defer src="/node_modules/babylonjs-materials/babylonjs.materials.min.js"></script>
