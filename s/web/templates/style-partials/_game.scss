@@ -87,7 +87,7 @@ canvas {
 	flex-direction: row;
 	gap: 0.2em;
 	color: white;
-	text-shadow: 1px 2px 3px #000a;
+	text-shadow: 1px 1px 1px #000a;
 }
 
 .game body[data-pointer-lock="true"] .floating .hide-when-pointer-locked {
@@ -150,7 +150,7 @@ canvas {
 	line-height: 0;
 	width: 1.5rem;
 	height: 1.5rem;
-	filter: drop-shadow(1px 2px 3px #000a);
+	filter: drop-shadow(1px 1px 1px #000a);
 }
 
 .game .buttonbar .invite {
