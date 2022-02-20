@@ -12,6 +12,7 @@ export function makeInviter(state: ReturnType<typeof makeNetworkingState>) {
 	return async function() {
 		const {sessionId} = state.readable
 		const link = sessionLink(location.href, sessionTerm, sessionId)
+		console.log("invite link", link)
 
 		try {
 			const permission = "clipboard-write" as PermissionName
