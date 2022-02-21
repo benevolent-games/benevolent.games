@@ -77,7 +77,7 @@ void async function main() {
 			if (request.subject === "spawn-player") {
 				coordinator.hostAccess.addToWorld({
 					type: "player",
-					position: [-0.5, 5, 0],
+					position: [9.5, 5, 1],
 					playerId: clientId,
 					character: CharacterType.Robot,
 				})
