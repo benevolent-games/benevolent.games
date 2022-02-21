@@ -20,10 +20,11 @@ const thumbSensitivity = 0.04
 const fieldOfView = 1.2
 const capsuleHeight = 1.65
 const defaultColor: V3 = [0.2, 0.2, 0.2]
+const interpolationSteps = 3
 
 export function spawnPlayer({
 		scene, renderLoop, mouseTracker, keyListener, thumbsticks, playerId,
-		getAccess, accessListeners,
+		getAccess, accessListeners, engine,
 	}: SpawnOptions): Spawner<PlayerDescription> {
 
 	return async function({host, description, sendMemo}) {
@@ -32,6 +33,7 @@ export function spawnPlayer({
 
 		let color: V3 = description.color ?? defaultColor
 		let characterType = description.character
+		let positionGoalPost = description.position
 
 		const capsule = makeCapsule({scene, capsuleHeight, disposers})
 		capsule.position = v3.toBabylon(description.position)
@@ -169,10 +171,23 @@ export function spawnPlayer({
 				impostor.setLinearVelocity(new BABYLON.Vector3(x, velocity3d.y, z))
 			})
 		}
+		else {
+			function physicsCallback() {
+				const currentPosition = v3.fromBabylon(capsule.position)
+				const difference = v3.subtract(positionGoalPost, currentPosition)
+				const step = v3.divideBy(difference, interpolationSteps)
+				const newPosition = v3.add(currentPosition, step)
+				capsule.position = v3.toBabylon(newPosition)
+			}
+			scene.onBeforePhysicsObservable.add(physicsCallback)
+			disposers.add(() => {
+				scene.onBeforePhysicsObservable.removeCallback(physicsCallback)
+			})
+		}
 
 		return asEntity<PlayerDescription>({
 			update(description) {
-				capsule.position = v3.toBabylon(description.position)
+				positionGoalPost = description.position
 				movement = description.movement ?? v2.zero()
 				if (!isMe)
 					rotation = description.rotation ?? v2.zero()
