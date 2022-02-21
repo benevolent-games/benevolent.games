@@ -14,6 +14,7 @@ const sprint = walk * 2
 const mouseSensitivity = 1 / 1_000
 const thumbSensitivity = 0.04
 const fieldOfView = 1.2
+const capsuleHeight = 1.65
 
 export function spawnPlayer({
 		scene, renderLoop, mouseTracker, keyListener, thumbsticks, playerId,
@@ -25,13 +26,15 @@ export function spawnPlayer({
 
 		let characterType = description.character
 
-		const capsule = makeCapsule({scene, disposers})
+		const capsule = makeCapsule({scene, capsuleHeight, disposers})
 		capsule.position = v3.toBabylon(description.position)
 		capsule.material.alpha = host ? 0.1 : 0.05
+		// capsule.isVisible = false
 
 		const character = await loadCharacter({
 			scene,
 			capsule,
+			capsuleHeight,
 			path: "/assets/art/character/robot.glb",
 			topSpeed: sprint,
 		})

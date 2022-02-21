@@ -7,11 +7,14 @@ import {CharacterType} from "../../types.js"
 import {loadGlb} from "../../babylon/load-glb.js"
 import {between, cap} from "../../utils/numpty.js"
 
-export async function loadCharacter({scene, capsule, path, topSpeed}: {
+export async function loadCharacter({
+		scene, capsule, path, topSpeed, capsuleHeight,
+	}: {
 		path: string
 		scene: BABYLON.Scene
 		capsule: BABYLON.Mesh
 		topSpeed: number
+		capsuleHeight: number
 	}) {
 
 	const assets = await loadGlb(scene, path)
@@ -35,7 +38,7 @@ export async function loadCharacter({scene, capsule, path, topSpeed}: {
 	}
 
 	const root = assets.meshes.find(m => m.name === "__root__")
-	root.position.addInPlaceFromFloats(0, -(1.75 / 2), 0)
+	root.position.addInPlaceFromFloats(0, -(capsuleHeight / 2), 0)
 	root.parent = capsule
 
 	const transform = new BABYLON.TransformNode("", scene)

@@ -1,6 +1,7 @@
 
-export function makeCapsule({scene, disposers}: {
+export function makeCapsule({scene, capsuleHeight, disposers}: {
 		scene: BABYLON.Scene
+		capsuleHeight: number
 		disposers: Set<() => void>
 	}) {
 
@@ -10,7 +11,7 @@ export function makeCapsule({scene, disposers}: {
 			subdivisions: 2,
 			tessellation: 16,
 			capSubdivisions: 6,
-			height: 1.75,
+			height: capsuleHeight,
 			radius: 0.25,
 		},
 		scene,
