@@ -37,8 +37,8 @@ export function spawnPlayer({
 
 		const capsule = makeCapsule({scene, capsuleHeight, disposers})
 		capsule.position = v3.toBabylon(description.position)
-		capsule.material.alpha = host ? 0.1 : 0.05
-		// capsule.isVisible = false
+		// capsule.material.alpha = host ? 0.1 : 0.05
+		capsule.isVisible = false
 
 		const character = await loadCharacter({
 			scene,
