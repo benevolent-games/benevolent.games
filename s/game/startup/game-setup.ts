@@ -1,17 +1,20 @@
 
 import {V3} from "../utils/v3.js"
-import {Thumbsticks} from "../types.js"
 import {makeGame} from "../make-game.js"
+import {AccessListeners, GetAccess, Thumbsticks} from "../types.js"
 import {makeFramerateDisplay} from "../utils/make-framerate-display.js"
 import {getGameQualityMode, startLoading, wirePointerLockAttribute, setupFullscreenToggling, enableDebugMeshPicking} from "./startup-routines.js"
 
 export async function gameSetup({
-		playerId, statsArea, thumbsticks, fullscreenButton,
+		playerId, statsArea, thumbsticks,
+		fullscreenButton, accessListeners, getAccess,
 	}: {
 		playerId: string
 		statsArea: HTMLElement
 		thumbsticks: Thumbsticks
 		fullscreenButton: HTMLButtonElement
+		getAccess: GetAccess
+		accessListeners: AccessListeners
 	}) {
 	const quality = getGameQualityMode()
 	const {finishLoading} = startLoading({quality})
@@ -27,6 +30,8 @@ export async function gameSetup({
 		middle,
 		thumbsticks,
 		playerId,
+		getAccess,
+		accessListeners,
 	})
 	document.body.prepend(game.canvas)
 	window.addEventListener("resize", game.resize)

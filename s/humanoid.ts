@@ -3,6 +3,9 @@ import {getRando} from "dbmage"
 import "./game/utils/thumbsticks/thumbsticks.js"
 
 import {installXiome} from "./xiome.js"
+// import {installXiomeMock} from "./xiome-mock.js"
+import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
+
 import {HostNetworking} from "./netcode/types.js"
 import {CharacterType, PlayerDescription} from "./game/types.js"
 import {gameSetup} from "./game/startup/game-setup.js"
@@ -14,6 +17,12 @@ void async function main() {
 
 	const xiome = await installXiome()
 	const getAccess = () => xiome.models.accessModel.getAccess()
+	const accessListeners = new Set<(access: AccessPayload) => void>()
+	xiome.models.accessModel.track(() => {
+		const access = getAccess()
+		for (const listener of accessListeners)
+			listener(access)
+	})
 
 	const networking = await makeNetworking({
 		rando: await getRando(),
@@ -27,6 +36,8 @@ void async function main() {
 	async function setupGame(playerId: string) {
 		const {game, quality, finishLoading} = await gameSetup({
 			playerId,
+			getAccess,
+			accessListeners,
 			statsArea: document.querySelector(".stats"),
 			fullscreenButton: document.querySelector(".buttonbar .fullscreen"),
 			thumbsticks: {
@@ -51,8 +62,12 @@ void async function main() {
 			{type: "environment"},
 		)
 		await coordinator.hostAccess.addToWorld(
-			{type: "player", position: [10, 5, 0], playerId,
-				character: CharacterType.Robot},
+			{
+				type: "player",
+				position: [10, 5, 0],
+				playerId,
+				character: CharacterType.Robot,
+			},
 			{type: "crate", position: [8, 5, 10]},
 			{type: "crate", position: [10, 5, 10]},
 			{type: "crate", position: [12, 5, 10]},

@@ -2,7 +2,7 @@
 import {V3} from "./utils/v3.js"
 import {makeKeyListener} from "./utils/key-listener.js"
 import {makeMouseTracker} from "./utils/mouse-tracker.js"
-import {Quality, SpawnOptions, Thumbsticks} from "./types.js"
+import {AccessListeners, GetAccess, Quality, SpawnOptions, Thumbsticks} from "./types.js"
 
 import {spawnCrate} from "./spawn/crate.js"
 import {spawnCamera} from "./spawn/camera.js"
@@ -15,11 +15,15 @@ export async function makeGame({
 		playerId,
 		quality,
 		thumbsticks,
+		getAccess,
+		accessListeners,
 		middle = [0, 0, 0],
 	}: {
 		playerId: string
 		quality: Quality
 		thumbsticks: Thumbsticks
+		getAccess: GetAccess
+		accessListeners: AccessListeners
 		middle?: V3
 	}) {
 
@@ -61,6 +65,8 @@ export async function makeGame({
 		mouseTracker: makeMouseTracker(),
 		keyListener: makeKeyListener(),
 		playerId,
+		getAccess,
+		accessListeners,
 	}
 
 	return {

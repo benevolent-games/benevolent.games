@@ -13,6 +13,16 @@ export function zero(): V3 {
 	return [0, 0, 0]
 }
 
+export function equal(a: V3, b: V3, ...c: V3[]) {
+	const [x, y, z] = a
+	for (const d of [b, ...c]) {
+		const [x2, y2, z2] = d
+		if (x !== x2 || y !== y2 || z !== z2)
+			return false
+	}
+	return true
+}
+
 export function add(...vectors: V3[]): V3 {
 	let x = 0
 	let y = 0

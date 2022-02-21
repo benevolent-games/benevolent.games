@@ -1,4 +1,7 @@
 
+import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
+
+import {V2} from "./utils/v2.js"
 import {Quat} from "./utils/quat.js"
 import type {V3} from "./utils/v3.js"
 import {MemoIncoming} from "../netcode/types.js"
@@ -6,9 +9,11 @@ import {Description} from "../netcode/world/types.js"
 import {ThumbStick} from "./utils/thumbsticks/thumb-stick.js"
 import type {makeKeyListener} from "./utils/key-listener.js"
 import type {makeMouseTracker} from "./utils/mouse-tracker.js"
-import {V2} from "./utils/v2.js"
 
 export type Quality = "q0" | "q1"
+
+export type GetAccess = () => AccessPayload
+export type AccessListeners = Set<(access: AccessPayload) => void>
 
 export interface Thumbsticks {
 	left: ThumbStick
@@ -26,6 +31,8 @@ export interface SpawnOptions {
 	keyListener: ReturnType<typeof makeKeyListener>
 	thumbsticks: Thumbsticks
 	playerId: string
+	getAccess: GetAccess
+	accessListeners: AccessListeners
 }
 
 export enum CharacterType {
@@ -76,6 +83,7 @@ export interface PlayerDescription extends EntityDescription {
 	position: V3
 	playerId: string
 	character: CharacterType
+	color?: V3
 	movement?: V2
 	rotation?: V2
 }
