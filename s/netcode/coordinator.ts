@@ -57,11 +57,18 @@ export function makeCoordinator({game, networking}: {
 	}
 
 	const memos = new Set<MemoOutgoing>()
+	const hostMemosSentDuringSpawn = new Set<MemoIncoming>()
 
 	function executeMemo(incoming: MemoIncoming) {
 		const entity = entities.get(incoming.entityId)
 		if (entity)
 			entity.receiveMemo(incoming)
+		else if (pendingEntitySpawns.has(incoming.entityId)) {
+			hostMemosSentDuringSpawn.add({
+				...incoming,
+				playerId: networking.playerId
+			})
+		}
 	}
 
 	function queueOutgoingMemo(outgoing: MemoOutgoing) {
@@ -175,6 +182,14 @@ export function makeCoordinator({game, networking}: {
 				UpdateType.Changes,
 				changes,
 			])
+		})
+
+		// send all host memos queued during spawn
+		networkLoop.add(() => {
+			const memos = [...hostMemosSentDuringSpawn]
+			hostMemosSentDuringSpawn.clear()
+			for (const memo of memos)
+				executeMemo(memo)
 		})
 
 		// host listens for incoming requests

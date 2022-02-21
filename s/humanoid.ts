@@ -62,8 +62,12 @@ void async function main() {
 			{type: "environment"},
 		)
 		await coordinator.hostAccess.addToWorld(
-			{type: "player", position: [10, 5, 0], playerId,
-				character: CharacterType.Robot},
+			{
+				type: "player",
+				position: [10, 5, 0],
+				playerId,
+				character: CharacterType.Robot,
+			},
 			{type: "crate", position: [8, 5, 10]},
 			{type: "crate", position: [10, 5, 10]},
 			{type: "crate", position: [12, 5, 10]},

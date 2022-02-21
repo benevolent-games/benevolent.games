@@ -18,6 +18,7 @@ const mouseSensitivity = 1 / 1_000
 const thumbSensitivity = 0.04
 const fieldOfView = 1.2
 const capsuleHeight = 1.65
+const defaultColor: V3 = [0.2, 0.2, 0.2]
 
 function hsl2rgb(h: number,s: number,l: number): V3 {
 	let a=s*Math.min(l,1-l)
@@ -34,6 +35,7 @@ export function spawnPlayer({
 		const disposers = new Set<() => void>()
 		const isMe = description.playerId === playerId
 
+		let color: V3 = description.color ?? defaultColor
 		let characterType = description.character
 
 		const capsule = makeCapsule({scene, capsuleHeight, disposers})
@@ -49,15 +51,17 @@ export function spawnPlayer({
 			topSpeed: sprint,
 		})
 
+		character.setCustomColors(color)
+
 		if (isMe) {
 			function handleNewAccess(access: AccessPayload) {
-				let color: V3 = [0.2, 0.2, 0.2]
+				let newColor: V3 = [...defaultColor]
 				const avatar = access?.user?.profile?.avatar
 				if (avatar?.type === "simple") {
 					const hue = Math.ceil(avatar.value * 360)
-					color = hsl2rgb(hue, 1, 0.6)
+					newColor = hsl2rgb(hue, 1, 0.6)
 				}
-				character.setCustomColors(color)
+				sendMemo(["color", newColor])
 			}
 			accessListeners.add(handleNewAccess)
 			disposers.add(() => accessListeners.delete(handleNewAccess))
@@ -181,6 +185,10 @@ export function spawnPlayer({
 					characterType = description.character
 					character.setCharacter(characterType)
 				}
+				if (description.color && !v3.equal(description.color, color)) {
+					color = description.color
+					character.setCustomColors(color)
+				}
 			},
 			describe: () => ({
 				type: "player",
@@ -189,6 +197,7 @@ export function spawnPlayer({
 				character: characterType,
 				movement,
 				rotation,
+				color,
 			}),
 			dispose() {
 				for (const disposer of disposers)
@@ -211,6 +220,10 @@ export function spawnPlayer({
 				else if (subject === "character") {
 					characterType = incoming.memo[1]
 					character.setCharacter(characterType)
+				}
+				else if (subject === "color") {
+					color = incoming.memo[1]
+					character.setCustomColors(color)
 				}
 				else
 					console.error("unknown player memo", incoming)

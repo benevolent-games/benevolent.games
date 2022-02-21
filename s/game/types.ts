@@ -83,6 +83,7 @@ export interface PlayerDescription extends EntityDescription {
 	position: V3
 	playerId: string
 	character: CharacterType
+	color?: V3
 	movement?: V2
 	rotation?: V2
 }

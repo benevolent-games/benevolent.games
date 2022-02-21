@@ -27,10 +27,8 @@ export interface MemoOutgoing {
 	memo: any
 }
 
-export interface MemoIncoming {
-	entityId: string
+export interface MemoIncoming extends MemoOutgoing {
 	playerId: string
-	memo: any
 }
 
 export enum UpdateType {
