@@ -24,11 +24,10 @@ export async function loadCharacter({
 	const womanMeshes = assets.meshes.filter(m => m.name.startsWith("female"))
 
 	// set colors for man and woman
-	for (const mesh of [manMeshes, womanMeshes].flat()) {
-		const material = new BABYLON.StandardMaterial("", scene)
-		material.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5)
-		mesh.material = material
-	}
+	const humanMaterial = new BABYLON.StandardMaterial("", scene)
+	humanMaterial.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5)
+	for (const mesh of [manMeshes, womanMeshes].flat())
+		mesh.material = humanMaterial
 
 	// set ambient color
 	for (const mesh of assets.meshes) {
@@ -63,6 +62,18 @@ export async function loadCharacter({
 
 	setCharacter(CharacterType.Robot)
 
+	function setCustomColors(color: V3) {
+		const robotTeamMaterial = <BABYLON.PBRMaterial>assets.materials
+			.find(m => m.name === "teamcolor")
+		const robotEyeMaterial = <BABYLON.PBRMaterial>assets.materials
+			.find(m => m.name === "eyes")
+		const bcolor = new BABYLON.Color3(...color)
+		robotTeamMaterial.albedoColor = bcolor
+		robotEyeMaterial.albedoColor = bcolor
+		robotEyeMaterial.emissiveColor = bcolor
+		humanMaterial.diffuseColor = bcolor
+	}
+
 	const findAnimation = (name: string) =>
 		assets.animationGroups.find(a => a.name === name)
 
@@ -96,6 +107,7 @@ export async function loadCharacter({
 		transform,
 		headBone: skeleton.bones.find(b => b.name === "head"),
 		setCharacter,
+		setCustomColors,
 		animateVerticalLooking(radians: number) {
 			const fraction = between(radians, -radian, radian)
 			const seconds = fraction * lookingSeconds

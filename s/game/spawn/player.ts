@@ -1,5 +1,8 @@
 
+import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
+
 import * as v2 from "../utils/v2.js"
+import {V3} from "../utils/v3.js"
 import * as v3 from "../utils/v3.js"
 import {walker} from "./player-tools/walker.js"
 import {makeCapsule} from "./player-tools/capsule.js"
@@ -16,8 +19,15 @@ const thumbSensitivity = 0.04
 const fieldOfView = 1.2
 const capsuleHeight = 1.65
 
+function hsl2rgb(h: number,s: number,l: number): V3 {
+	let a=s*Math.min(l,1-l)
+	let f= (n,k=(n+h/30)%12) => l - a*Math.max(Math.min(k-3,9-k,1),-1);
+	return [f(0),f(8),f(4)]
+}
+
 export function spawnPlayer({
 		scene, renderLoop, mouseTracker, keyListener, thumbsticks, playerId,
+		getAccess, accessListeners,
 	}: SpawnOptions): Spawner<PlayerDescription> {
 
 	return async function({host, description, sendMemo}) {
@@ -38,6 +48,22 @@ export function spawnPlayer({
 			path: "/assets/art/character/robot.glb",
 			topSpeed: sprint,
 		})
+
+		if (isMe) {
+			function handleNewAccess(access: AccessPayload) {
+				let color: V3 = [0.2, 0.2, 0.2]
+				const avatar = access?.user?.profile?.avatar
+				if (avatar?.type === "simple") {
+					const hue = Math.ceil(avatar.value * 360)
+					color = hsl2rgb(hue, 1, 0.6)
+				}
+				character.setCustomColors(color)
+			}
+			accessListeners.add(handleNewAccess)
+			disposers.add(() => accessListeners.delete(handleNewAccess))
+			handleNewAccess(getAccess())
+		}
+
 
 		if (host) {
 			capsule.physicsImpostor = new BABYLON.PhysicsImpostor(

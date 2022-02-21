@@ -2,7 +2,10 @@
 import {getRando} from "dbmage"
 import "./game/utils/thumbsticks/thumbsticks.js"
 
-import {installXiome} from "./xiome.js"
+// import {installXiome} from "./xiome.js"
+import {installXiomeMock} from "./xiome-mock.js"
+import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
+
 import {HostNetworking} from "./netcode/types.js"
 import {CharacterType, PlayerDescription} from "./game/types.js"
 import {gameSetup} from "./game/startup/game-setup.js"
@@ -12,8 +15,14 @@ import {makeCoordinator} from "./netcode/coordinator.js"
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
 
-	const xiome = await installXiome()
+	const xiome = await installXiomeMock()
 	const getAccess = () => xiome.models.accessModel.getAccess()
+	const accessListeners = new Set<(access: AccessPayload) => void>()
+	xiome.models.accessModel.track(() => {
+		const access = getAccess()
+		for (const listener of accessListeners)
+			listener(access)
+	})
 
 	const networking = await makeNetworking({
 		rando: await getRando(),
@@ -27,6 +36,8 @@ void async function main() {
 	async function setupGame(playerId: string) {
 		const {game, quality, finishLoading} = await gameSetup({
 			playerId,
+			getAccess,
+			accessListeners,
 			statsArea: document.querySelector(".stats"),
 			fullscreenButton: document.querySelector(".buttonbar .fullscreen"),
 			thumbsticks: {
