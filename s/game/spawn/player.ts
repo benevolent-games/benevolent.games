@@ -9,7 +9,7 @@ import {loadCharacter} from "./player-tools/load-character.js"
 import {makePlayerCameras} from "./player-tools/player-cameras.js"
 import {asEntity, PlayerDescription, Spawner, SpawnOptions} from "../types.js"
 
-const walk = 5
+const walk = 3
 const sprint = walk * 2
 const mouseSensitivity = 1 / 1_000
 const thumbSensitivity = 0.04
