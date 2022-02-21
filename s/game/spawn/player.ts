@@ -1,13 +1,14 @@
 
 import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
 
-import * as v2 from "../utils/v2.js"
 import {V3} from "../utils/v3.js"
+import * as v2 from "../utils/v2.js"
 import * as v3 from "../utils/v3.js"
 import {hslToRgb} from "../utils/hsl.js"
 import {walker} from "./player-tools/walker.js"
 import {makeCapsule} from "./player-tools/capsule.js"
 import {makeReticule} from "./player-tools/reticule.js"
+import {positionInterpolator} from "../utils/interpolator.js"
 import {playerLooking} from "./player-tools/player-looking.js"
 import {loadCharacter} from "./player-tools/load-character.js"
 import {makePlayerCameras} from "./player-tools/player-cameras.js"
@@ -33,11 +34,13 @@ export function spawnPlayer({
 
 		let color: V3 = description.color ?? defaultColor
 		let characterType = description.character
-		let positionGoalPost = description.position
+
+		const interpolators = {
+			position: positionInterpolator(interpolationSteps),
+		}
 
 		const capsule = makeCapsule({scene, capsuleHeight, disposers})
 		capsule.position = v3.toBabylon(description.position)
-		// capsule.material.alpha = host ? 0.1 : 0.05
 		capsule.isVisible = false
 
 		const character = await loadCharacter({
@@ -173,11 +176,11 @@ export function spawnPlayer({
 		}
 		else {
 			function physicsCallback() {
-				const currentPosition = v3.fromBabylon(capsule.position)
-				const difference = v3.subtract(positionGoalPost, currentPosition)
-				const step = v3.divideBy(difference, interpolationSteps)
-				const newPosition = v3.add(currentPosition, step)
-				capsule.position = v3.toBabylon(newPosition)
+				capsule.position = v3.toBabylon(
+					interpolators.position.getCloser(
+						v3.fromBabylon(capsule.position)
+					)
+				)
 			}
 			scene.onBeforePhysicsObservable.add(physicsCallback)
 			disposers.add(() => {
@@ -187,7 +190,7 @@ export function spawnPlayer({
 
 		return asEntity<PlayerDescription>({
 			update(description) {
-				positionGoalPost = description.position
+				interpolators.position.updateGoalpost(description.position)
 				movement = description.movement ?? v2.zero()
 				if (!isMe)
 					rotation = description.rotation ?? v2.zero()

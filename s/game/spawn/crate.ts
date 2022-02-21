@@ -2,6 +2,7 @@
 import * as v3 from "../utils/v3.js"
 import * as quat from "../utils/quat.js"
 import {asEntity, CrateDescription, Spawner, SpawnOptions} from "../types.js"
+import {positionInterpolator, rotationInterpolator} from "../utils/interpolator.js"
 
 const interpolationSteps = 3
 
@@ -9,9 +10,10 @@ export function spawnCrate({scene}: SpawnOptions): Spawner<CrateDescription> {
 	return async function({host, description}) {
 
 		const disposers = new Set<() => void>()
-		const goalposts = {
-			position: description.position,
-			rotation: description.rotation ?? quat.zero(),
+
+		const interpolators = {
+			position: positionInterpolator(interpolationSteps),
+			rotation: rotationInterpolator(interpolationSteps),
 		}
 
 		const mesh = BABYLON.MeshBuilder.CreateBox("crate", {size: 1}, scene)
@@ -34,21 +36,18 @@ export function spawnCrate({scene}: SpawnOptions): Spawner<CrateDescription> {
 		}
 		else {
 			function physicsCallback() {
-				const currentPosition = v3.fromBabylon(mesh.position)
-				const difference = v3.subtract(goalposts.position, currentPosition)
-				const step = v3.divideBy(difference, interpolationSteps)
-				const newPosition = v3.add(currentPosition, step)
-				mesh.position = v3.toBabylon(newPosition)
-
-				{
-					const goalRotation = quat.toBabylon(goalposts.rotation)
-					const newRotation = BABYLON.Quaternion.Slerp(
-						mesh.rotationQuaternion ?? BABYLON.Quaternion.Zero(),
-						goalRotation,
-						1 / interpolationSteps,
+				mesh.position = v3.toBabylon(
+					interpolators.position.getCloser(
+						v3.fromBabylon(mesh.position)
 					)
-					mesh.rotationQuaternion = newRotation
-				}
+				)
+				mesh.rotationQuaternion = quat.toBabylon(
+					interpolators.rotation.getCloser(
+						mesh.rotationQuaternion
+							? quat.fromBabylon(mesh.rotationQuaternion)
+							: quat.zero()
+					)
+				)
 			}
 			scene.onBeforePhysicsObservable.add(physicsCallback)
 			disposers.add(() => scene.onBeforePhysicsObservable.removeCallback(physicsCallback))
@@ -56,9 +55,9 @@ export function spawnCrate({scene}: SpawnOptions): Spawner<CrateDescription> {
 
 		return asEntity<CrateDescription>({
 			update: description => {
-				goalposts.position = description.position
+				interpolators.position.updateGoalpost(description.position)
 				if (description.rotation)
-					goalposts.rotation = description.rotation
+					interpolators.rotation.updateGoalpost(description.rotation)
 			},
 			describe: () => ({
 				type: "crate",
