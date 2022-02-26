@@ -15,12 +15,14 @@ const games: {
 	link?: string
 }[] = [
 	{link: "/humanoid", poster: "humanoid.webp", title: "humanoid"},
+	{poster: "elderly-escape.webp", title: "elderly escape"},
 	{poster: "faster-than-the-slowest-camper.webp", title: "faster than the slowest camper"},
+	{poster: "snowfort.webp", title: "snowfort"},
 	{poster: "forbearance.webp", title: "forbearance"},
 	{poster: "muskets-of-obligation.webp", title: "muskets of obligation"},
-	{poster: "the-hopeless.webp", title: "the hopeless"},
-	{poster: "break-action.webp", title: "break-action"},
 	{poster: "will-to-die.webp", title: "will to die"},
+	// {poster: "the-hopeless.webp", title: "the hopeless"},
+	// {poster: "break-action.webp", title: "break-action"},
 ]
 
 function gamelink(link: string, content: HtmlTemplate) {
