@@ -2,6 +2,7 @@
 import {V2} from "../v2.js"
 import * as v2 from "../v2.js"
 import {LitElement, html, css} from "lit"
+import {findTouchAppleFriendly} from "./utils/find-touch-ios-friendly.js"
 
 export class ThumbStick extends LitElement {
 
@@ -125,16 +126,16 @@ export class ThumbStick extends LitElement {
 			const {clientX, clientY} = touch
 			moveStick(clientX, clientY)
 			event.preventDefault()
-		})
+		}, {passive: false})
 
 		base.addEventListener("touchmove", (event: TouchEvent) => {
-			const touch = event.touches.item(trackingTouchId)
+			const touch = findTouchAppleFriendly(trackingTouchId, event.touches)
 			if (touch) {
 				const {clientX, clientY} = touch
 				moveStick(clientX, clientY)
 			}
 			event.preventDefault()
-		})
+		}, {passive: false})
 
 		base.addEventListener("touchend", () => {
 			trackingTouchId = undefined
