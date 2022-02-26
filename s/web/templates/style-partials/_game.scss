@@ -301,16 +301,23 @@ canvas {
 	bottom: 0;
 	left: 0;
 	right: 0;
+	width: 100%;
 	pointer-events: auto;
 
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+
+	padding: 1em;
 }
 
 .game .mobile thumb-stick {
+	position: relative;
+	display: block;
 	opacity: 0.2;
-	width: 7em;
-	height: 7em;
-	margin: 2em;
+	flex: 1 1 auto;
+	max-width: 7em;
+	width: 50%;
+	height: auto;
+	aspect-ratio: 1 / 1;
 }
