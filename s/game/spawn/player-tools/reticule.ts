@@ -15,4 +15,5 @@ export function makeReticule({scene, camera, disposers}: {
 	box.material = boxMaterial
 	disposers.add(() => boxMaterial.dispose())
 	disposers.add(() => box.dispose())
+	return {mesh: box}
 }

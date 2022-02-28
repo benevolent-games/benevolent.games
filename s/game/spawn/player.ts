@@ -104,7 +104,7 @@ export function spawnPlayer({
 				characterTransform: character.transform,
 			})
 			scene.activeCamera = camera
-			makeReticule({scene, camera, disposers})
+			const reticule = makeReticule({scene, camera, disposers})
 
 			mouseTracker.listeners.add(looking.addMouseforce)
 
@@ -121,6 +121,7 @@ export function spawnPlayer({
 				scene.activeCamera = thirdPerson
 					? thirdPersonCamera
 					: camera
+				reticule.mesh.isVisible = !thirdPerson
 			}
 			toggleThirdPerson(true)
 
