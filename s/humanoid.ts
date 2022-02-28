@@ -7,10 +7,11 @@ import {installXiome} from "./xiome.js"
 import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
 
 import {HostNetworking} from "./netcode/types.js"
-import {CharacterType, PlayerDescription} from "./game/types.js"
 import {gameSetup} from "./game/startup/game-setup.js"
 import {makeNetworking} from "./netcode/networking.js"
 import {makeCoordinator} from "./netcode/coordinator.js"
+import {CharacterType, PlayerDescription} from "./game/types.js"
+import {V3} from "./game/utils/v3.js"
 
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
@@ -56,28 +57,53 @@ void async function main() {
 	const {playerId} = networking
 	const game = await setupGame(playerId)
 
+	const map: string = "butte"
+
 	const coordinator = makeCoordinator({networking, game})
 	if (coordinator.hostAccess) {
-		await coordinator.hostAccess.addToWorld(
-			{type: "environment"},
-		)
-		await coordinator.hostAccess.addToWorld(
-			{
-				type: "player",
-				position: [10, 5, 0],
-				playerId,
-				character: CharacterType.Robot,
-			},
-			{type: "crate", position: [8, 5, 10]},
-			{type: "crate", position: [10, 5, 10]},
-			{type: "crate", position: [12, 5, 10]},
-			{type: "dunebuggy", position: [0, -1, 0]},
-		)
+		let spawnpoint: V3 = [0, 0, 0]
+		if (map === "butte") {
+			spawnpoint = [100, 0, -100]
+			await coordinator.hostAccess.addToWorld(
+				{type: "mapButte"},
+			)
+			await coordinator.hostAccess.addToWorld(
+				{
+					type: "player",
+					position: spawnpoint,
+					playerId,
+					character: CharacterType.Robot,
+				},
+				// {type: "crate", position: [8, 5, 10]},
+				// {type: "crate", position: [10, 5, 10]},
+				// {type: "crate", position: [12, 5, 10]},
+				// {type: "dunebuggy", position: [0, -1, 0]},
+			)
+		}
+		else {
+			spawnpoint = [10, 10, 0]
+			await coordinator.hostAccess.addToWorld(
+				{type: "mapDesert"},
+			)
+			await coordinator.hostAccess.addToWorld(
+				{
+					type: "player",
+					position: spawnpoint,
+					playerId,
+					character: CharacterType.Robot,
+				},
+				{type: "crate", position: [8, 5, 10]},
+				{type: "crate", position: [10, 5, 10]},
+				{type: "crate", position: [12, 5, 10]},
+				{type: "dunebuggy", position: [0, -1, 0]},
+			)
+		}
+
 		coordinator.hostAccess.requestListeners.add((clientId, [type, request]) => {
 			if (request.subject === "spawn-player") {
 				coordinator.hostAccess.addToWorld({
 					type: "player",
-					position: [9.5, 5, 1],
+					position: spawnpoint,
 					playerId: clientId,
 					character: CharacterType.Robot,
 				})
