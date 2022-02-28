@@ -1,4 +1,8 @@
 
+.game {
+	overflow: hidden;
+}
+
 .game, .game body, .game canvas {
 	position: relative;
 	height: 100vh;
