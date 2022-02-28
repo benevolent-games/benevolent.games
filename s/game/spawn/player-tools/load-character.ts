@@ -104,6 +104,7 @@ export async function loadCharacter({
 	const skeleton = assets.skeletons[0]
 
 	return {
+		meshes: [...assets.meshes],
 		transform,
 		headBone: skeleton.bones.find(b => b.name === "head"),
 		setCharacter,

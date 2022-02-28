@@ -27,7 +27,7 @@ export function spawnCrate({scene}: SpawnOptions): Spawner<CrateDescription> {
 				mesh,
 				BABYLON.PhysicsImpostor.BoxImpostor,
 				{
-					mass: 1,
+					mass: 50,
 					friction: 1,
 					restitution: 0.5,
 				}

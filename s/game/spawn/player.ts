@@ -94,6 +94,33 @@ export function spawnPlayer({
 		let rotation = v2.zero()
 		let movement = v2.zero()
 
+		const jumper = (() => {
+			let lastJump = 0
+			const downVector = new BABYLON.Vector3(0, -1, 0)
+			const playerMeshes = [capsule, ...character.meshes]
+			const timeBetweenJumps = 500
+			const jumpImpulse = new BABYLON.Vector3(0, 350, 0)
+			const jumpContactPoint = BABYLON.Vector3.Zero()
+			const jumpRayLength = 1
+			return {
+				jump() {
+					const now = Date.now()
+					const since = now - lastJump
+					if (since > timeBetweenJumps) {
+						const ray = new BABYLON.Ray(capsule.getAbsolutePosition(), downVector, jumpRayLength)
+						const pick = scene.pickWithRay(ray, mesh => !playerMeshes.includes(mesh))
+						if (pick.hit) {
+							lastJump = now
+							capsule.physicsImpostor.applyImpulse(
+								jumpImpulse,
+								jumpContactPoint,
+							)
+						}
+					}
+				}
+			}
+		})()
+
 		if (isMe) {
 			const {camera, thirdPersonCamera, headLocus} = makePlayerCameras({
 				scene,
@@ -150,6 +177,11 @@ export function spawnPlayer({
 					nextCharacter()
 					sendMemo(["character", currentCharacter])
 				}
+			})
+
+			keyListener.on(" ", state => {
+				if (state.isDown)
+					sendMemo(["jump"])
 			})
 
 			disposers.add(() => clearInterval(interval))
@@ -238,6 +270,9 @@ export function spawnPlayer({
 				else if (subject === "color") {
 					color = incoming.memo[1]
 					character.setCustomColors(color)
+				}
+				else if (subject === "jump") {
+					jumper.jump()
 				}
 				else
 					console.error("unknown player memo", incoming)
