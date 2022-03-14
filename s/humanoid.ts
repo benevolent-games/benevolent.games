@@ -80,13 +80,15 @@ void async function main() {
 		}
 
 		else if (map === "dungeon") {
-			spawnpoint = [0, 55, 0]
+			spawnpoint = [0, 55, 0] // above
+			// spawnpoint = [0, 1, 0] // within
 			await coordinator.hostAccess.addToWorld(
 				{
 					type: "mapDungeon",
-					seed: 101, // randomSeed(),
-					pathSize: 5,
-					percentOfMapSubdividedIntoLittleTiles: 60,
+					seed: randomSeed(),
+					// seed: 465430,
+					pathSize: 10,
+					amountOfLittleTiles: 70,
 				},
 			)
 			await coordinator.hostAccess.addToWorld(

@@ -97,9 +97,7 @@ export function dungeonGenerator(seed: number) {
 		return false
 	}
 
-	function randomPathWithinGrid(x: number, y: number) {
-		const {start, end} = randomStartAndEnd(x, y)
-
+	function randomPathWithinGrid(x: number, y: number, start: V2, end: V2) {
 		function wander(path: V2[]) {
 			const current = path[path.length - 1]
 			const adjacent = getAdjacentPoints(current, x, y)
@@ -223,6 +221,61 @@ export function dungeonGenerator(seed: number) {
 		}))
 	}
 
+	const positionsIn3x3 = {
+		north: <V2>[1, 2],
+		east: <V2>[2, 1],
+		south: <V2>[1, 0],
+		west: <V2>[0, 1],
+	}
+
+	function doorsToPositions(doors: Doors) {
+		const positions: V2[] = []
+		if (doors.north) positions.push(positionsIn3x3.north)
+		if (doors.east) positions.push(positionsIn3x3.east)
+		if (doors.south) positions.push(positionsIn3x3.south)
+		if (doors.west) positions.push(positionsIn3x3.west)
+		return positions
+	}
+
+	function openOutsideDoor(subsegment: DungeonPathSegment) {
+		if (v2.equal(subsegment.point, positionsIn3x3.north)) subsegment.doors.north = true
+		if (v2.equal(subsegment.point, positionsIn3x3.east)) subsegment.doors.east = true
+		if (v2.equal(subsegment.point, positionsIn3x3.south)) subsegment.doors.south = true
+		if (v2.equal(subsegment.point, positionsIn3x3.west)) subsegment.doors.west = true
+	}
+
+	function subdivideDungeonSectors(bigPath: DungeonPathSegment[], percent: number): (DungeonPathSegment | DungeonSector)[] {
+		return bigPath.map((segment, index) => {
+			const isStart = index === 0
+			const isEnd = index === bigPath.length - 1
+			const shouldSubdivide = (isStart || isEnd)
+				? false
+				: random() < (percent / 100)
+			if (shouldSubdivide) {
+				const [start, end] = doorsToPositions(segment.doors)
+				const subpath = randomPathWithinGrid(3, 3, start, end)
+				const subdoors = pathToDoors(subpath)
+				const subpath2 = subpath.map((point, index) => {
+					return {
+						point,
+						doors: subdoors[index],
+					}
+				})
+				const subpath2start = subpath2[0]
+				const subpath2end = subpath2[subpath2.length - 1]
+				openOutsideDoor(subpath2start)
+				openOutsideDoor(subpath2end)
+				return {
+					...segment,
+					subpath: subpath2,
+				}
+			}
+			else {
+				return segment
+			}
+		})
+	}
+
 	function doorsAreStraight(doors: Doors) {
 		if (doors.north && doors.south)
 			return true
@@ -233,7 +286,19 @@ export function dungeonGenerator(seed: number) {
 
 	return {
 		generateDungeonPath,
+		subdivideDungeonSectors,
 		doorsAreStraight,
 		randomSelect,
 	}
+}
+
+export interface DungeonPathSegment {
+	point: V2
+	doors: Doors
+}
+
+export interface DungeonSector {
+	point: V2
+	doors: Doors
+	subpath: DungeonPathSegment[]
 }

@@ -100,3 +100,7 @@ export function negate(vector: V2): V2 {
 export function multiplyBy(vector: V2, factor: number): V2 {
 	return applyBy(vector, a => a * factor)
 }
+
+export function addBy(vector: V2, amount: number): V2 {
+	return applyBy(vector, a => a + amount)
+}

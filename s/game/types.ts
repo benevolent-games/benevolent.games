@@ -76,7 +76,7 @@ export interface MapDungeonDescription extends EntityDescription {
 	type: "mapDungeon"
 	seed: number
 	pathSize: number
-	percentOfMapSubdividedIntoLittleTiles: number
+	amountOfLittleTiles: number
 }
 
 export interface CrateDescription extends EntityDescription {
