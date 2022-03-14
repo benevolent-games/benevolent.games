@@ -11,6 +11,16 @@ export function zero(): V2 {
 	return [0, 0]
 }
 
+export function equal(a: V2, b: V2, ...c: V2[]) {
+	const [x, y] = a
+	for (const d of [b, ...c]) {
+		const [x2, y2] = d
+		if (x !== x2 || y !== y2)
+			return false
+	}
+	return true
+}
+
 export function rotate([x, y]: V2, radians: number): V2 {
 	return [
 		(x * Math.cos(radians)) - (y * Math.sin(radians)),
