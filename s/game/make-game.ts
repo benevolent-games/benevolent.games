@@ -9,7 +9,7 @@ import {spawnCamera} from "./spawn/camera.js"
 import {spawnPlayer} from "./spawn/player.js"
 import {spawnCharacter} from "./spawn/character.js"
 import {spawnDunebuggy} from "./spawn/dunebuggy.js"
-import {spawnEnvironment} from "./spawn/environment.js"
+import {spawnMapDesert} from "./spawn/map-desert.js"
 
 export async function makeGame({
 		playerId,
@@ -80,7 +80,7 @@ export async function makeGame({
 			crate: spawnCrate(options),
 			player: spawnPlayer(options),
 			character: spawnCharacter(options),
-			environment: spawnEnvironment(options),
+			mapDesert: spawnMapDesert(options),
 			dunebuggy: spawnDunebuggy(options),
 		}
 	}
