@@ -24,3 +24,7 @@ export function between(value: number, min: number, max: number) {
 	const amount = value - min
 	return amount / space
 }
+
+export function withinRange(value: number, min: number, max: number) {
+	return value >= min && value <= max
+}

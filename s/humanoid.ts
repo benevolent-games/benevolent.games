@@ -12,8 +12,9 @@ import {gameSetup} from "./game/startup/game-setup.js"
 import {makeNetworking} from "./netcode/networking.js"
 import {makeCoordinator} from "./netcode/coordinator.js"
 import {V3} from "./game/utils/v3.js"
+import {randomSeed} from "./game/utils/dungeon-generator/dungeon-generator.js"
 
-const map = "desert"
+const map: string = "dungeon"
 
 void async function main() {
 	console.log("👼 benevolent.games", {BABYLON, Ammo})
@@ -71,19 +72,35 @@ void async function main() {
 			await coordinator.hostAccess.addToWorld(
 				{
 					type: "player",
+					playerId,
+					position: spawnpoint,
+					character: CharacterType.Robot,
+				},
+			)
+		}
+
+		else if (map === "dungeon") {
+			spawnpoint = [0, 55, 0]
+			await coordinator.hostAccess.addToWorld(
+				{
+					type: "mapDungeon",
+					seed: 101, // randomSeed(),
+					pathSize: 5,
+					percentOfMapSubdividedIntoLittleTiles: 60,
+				},
+			)
+			await coordinator.hostAccess.addToWorld(
+				{
+					type: "player",
 					position: spawnpoint,
 					playerId,
 					character: CharacterType.Robot,
 				},
-				{type: "crate", position: [8, 5, 10]},
-				{type: "crate", position: [10, 5, 10]},
-				{type: "crate", position: [12, 5, 10]},
-				{type: "dunebuggy", position: [0, -1, 0]},
 			)
 		}
 
 		else {
-			
+			throw new Error(`unknown map "${map}"`)
 		}
 
 		coordinator.hostAccess.requestListeners.add((clientId, [type, request]) => {

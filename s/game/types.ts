@@ -72,6 +72,13 @@ export interface MapDesertDescription extends EntityDescription {
 	type: "mapDesert"
 }
 
+export interface MapDungeonDescription extends EntityDescription {
+	type: "mapDungeon"
+	seed: number
+	pathSize: number
+	percentOfMapSubdividedIntoLittleTiles: number
+}
+
 export interface CrateDescription extends EntityDescription {
 	type: "crate"
 	position: V3
@@ -95,6 +102,7 @@ export interface DunebuggyDescription extends EntityDescription {
 
 export type AnyEntityDescription =
 	| MapDesertDescription
+	| MapDungeonDescription
 	| CrateDescription
 	| PlayerDescription
 	| DunebuggyDescription

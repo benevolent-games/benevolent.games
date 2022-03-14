@@ -39,32 +39,6 @@ export type DungeonGrid = BigTile[][]
 export function dungeonGenerator(seed: number) {
 	const random = makeRandomNumberGenerator(seed)
 
-	function generateBigTile() {
-		return {
-			children: undefined,
-			doors: {
-				north: false,
-				east: false,
-				south: false,
-				west: false,
-			},
-		}
-	}
-
-	function generateRowOfBigTiles(x: number) {
-		let row: BigTile[] = []
-		for (let i = 0; i < x; i++)
-			row.push(generateBigTile())
-		return row
-	}
-
-	function generateGridOfBigTiles(x: number, y: number) {
-		const grid: DungeonGrid = []
-		for (let i = 0; i < y; i++)
-			grid.push(generateRowOfBigTiles(x))
-		return grid
-	}
-
 	function randomSample(min: number, max: number) {
 		min = Math.ceil(min)
 		max = Math.floor(max)
@@ -104,8 +78,8 @@ export function dungeonGenerator(seed: number) {
 			point => v2.add(current, point)
 		)
 		const inBounds = absoluteConsiderations.filter(point => (
-			numpty.between(point[0], 0, x + 1) &&
-			numpty.between(point[1], 0, y + 1)
+			numpty.withinRange(point[0], 0, x - 1) &&
+			numpty.withinRange(point[1], 0, y - 1)
 		))
 		return inBounds
 	}
@@ -123,7 +97,7 @@ export function dungeonGenerator(seed: number) {
 		return false
 	}
 
-	function randomPath(x: number, y: number) {
+	function randomPathWithinGrid(x: number, y: number) {
 		const {start, end} = randomStartAndEnd(x, y)
 
 		function wander(path: V2[]) {
@@ -150,23 +124,66 @@ export function dungeonGenerator(seed: number) {
 		return path
 	}
 
-	function openDoorBetween(tileA: Tile, a: V2, b: V2) {
-		const diff = v2.subtract(a, b)
-	
-		if (v2.equal(diff, [0, 1]))
-			tileA.doors.north = true
-	
-		if (v2.equal(diff, [1, 0]))
-			tileA.doors.east = true
-	
-		if (v2.equal(diff, [0, -1]))
-			tileA.doors.south = true
-	
-		if (v2.equal(diff, [-1, 0]))
-			tileA.doors.west = true
+	function randomPath(pathSize: number) {
+		const manhattanRelativeSteps: V2[] = [
+			[0, 1],
+			[1, 0],
+			[0, -1],
+			[-1, 0],
+		]
+
+		function wander(path: V2[]) {
+			const current = path[path.length - 1]
+			const manhattanAbsoluteSteps = manhattanRelativeSteps.map(
+				point => v2.add(current, point)
+			)
+			const validSteps = manhattanAbsoluteSteps.filter(
+				point => !alreadyInPath(point, path)
+			)
+
+			if (validSteps.length === 0)
+				return undefined
+
+			const next = randomSelect(validSteps)
+
+			if (alreadyInPath(next, path))
+				return undefined
+
+			path.push(next)
+
+			if (path.length === pathSize)
+				return path
+
+			return wander(path)
+		}
+
+		const start: V2 = [0, 0]
+
+		let path: V2[]
+		while (!path)
+			path = wander([start])
+
+		return path
 	}
 
-	function openDoorsAlongPath(grid: AnyGrid, path: V2[]) {
+	function openDoorBetween(doors: Doors, a: V2, b: V2) {
+		const diff = v2.subtract(a, b)
+	
+		if (v2.equal(diff, [0, -1]))
+			doors.north = true
+	
+		if (v2.equal(diff, [-1, 0]))
+			doors.east = true
+	
+		if (v2.equal(diff, [0, 1]))
+			doors.south = true
+	
+		if (v2.equal(diff, [1, 0]))
+			doors.west = true
+	}
+
+	function pathToDoors(path: V2[]) {
+		const allDoors: Doors[] = []
 		path.forEach(([x, y], index) => {
 			const previousIndex = index - 1
 			const nextIndex = index + 1
@@ -179,24 +196,44 @@ export function dungeonGenerator(seed: number) {
 				? path[nextIndex]
 				: undefined
 	
-			const tile = grid[x][y]
+			const tileDoors: Doors = {
+				north: false,
+				east: false,
+				south: false,
+				west: false,
+			}
 			
 			if (previous)
-				openDoorBetween(tile, [x, y], previous)
+				openDoorBetween(tileDoors, [x, y], previous)
 	
 			if (next)
-				openDoorBetween(tile, [x, y], next)
+				openDoorBetween(tileDoors, [x, y], next)
+			
+			allDoors.push(tileDoors)
 		})
+		return allDoors
 	}
 
-	function generateDungeon(x: number, y: number) {
-		const grid = generateGridOfBigTiles(5, 5)
-		const path = randomPath(x, y)
-		openDoorsAlongPath(grid, path)
-		return grid
+	function generateDungeonPath(pathSize: number) {
+		const path = randomPath(pathSize)
+		const doors = pathToDoors(path)
+		return path.map((point, index) => ({
+			point,
+			doors: doors[index],
+		}))
+	}
+
+	function doorsAreStraight(doors: Doors) {
+		if (doors.north && doors.south)
+			return true
+		else if (doors.east && doors.west)
+			return true
+		return false
 	}
 
 	return {
-		generateDungeon,
+		generateDungeonPath,
+		doorsAreStraight,
+		randomSelect,
 	}
 }
