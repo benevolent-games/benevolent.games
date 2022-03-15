@@ -6,13 +6,13 @@ import {installXiome} from "./xiome.js"
 // import {installXiomeMock} from "./xiome-mock.js"
 import {AccessPayload} from "xiome/x/features/auth/types/auth-tokens.js"
 
+import {V3} from "./game/utils/v3.js"
 import {HostNetworking} from "./netcode/types.js"
-import {CharacterType, PlayerDescription} from "./game/types.js"
 import {gameSetup} from "./game/startup/game-setup.js"
 import {makeNetworking} from "./netcode/networking.js"
+import {randomSeed} from "./game/utils/random-tools.js"
 import {makeCoordinator} from "./netcode/coordinator.js"
-import {V3} from "./game/utils/v3.js"
-import {randomSeed} from "./game/utils/dungeon-generator/dungeon-generator.js"
+import {CharacterType, PlayerDescription} from "./game/types.js"
 
 const map: string = "dungeon"
 
