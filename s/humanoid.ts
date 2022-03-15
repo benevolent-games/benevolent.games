@@ -80,8 +80,8 @@ void async function main() {
 		}
 
 		else if (map === "dungeon") {
-			spawnpoint = [0, 55, 0] // above
-			// spawnpoint = [0, 1, 0] // within
+			// spawnpoint = [0, 55, 0] // above
+			spawnpoint = [0, 1, 0] // within
 			await coordinator.hostAccess.addToWorld(
 				{
 					type: "mapDungeon",
