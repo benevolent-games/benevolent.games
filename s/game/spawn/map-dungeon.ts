@@ -67,15 +67,15 @@ export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescri
 			},
 		})
 
-		console.log(`dungeon seed ${description.seed}`)
+		console.log(`🌱 dungeon seed ${description.seed}`)
 		const generationTimer = stopwatch()
 		const dungeonBigTiles = generator.generateTilePath(description.pathSize)
 		const dungeonTiles = generator.subdivideSomeTiles(dungeonBigTiles, description.amountOfLittleTiles)
-		console.log(`dungeon generator took ${generationTimer.elapsed().toFixed(0)}ms`)
+		console.log(`⏱️ dungeon generator took ${generationTimer.elapsed().toFixed(0)}ms`)
 
 		const placementTimer = stopwatch()
 		placement.placeDungeon(dungeonTiles)
-		console.log(`dungeon placement took ${placementTimer.elapsed().toFixed(0)}ms`)
+		console.log(`⏱️ dungeon placement took ${placementTimer.elapsed().toFixed(0)}ms`)
 
 		const lightDirection = v3.toBabylon(v3.normalize([0.7, -1, 0.2]))
 		const sun = new BABYLON.DirectionalLight("", lightDirection, scene)
