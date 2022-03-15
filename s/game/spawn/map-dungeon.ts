@@ -1,17 +1,19 @@
 
-import * as v3 from "../utils/v3.js"
-import {loadGlb} from "../babylon/load-glb.js"
-import {loadMaterial} from "../babylon/load-material.js"
-import {asEntity, MapDungeonDescription, Quality, Spawner, SpawnOptions} from "../types.js"
-import {Doors, dungeonGenerator, DungeonSector} from "../utils/dungeon-generator/dungeon-generator.js"
 import {V2} from "../utils/v2.js"
 import * as v2 from "../utils/v2.js"
+import * as v3 from "../utils/v3.js"
+import {loadGlb} from "../babylon/load-glb.js"
 import {stopwatch} from "../utils/stopwatch.js"
+import {dungeonGenerator} from "../utils/dungeon-generator/dungeon-generator.js"
+import {DungeonTileSubdivided, DungeonDoors} from "../utils/dungeon-generator/dungeon-types.js"
+import {asEntity, MapDungeonDescription, Quality, Spawner, SpawnOptions} from "../types.js"
+import {pseudoRandomTools} from "../utils/random-tools.js"
 
-export function spawnMapDungeon({quality, scene, renderLoop}: SpawnOptions): Spawner<MapDungeonDescription> {
+export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescription> {
 	return async function({description}) {
 
 		scene.ambientColor = new BABYLON.Color3(1, 1, 1)
+
 		const assets = await loadGlb(scene, "/assets/art/dungeon/dungeon.glb")
 		assets.removeAllFromScene()
 		assets.addAllToScene()
@@ -60,9 +62,10 @@ export function spawnMapDungeon({quality, scene, renderLoop}: SpawnOptions): Spa
 		console.log(`dungeon seed ${description.seed}`)
 
 		const generationTimer = stopwatch()
-		const dungeonGen = dungeonGenerator(description.seed)
-		const dungeon = dungeonGen.generateDungeonPath(description.pathSize)
-		const sectors = dungeonGen.subdivideDungeonSectors(dungeon, description.amountOfLittleTiles)
+		const randomTools = pseudoRandomTools(description.seed)
+		const dungeonGen = dungeonGenerator(randomTools)
+		const dungeon = dungeonGen.generateTilePath(description.pathSize)
+		const sectors = dungeonGen.subdivideSomeTiles(dungeon, description.amountOfLittleTiles)
 		console.log(`dungeon generator took ${generationTimer.elapsed().toFixed(0)}ms`)
 		console.log("dungeon sectors", sectors)
 
@@ -98,14 +101,14 @@ export function spawnMapDungeon({quality, scene, renderLoop}: SpawnOptions): Spa
 
 		sectors.forEach((sector, index) => {
 			const {point, doors} = sector
-			if ((<DungeonSector>sector).subpath) {
-				const {subpath} = <DungeonSector>sector
+			if ((<DungeonTileSubdivided>sector).children) {
+				const {children: subpath} = <DungeonTileSubdivided>sector
 				subpath.forEach((sub, index) => {
 					const [worldX, worldZ] = subposition(point, sub.point)
 					const straight = dungeonGen.doorsAreStraight(sub.doors)
 					const randomMesh = straight
-						? dungeonGen.randomSelect(tiles.little.straights)
-						: dungeonGen.randomSelect(tiles.little.corners)
+						? randomTools.randomSelect(tiles.little.straights)
+						: randomTools.randomSelect(tiles.little.corners)
 					const instance = makeInstance(randomMesh, worldX, worldZ)
 					if (straight)
 						rotateStraightToMatchDoors(instance, sub.doors)
@@ -121,16 +124,16 @@ export function spawnMapDungeon({quality, scene, renderLoop}: SpawnOptions): Spa
 				const isEnd = index === dungeon.length - 1
 				if (isStart || isEnd) {
 					const randomMesh = isStart
-						? dungeonGen.randomSelect(tiles.big.starts)
-						: dungeonGen.randomSelect(tiles.big.ends)
+						? randomTools.randomSelect(tiles.big.starts)
+						: randomTools.randomSelect(tiles.big.ends)
 					const instance = makeInstance(randomMesh, worldX, worldZ)
 					rotateStartOrEndToMatchDoor(instance, doors)
 				}
 				else {
 					const straight = dungeonGen.doorsAreStraight(doors)
 					const randomMesh = straight
-						? dungeonGen.randomSelect(tiles.big.straights)
-						: dungeonGen.randomSelect(tiles.big.corners)
+						? randomTools.randomSelect(tiles.big.straights)
+						: randomTools.randomSelect(tiles.big.corners)
 					const instance = makeInstance(randomMesh, worldX, worldZ)
 					if (straight)
 						rotateStraightToMatchDoors(instance, doors)
@@ -160,19 +163,19 @@ export function spawnMapDungeon({quality, scene, renderLoop}: SpawnOptions): Spa
 const axis = new BABYLON.Vector3(0, 1, 0)
 const quarterTurn = (Math.PI / 2)
 
-function rotateStartOrEndToMatchDoor(mesh: BABYLON.AbstractMesh, doors: Doors) {
+function rotateStartOrEndToMatchDoor(mesh: BABYLON.AbstractMesh, doors: DungeonDoors) {
 	// starts pointing east
 	if (doors.north) mesh.rotate(axis, quarterTurn)
 	else if (doors.west) mesh.rotate(axis, quarterTurn * 2)
 	else if (doors.south) mesh.rotate(axis, quarterTurn * 3)
 }
 
-function rotateStraightToMatchDoors(mesh: BABYLON.AbstractMesh, doors: Doors) {
+function rotateStraightToMatchDoors(mesh: BABYLON.AbstractMesh, doors: DungeonDoors) {
 	if (doors.north)
 		mesh.rotate(axis, quarterTurn)
 }
 
-function rotateCornerToMatchDoors(mesh: BABYLON.AbstractMesh, doors: Doors) {
+function rotateCornerToMatchDoors(mesh: BABYLON.AbstractMesh, doors: DungeonDoors) {
 	// starts pointing south-west
 	if (doors.south && doors.east) mesh.rotate(axis, quarterTurn)
 	else if (doors.east && doors.north) mesh.rotate(axis, quarterTurn * 2)
