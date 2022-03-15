@@ -2,13 +2,14 @@
 import {V2} from "../utils/v2.js"
 import * as v2 from "../utils/v2.js"
 import * as v3 from "../utils/v3.js"
+
 import {loadGlb} from "../babylon/load-glb.js"
 import {stopwatch} from "../utils/stopwatch.js"
-import {dungeonGenerator} from "../utils/dungeon-generator/dungeon-generator.js"
-import {DungeonTileSubdivided, DungeonDoors} from "../utils/dungeon-generator/dungeon-types.js"
-import {asEntity, MapDungeonDescription, Quality, Spawner, SpawnOptions} from "../types.js"
 import {pseudoRandomTools} from "../utils/random-tools.js"
-import {doorsAreStraight} from "../utils/dungeon-generator/gentools/door-logic.js"
+import {dungeonPlacement} from "./dungeon-tools/dungeon-placement.js"
+import {DungeonDoors} from "../utils/dungeon-generator/dungeon-types.js"
+import {dungeonGenerator} from "../utils/dungeon-generator/dungeon-generator.js"
+import {asEntity, MapDungeonDescription, Spawner, SpawnOptions} from "../types.js"
 
 export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescription> {
 	return async function({description}) {
@@ -17,15 +18,11 @@ export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescri
 
 		const assets = await loadGlb(scene, "/assets/art/dungeon/dungeon.glb")
 		assets.removeAllFromScene()
-		assets.addAllToScene()
-
 		const meshes = <BABYLON.Mesh[]>assets.meshes
 		console.log("meshes", meshes.map(m => m.name))
-
 		for (const mesh of meshes) {
 			mesh.setParent(null)
 		}
-
 		for (const material of assets.materials) {
 			console.log(material.getClassName())
 			const pbr = <BABYLON.PBRMaterial>material
@@ -45,109 +42,39 @@ export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescri
 
 		const bigs = meshes.filter(m => m.name.startsWith("60x60m"))
 		const littles = meshes.filter(m => m.name.startsWith("20x20m"))
-		const tiles = {
-			big: {
-				straights: bigs.filter(m => m.name.includes("straight")),
-				corners: bigs.filter(m => m.name.includes("corner")),
-				starts: bigs.filter(m => m.name.includes("start")),
-				ends: bigs.filter(m => m.name.includes("end")),
-			},
-			little: {
-				straights: littles.filter(m => m.name.includes("straight")),
-				corners: littles.filter(m => m.name.includes("corner")),
-				starts: littles.filter(m => m.name.includes("start")),
-				ends: littles.filter(m => m.name.includes("end")),
-			},
-		}
-		console.log("tiles", tiles)
-		console.log(`dungeon seed ${description.seed}`)
 
+		console.log(`dungeon seed ${description.seed}`)
 		const generationTimer = stopwatch()
 		const randomTools = pseudoRandomTools(description.seed)
-		const dungeonGen = dungeonGenerator(randomTools)
-		const dungeon = dungeonGen.generateTilePath(description.pathSize)
-		const sectors = dungeonGen.subdivideSomeTiles(dungeon, description.amountOfLittleTiles)
+		const generator = dungeonGenerator(randomTools)
+		const dungeonBigTiles = generator.generateTilePath(description.pathSize)
+		const dungeonTiles = generator.subdivideSomeTiles(dungeonBigTiles, description.amountOfLittleTiles)
 		console.log(`dungeon generator took ${generationTimer.elapsed().toFixed(0)}ms`)
-		console.log("dungeon sectors", sectors)
 
-		const bigSize = 60
-		const littleSize = 20
-		const placementTimer = stopwatch()
-
-		function subposition(bigPoint: V2, littlePoint: V2) {
-			const bigOffset = v2.addBy(
-				v2.multiplyBy(bigPoint, bigSize),
-				-(bigSize / 2)
-			)
-			const littleOffset = v2.multiplyBy(littlePoint, littleSize)
-			const totalOffset = v2.add(bigOffset, littleOffset)
-			return v2.addBy(
-				totalOffset,
-				littleSize / 2
-			)
-		}
-
-		function makeInstance(mesh: BABYLON.Mesh, x: number, z: number) {
-			const instance = mesh.createInstance("mapinstance")
-			instance.setParent(null)
-			instance.physicsImpostor = new BABYLON.PhysicsImpostor(
-				instance,
-				BABYLON.PhysicsImpostor.MeshImpostor,
-				{mass: 0, friction: 1, restitution: 0.1},
-			)
-			instance.position.x = x
-			instance.position.z = z
-			return instance
-		}
-
-		sectors.forEach((sector, index) => {
-			const {point, doors} = sector
-			if ((<DungeonTileSubdivided>sector).children) {
-				const {children: subpath} = <DungeonTileSubdivided>sector
-				subpath.forEach((sub, index) => {
-					const [worldX, worldZ] = subposition(point, sub.point)
-					const straight = doorsAreStraight(sub.doors)
-					const randomMesh = straight
-						? randomTools.randomSelect(tiles.little.straights)
-						: randomTools.randomSelect(tiles.little.corners)
-					const instance = makeInstance(randomMesh, worldX, worldZ)
-					if (straight)
-						rotateStraightToMatchDoors(instance, sub.doors)
-					else
-						rotateCornerToMatchDoors(instance, sub.doors)
-				})
-			}
-			else {
-				const [x, y] = point
-				const worldX = x * bigSize
-				const worldZ = y * bigSize
-				const isStart = index === 0
-				const isEnd = index === dungeon.length - 1
-				if (isStart || isEnd) {
-					const randomMesh = isStart
-						? randomTools.randomSelect(tiles.big.starts)
-						: randomTools.randomSelect(tiles.big.ends)
-					const instance = makeInstance(randomMesh, worldX, worldZ)
-					rotateStartOrEndToMatchDoor(instance, doors)
-				}
-				else {
-					const straight = doorsAreStraight(doors)
-					const randomMesh = straight
-						? randomTools.randomSelect(tiles.big.straights)
-						: randomTools.randomSelect(tiles.big.corners)
-					const instance = makeInstance(randomMesh, worldX, worldZ)
-					if (straight)
-						rotateStraightToMatchDoors(instance, doors)
-					else
-						rotateCornerToMatchDoors(instance, doors)
-				}
-			}
+		const placement = dungeonPlacement({
+			randomTools,
+			big: {
+				size: 60,
+				meshSet: {
+					straights: bigs.filter(m => m.name.includes("straight")),
+					corners: bigs.filter(m => m.name.includes("corner")),
+					starts: bigs.filter(m => m.name.includes("start")),
+					ends: bigs.filter(m => m.name.includes("end")),
+				},
+			},
+			small: {
+				size: 20,
+				meshSet: {
+					straights: littles.filter(m => m.name.includes("straight")),
+					corners: littles.filter(m => m.name.includes("corner")),
+					starts: littles.filter(m => m.name.includes("start")),
+					ends: littles.filter(m => m.name.includes("end")),
+				},
+			},
 		})
 
-		for (const mesh of meshes) {
-			scene.removeMesh(mesh)
-		}
-
+		const placementTimer = stopwatch()
+		placement.placeDungeon(dungeonTiles)
 		console.log(`dungeon placement took ${placementTimer.elapsed().toFixed(0)}ms`)
 
 		return asEntity<MapDungeonDescription>({
