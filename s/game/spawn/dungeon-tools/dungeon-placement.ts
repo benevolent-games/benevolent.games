@@ -1,6 +1,7 @@
 
 import {V2} from "../../utils/v2.js"
 import * as v2 from "../../utils/v2.js"
+import {hatPuller} from "./placement-utils/hat-puller.js"
 import {RandomTools} from "../../utils/random-tools.js"
 import {doorsAreStraight} from "../../utils/dungeon-generator/gentools/door-logic.js"
 import {DungeonDoors, DungeonTile, DungeonTileSubdivided} from "../../utils/dungeon-generator/dungeon-types.js"
@@ -28,6 +29,20 @@ export function dungeonPlacement({
 		}
 	}) {
 
+	function meshSetHats(meshSet: TileMeshSet) {
+		return {
+			straights: hatPuller(randomTools, meshSet.straights),
+			corners: hatPuller(randomTools, meshSet.corners),
+			starts: hatPuller(randomTools, meshSet.starts),
+			ends: hatPuller(randomTools, meshSet.ends),
+		}
+	}
+
+	const hats = {
+		big: meshSetHats(big.meshSet),
+		small: meshSetHats(small.meshSet),
+	}
+
 	function bigposition(bigPoint: V2) {
 		return v2.multiplyBy(bigPoint, big.size)
 	}
@@ -37,8 +52,8 @@ export function dungeonPlacement({
 			v2.multiplyBy(bigPoint, big.size),
 			-(big.size / 2)
 		)
-		const littleOffset = v2.multiplyBy(smallPoint, small.size)
-		const totalOffset = v2.add(bigOffset, littleOffset)
+		const smallOffset = v2.multiplyBy(smallPoint, small.size)
+		const totalOffset = v2.add(bigOffset, smallOffset)
 		return v2.addBy(
 			totalOffset,
 			small.size / 2
@@ -58,8 +73,7 @@ export function dungeonPlacement({
 		return instance
 	}
 
-	function placeStartOrEnd(tile: DungeonTile, meshes: BABYLON.Mesh[]) {
-		const mesh = randomTools.randomSelect(meshes)
+	function placeStartOrEnd(tile: DungeonTile, mesh: BABYLON.Mesh) {
 		const [x, y] = bigposition(tile.point)
 		const instance = makeInstance(mesh, x, y)
 		rotateStartOrEndToMatchDoor(instance, tile.doors)
@@ -72,16 +86,16 @@ export function dungeonPlacement({
 			const startTile = tiles.shift()
 			const endTile = tiles.pop()
 
-			placeStartOrEnd(startTile, big.meshSet.starts)
-			placeStartOrEnd(endTile, big.meshSet.starts)
+			placeStartOrEnd(startTile, hats.big.starts.pull())
+			placeStartOrEnd(endTile, hats.big.ends.pull())
 
 			for (const bigTile of tiles) {
 				if (isTileSubdivided(bigTile)) {
 					for (const smallTile of (<DungeonTileSubdivided>bigTile).children) {
 						const isStraight = doorsAreStraight(smallTile.doors)
 						const mesh = isStraight
-							? randomTools.randomSelect(small.meshSet.straights)
-							: randomTools.randomSelect(small.meshSet.corners)
+							? hats.small.straights.pull()
+							: hats.small.corners.pull()
 						const [x, y] = smallposition(bigTile.point, smallTile.point)
 						const instance = makeInstance(mesh, x, y)
 						if (isStraight)
@@ -93,8 +107,8 @@ export function dungeonPlacement({
 				else {
 					const isStraight = doorsAreStraight(bigTile.doors)
 					const mesh = isStraight
-						? randomTools.randomSelect(big.meshSet.straights)
-						: randomTools.randomSelect(big.meshSet.corners)
+						? hats.big.straights.pull()
+						: hats.big.corners.pull()
 					const [x, y] = bigposition(bigTile.point)
 					const instance = makeInstance(mesh, x, y)
 					if (isStraight)
