@@ -2,9 +2,9 @@
 import * as v3 from "../utils/v3.js"
 import {loadGlb} from "../babylon/load-glb.js"
 import {loadMaterial} from "../babylon/load-material.js"
-import {asEntity, EnvironmentDescription, Quality, Spawner, SpawnOptions} from "../types.js"
+import {asEntity, MapDesertDescription, Quality, Spawner, SpawnOptions} from "../types.js"
 
-export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions): Spawner<EnvironmentDescription> {
+export function spawnMapDesert({quality, scene, renderLoop}: SpawnOptions): Spawner<MapDesertDescription> {
 	return async function({description}) {
 
 		scene.ambientColor = new BABYLON.Color3(0.1, 0.1, 0.1)
@@ -105,7 +105,7 @@ export function spawnEnvironment({quality, scene, renderLoop}: SpawnOptions): Sp
 				: 1024,
 		})
 
-		return asEntity<EnvironmentDescription>({
+		return asEntity<MapDesertDescription>({
 			update() {},
 			describe: () => description,
 			dispose() {

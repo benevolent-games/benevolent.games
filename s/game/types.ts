@@ -68,8 +68,15 @@ export interface Spawner<xDescription extends EntityDescription> {
 	({}: SpawnDetails<xDescription>): Promise<Entity<xDescription>>
 }
 
-export interface EnvironmentDescription extends EntityDescription {
-	type: "environment"
+export interface MapDesertDescription extends EntityDescription {
+	type: "mapDesert"
+}
+
+export interface MapDungeonDescription extends EntityDescription {
+	type: "mapDungeon"
+	seed: number
+	pathSize: number
+	amountOfLittleTiles: number
 }
 
 export interface CrateDescription extends EntityDescription {
@@ -94,7 +101,8 @@ export interface DunebuggyDescription extends EntityDescription {
 }
 
 export type AnyEntityDescription =
-	| EnvironmentDescription
+	| MapDesertDescription
+	| MapDungeonDescription
 	| CrateDescription
 	| PlayerDescription
 	| DunebuggyDescription
