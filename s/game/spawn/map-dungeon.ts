@@ -8,6 +8,7 @@ import {dungeonGenerator} from "../utils/dungeon-generator/dungeon-generator.js"
 import {DungeonTileSubdivided, DungeonDoors} from "../utils/dungeon-generator/dungeon-types.js"
 import {asEntity, MapDungeonDescription, Quality, Spawner, SpawnOptions} from "../types.js"
 import {pseudoRandomTools} from "../utils/random-tools.js"
+import {doorsAreStraight} from "../utils/dungeon-generator/gentools/door-logic.js"
 
 export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescription> {
 	return async function({description}) {
@@ -105,7 +106,7 @@ export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescri
 				const {children: subpath} = <DungeonTileSubdivided>sector
 				subpath.forEach((sub, index) => {
 					const [worldX, worldZ] = subposition(point, sub.point)
-					const straight = dungeonGen.doorsAreStraight(sub.doors)
+					const straight = doorsAreStraight(sub.doors)
 					const randomMesh = straight
 						? randomTools.randomSelect(tiles.little.straights)
 						: randomTools.randomSelect(tiles.little.corners)
@@ -130,7 +131,7 @@ export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescri
 					rotateStartOrEndToMatchDoor(instance, doors)
 				}
 				else {
-					const straight = dungeonGen.doorsAreStraight(doors)
+					const straight = doorsAreStraight(doors)
 					const randomMesh = straight
 						? randomTools.randomSelect(tiles.big.straights)
 						: randomTools.randomSelect(tiles.big.corners)
