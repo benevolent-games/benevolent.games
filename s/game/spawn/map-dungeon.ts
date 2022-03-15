@@ -14,7 +14,7 @@ import {asEntity, MapDungeonDescription, Spawner, SpawnOptions} from "../types.j
 export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescription> {
 	return async function({description}) {
 
-		scene.ambientColor = new BABYLON.Color3(1, 1, 1)
+		scene.ambientColor = new BABYLON.Color3(0.06, 0.06, 0.06)
 
 		const assets = await loadGlb(scene, "/assets/art/dungeon/dungeon.glb")
 		assets.removeAllFromScene()
@@ -24,9 +24,9 @@ export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescri
 			mesh.setParent(null)
 		}
 		for (const material of assets.materials) {
-			console.log(material.getClassName())
 			const pbr = <BABYLON.PBRMaterial>material
 			pbr.ambientColor = new BABYLON.Color3(1, 1, 1)
+			pbr.backFaceCulling = true
 		}
 
 		const ground = BABYLON.CreateGround("", {
@@ -43,14 +43,8 @@ export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescri
 		const bigs = meshes.filter(m => m.name.startsWith("60x60m"))
 		const littles = meshes.filter(m => m.name.startsWith("20x20m"))
 
-		console.log(`dungeon seed ${description.seed}`)
-		const generationTimer = stopwatch()
 		const randomTools = pseudoRandomTools(description.seed)
 		const generator = dungeonGenerator(randomTools)
-		const dungeonBigTiles = generator.generateTilePath(description.pathSize)
-		const dungeonTiles = generator.subdivideSomeTiles(dungeonBigTiles, description.amountOfLittleTiles)
-		console.log(`dungeon generator took ${generationTimer.elapsed().toFixed(0)}ms`)
-
 		const placement = dungeonPlacement({
 			randomTools,
 			big: {
@@ -73,9 +67,19 @@ export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescri
 			},
 		})
 
+		console.log(`dungeon seed ${description.seed}`)
+		const generationTimer = stopwatch()
+		const dungeonBigTiles = generator.generateTilePath(description.pathSize)
+		const dungeonTiles = generator.subdivideSomeTiles(dungeonBigTiles, description.amountOfLittleTiles)
+		console.log(`dungeon generator took ${generationTimer.elapsed().toFixed(0)}ms`)
+
 		const placementTimer = stopwatch()
 		placement.placeDungeon(dungeonTiles)
 		console.log(`dungeon placement took ${placementTimer.elapsed().toFixed(0)}ms`)
+
+		const lightDirection = v3.toBabylon(v3.normalize([0.7, -1, 0.2]))
+		const sun = new BABYLON.DirectionalLight("", lightDirection, scene)
+		sun.intensity = 4
 
 		return asEntity<MapDungeonDescription>({
 			update() {},
