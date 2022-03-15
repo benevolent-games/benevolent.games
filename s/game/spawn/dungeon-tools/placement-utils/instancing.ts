@@ -7,7 +7,7 @@ export function makeInstance(mesh: BABYLON.Mesh, [x, z]: V2) {
 	instance.physicsImpostor = new BABYLON.PhysicsImpostor(
 		instance,
 		BABYLON.PhysicsImpostor.MeshImpostor,
-		{mass: 0, friction: 1, restitution: 0.1},
+		{mass: 0, friction: 1, restitution: 0},
 	)
 	instance.position.x = x
 	instance.position.z = z
