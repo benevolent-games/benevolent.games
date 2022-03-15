@@ -19,7 +19,7 @@ export function spawnMapDungeon({scene}: SpawnOptions): Spawner<MapDungeonDescri
 		const assets = await loadGlb(scene, "/assets/art/dungeon/dungeon.glb")
 		assets.removeAllFromScene()
 		const meshes = <BABYLON.Mesh[]>assets.meshes
-		console.log("meshes", meshes.map(m => m.name))
+		console.log("🧺 dungeon meshes", meshes.map(m => m.name))
 		for (const mesh of meshes) {
 			mesh.setParent(null)
 		}
