@@ -38,4 +38,6 @@
 	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingEmptyBraces": false,
 	"javascript.preferences.importModuleSpecifierEnding": "js",
 	"typescript.preferences.importModuleSpecifierEnding": "js",
+	"editor.tabSize": 2,
+	"editor.renderWhitespace": "boundary",
 }
