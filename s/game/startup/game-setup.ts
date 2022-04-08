@@ -1,17 +1,17 @@
 
 import {V3} from "../utils/v3.js"
 import {makeGame} from "../make-game.js"
-import {AccessListeners, GetAccess, Thumbsticks} from "../types.js"
+import {AccessListeners, GetAccess, MobileControls, Thumbsticks} from "../types.js"
 import {makeFramerateDisplay} from "../utils/make-framerate-display.js"
 import {getGameQualityMode, startLoading, wirePointerLockAttribute, setupFullscreenToggling, enableDebugMeshPicking} from "./startup-routines.js"
 
 export async function gameSetup({
-		playerId, statsArea, thumbsticks,
+		playerId, statsArea, mobileControls,
 		fullscreenButton, accessListeners, getAccess,
 	}: {
 		playerId: string
 		statsArea: HTMLElement
-		thumbsticks: Thumbsticks
+		mobileControls: MobileControls
 		fullscreenButton: HTMLButtonElement
 		getAccess: GetAccess
 		accessListeners: AccessListeners
@@ -28,7 +28,7 @@ export async function gameSetup({
 	const game = await makeGame({
 		quality,
 		middle,
-		thumbsticks,
+		mobileControls,
 		playerId,
 		getAccess,
 		accessListeners,

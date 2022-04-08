@@ -20,6 +20,13 @@ export interface Thumbsticks {
 	right: ThumbStick
 }
 
+export interface MobileControls {
+	swapMesh: HTMLElement
+	changePerspective: HTMLElement
+	jump: HTMLElement
+	thumbsticks: Thumbsticks
+}
+
 export interface SpawnOptions {
 	middle: V3
 	quality: Quality
@@ -29,7 +36,7 @@ export interface SpawnOptions {
 	renderLoop: Set<() => void>
 	mouseTracker: ReturnType<typeof makeMouseTracker>
 	keyListener: ReturnType<typeof makeKeyListener>
-	thumbsticks: Thumbsticks
+	mobileControls: MobileControls
 	playerId: string
 	getAccess: GetAccess
 	accessListeners: AccessListeners

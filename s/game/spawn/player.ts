@@ -24,7 +24,7 @@ const defaultColor: V3 = [0.2, 0.2, 0.2]
 const interpolationSteps = 3
 
 export function spawnPlayer({
-		scene, renderLoop, mouseTracker, keyListener, thumbsticks, playerId,
+		scene, renderLoop, mouseTracker, keyListener, mobileControls, playerId,
 		getAccess, accessListeners, engine,
 	}: SpawnOptions): Spawner<PlayerDescription> {
 
@@ -87,7 +87,7 @@ export function spawnPlayer({
 			walk,
 			sprint,
 			keyListener,
-			thumbstick: thumbsticks.left,
+			thumbstick: mobileControls.thumbsticks.left,
 		})
 
 		// robot animations
@@ -136,7 +136,7 @@ export function spawnPlayer({
 			mouseTracker.listeners.add(looking.addMouseforce)
 
 			renderLoop.add(() => {
-				const thumbforce = thumbsticks.right.values
+				const thumbforce = mobileControls.thumbsticks.right.values
 				looking.addThumbforce(thumbforce)
 				looking.applyPlayerLook(capsule, headLocus)
 				rotation = looking.look
@@ -155,6 +155,10 @@ export function spawnPlayer({
 			keyListener.on("p", state => {
 				if (state.isDown)
 					toggleThirdPerson()
+			})
+
+			mobileControls.changePerspective.addEventListener('click', () => {
+				toggleThirdPerson()
 			})
 
 			const interval = setInterval(
@@ -179,9 +183,18 @@ export function spawnPlayer({
 				}
 			})
 
+			mobileControls.swapMesh.addEventListener("click", () => {
+				nextCharacter()
+				sendMemo(["character", currentCharacter])
+			})
+
 			keyListener.on(" ", state => {
 				if (state.isDown)
 					sendMemo(["jump"])
+			})
+
+			mobileControls.jump.addEventListener('click', () => {
+				sendMemo(["jump"])
 			})
 
 			disposers.add(() => clearInterval(interval))

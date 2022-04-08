@@ -44,10 +44,15 @@ void async function main() {
 			accessListeners,
 			statsArea: document.querySelector(".stats"),
 			fullscreenButton: document.querySelector(".buttonbar .fullscreen"),
-			thumbsticks: {
-				left: document.querySelector("thumb-stick.left"),
-				right: document.querySelector("thumb-stick.right"),
-			}
+			mobileControls: {
+				swapMesh: document.querySelector('.swap-mesh'),
+				changePerspective: document.querySelector('.change-perspective'),
+				jump: document.querySelector('.jump'),
+				thumbsticks: {
+					left: document.querySelector("thumb-stick.left"),
+					right: document.querySelector("thumb-stick.right"),
+				}
+			},
 		})
 
 		console.log("💅 quality:", quality)
