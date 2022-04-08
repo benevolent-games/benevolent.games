@@ -2,7 +2,7 @@
 import {V3} from "./utils/v3.js"
 import {makeKeyListener} from "./utils/key-listener.js"
 import {makeMouseTracker} from "./utils/mouse-tracker.js"
-import {AccessListeners, GetAccess, Quality, SpawnOptions, Thumbsticks} from "./types.js"
+import {AccessListeners, GetAccess, MobileControls, Quality, SpawnOptions, Thumbsticks} from "./types.js"
 
 import {spawnCrate} from "./spawn/crate.js"
 import {spawnCamera} from "./spawn/camera.js"
@@ -15,14 +15,14 @@ import {spawnMapDungeon} from "./spawn/map-dungeon.js"
 export async function makeGame({
 		playerId,
 		quality,
-		thumbsticks,
+		mobileControls,
 		getAccess,
 		accessListeners,
 		middle = [0, 0, 0],
 	}: {
 		playerId: string
 		quality: Quality
-		thumbsticks: Thumbsticks
+		mobileControls: MobileControls
 		getAccess: GetAccess
 		accessListeners: AccessListeners
 		middle?: V3
@@ -62,7 +62,7 @@ export async function makeGame({
 		middle,
 		quality,
 		renderLoop,
-		thumbsticks,
+		mobileControls,
 		mouseTracker: makeMouseTracker(),
 		keyListener: makeKeyListener(),
 		playerId,

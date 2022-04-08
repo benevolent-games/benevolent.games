@@ -61,8 +61,17 @@ export default ({mode, v, ...options}: BenevolentWebsiteContext) => html`
 		<div class=debug></div>
 	</div>
 	<div class="mobile">
-		<thumb-stick class=left></thumb-stick>
-		<thumb-stick class=right></thumb-stick>
+		<div class="left-buttons">
+			<thumb-stick class=left></thumb-stick>
+		</div>
+		<div class="right-buttons">
+			<button class="swap-mesh">M</button>
+			<button class="change-perspective">P</button>
+			<button class="jump">J</button>
+			<thumb-stick class=right></thumb-stick>
+		</div>
+		
+		
 	</div>
 </body>
 </html>

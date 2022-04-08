@@ -315,6 +315,7 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+	align-items: flex-end;
 
 	padding: 1em;
 }
@@ -325,7 +326,41 @@
 	opacity: 0.2;
 	flex: 1 1 auto;
 	max-width: 7em;
-	width: 50%;
+	// width: 50%;
 	height: auto;
 	aspect-ratio: 1 / 1;
+}
+
+.game .mobile .right-buttons {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: 1fr 1fr;
+	place-items: center;
+}
+
+.game .mobile .right-buttons button {
+	width: 35%;
+	border: none;
+	font-size: 1.5rem;
+	border-radius: 50%;
+	aspect-ratio: 1/1;
+	color: #aaaaaa;
+	background-color: rgba(0,0,0, 0.3);
+}
+
+.game .mobile .right-buttons button:active {
+	background-color: rgba(0,0,0, 0.5);
+}
+
+.game .mobile .right-buttons button:focus {
+	outline: none;
+}
+
+.game .mobile .right-buttons button:hover {
+	cursor: pointer;
+}
+
+.game .mobile .right-buttons .swap-mesh {
+	align-self: flex-end;
+	justify-self: flex-end;
 }
