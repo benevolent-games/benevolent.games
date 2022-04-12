@@ -325,7 +325,7 @@
 	display: block;
 	opacity: 0.2;
 	flex: 1 1 auto;
-	max-width: 7em;
+	max-width: 6em;
 	// width: 50%;
 	height: auto;
 	aspect-ratio: 1 / 1;
@@ -333,13 +333,13 @@
 
 .game .mobile .right-buttons {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: repeat(2, minmax(5rem, 1fr));
 	grid-template-rows: 1fr 1fr;
 	place-items: center;
 }
 
 .game .mobile .right-buttons button {
-	width: 35%;
+	width: 40%;
 	border: none;
 	font-size: 1.5rem;
 	border-radius: 50%;

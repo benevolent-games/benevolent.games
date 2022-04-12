@@ -142,6 +142,14 @@ export function spawnPlayer({
 				rotation = looking.look
 			})
 
+			function onButtonPress (element: HTMLElement, handler: (event: Event) => void) {
+				const events = ['touchstart', 'click']
+				events.map((event) => {element.addEventListener(event, handler)})
+				disposers.add(() => {
+					events.map((event) => element.removeEventListener(event, handler))
+				})
+			}
+
 			let thirdPerson = false
 			function toggleThirdPerson(value = !thirdPerson) {
 				thirdPerson = value
@@ -157,7 +165,8 @@ export function spawnPlayer({
 					toggleThirdPerson()
 			})
 
-			mobileControls.changePerspective.addEventListener('click', () => {
+			onButtonPress(mobileControls.changePerspective, (e) => {
+				e.preventDefault()
 				toggleThirdPerson()
 			})
 
@@ -183,7 +192,8 @@ export function spawnPlayer({
 				}
 			})
 
-			mobileControls.swapMesh.addEventListener("click", () => {
+			onButtonPress(mobileControls.swapMesh, (e) => {
+				e.preventDefault()
 				nextCharacter()
 				sendMemo(["character", currentCharacter])
 			})
@@ -193,10 +203,10 @@ export function spawnPlayer({
 					sendMemo(["jump"])
 			})
 
-			mobileControls.jump.addEventListener('click', () => {
+			onButtonPress(mobileControls.jump, (e) => {
+				e.preventDefault()
 				sendMemo(["jump"])
 			})
-
 			disposers.add(() => clearInterval(interval))
 		}
 		else {
